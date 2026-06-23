@@ -1,24 +1,23 @@
 "use client";
 
-import Hint from "@/components/hint";
-import { Button } from "@/components/ui/button";
-import { setTool } from "@/features/toolbar/toolbar-slice";
-import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
 import { cn } from "@/lib/utils";
-import { CursorType, ToolbarItemType, ToolType } from "@/types/toolbar.types";
+import { ToolbarItemType, ToolType } from "@/types/toolbar.types";
 import { JSX } from "react";
+import Hint from "../hint";
+import { Button } from "../ui/button";
+import { useSelectedTool, useSetSelectedTool } from "../../store/selectors";
 
 type ToolbarButtonProp = {
   item: Omit<ToolbarItemType, "icon"> & { icon: JSX.Element };
 };
 
 export const ToolbarButton = ({ item }: ToolbarButtonProp) => {
-  const dispatch = useAppDispatch();
-  const selectedTool = useAppSelector((state) => state.toolbar.tool);
+  const selectedTool = useSelectedTool();
+  const setSelectedTool = useSetSelectedTool();
 
   // Sets the tool
   const handleToolSelect = (tool: ToolType) => {
-    dispatch(setTool({ tool }));
+    setSelectedTool(tool);
   };
 
   return (

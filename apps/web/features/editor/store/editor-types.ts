@@ -44,7 +44,7 @@ export interface EditorStore {
   setScale: (scale: number) => void;
 
   panOffset: Point;
-  setPanOffset: (offset: Point) => void;
+  setPanOffset: (updater: Point | ((prev: Point) => Point)) => void;
 
   scaleOffset: Point;
   setScaleOffset: (offset: Point) => void;

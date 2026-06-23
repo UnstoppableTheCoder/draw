@@ -1,10 +1,9 @@
 import React from "react";
 import ColorPicker from "./color-picker";
-import { useAppSelector } from "@/hooks/hooks";
-import { selectTool } from "@/features/toolbar/toolbar-slice";
+import { useSelectedTool } from "@/features/editor/store/selectors";
 
 const BackgroundColorPicker = () => {
-  const selectedTool = useAppSelector(selectTool);
+  const selectedTool = useSelectedTool();
 
   // Render Background Color Picker Conditionally
   if (selectedTool === "arrow" || selectedTool === "text") {

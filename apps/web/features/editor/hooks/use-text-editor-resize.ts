@@ -1,13 +1,14 @@
 import { RefObject, useEffect } from "react";
-import { TextEditingState } from "../types/types";
-import { useTextEditingState, useTextStyleState } from "../store/selectors";
+import * as store from "../store/selectors";
 
 export default function useTextEditorResize(
   canvasRef: RefObject<HTMLCanvasElement | null>,
   textareaRef: RefObject<HTMLTextAreaElement | null>,
 ) {
-  const { textEditingState } = useTextEditingState();
-  const { fontSize, fontFamily, lineHeightMultiplier } = useTextStyleState();
+  const textEditingState = store.useTextEditingState();
+  const fontSize = store.useFontSize();
+  const fontFamily = store.useFontFamily();
+  const lineHeightMultiplier = store.useLineHeightMultiplier();
 
   // Adjusts Width and Height of textarea
   useEffect(() => {

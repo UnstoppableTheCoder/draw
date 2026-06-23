@@ -32,56 +32,49 @@
 import { useState } from "react";
 import { Shape, Point, SelectedShapeBounds } from "../types/types";
 
-import {
-  getBoundingBox,
-  getResizeHandleAtPoint,
-} from "../geometry/bounding-box";
+// export function useCanvasSelection(scale: number) {
+//   const [selectedShape, setSelectedShape] = useState<Shape | null>(null);
 
-import { getShapeAtPosition } from "../geometry/hit-test";
+//   const [selectedShapeBounds, setSelectedShapeBounds] =
+//     useState<SelectedShapeBounds | null>(null);
 
-export function useCanvasSelection(scale: number) {
-  const [selectedShape, setSelectedShape] = useState<Shape | null>(null);
+//   function clearSelection() {
+//     setSelectedShape(null);
+//     setSelectedShapeBounds(null);
+//   }
 
-  const [selectedShapeBounds, setSelectedShapeBounds] =
-    useState<SelectedShapeBounds | null>(null);
+//   function selectShape(point: Point, shapes: Shape[]) {
+//     const shape = getShapeAtPosition(
+//       point,
+//       shapes,
+//       selectedShape,
+//       selectedShapeBounds,
+//     );
 
-  function clearSelection() {
-    setSelectedShape(null);
-    setSelectedShapeBounds(null);
-  }
+//     if (!shape) return null;
 
-  function selectShape(point: Point, shapes: Shape[]) {
-    const shape = getShapeAtPosition(
-      point,
-      shapes,
-      selectedShape,
-      selectedShapeBounds,
-    );
+//     const bounds = getBoundingBox(shape);
 
-    if (!shape) return null;
+//     setSelectedShape(shape);
+//     setSelectedShapeBounds(bounds);
 
-    const bounds = getBoundingBox(shape);
+//     const resizeHandle = getResizeHandleAtPoint(point, shape, bounds, scale);
 
-    setSelectedShape(shape);
-    setSelectedShapeBounds(bounds);
+//     return {
+//       shape,
+//       bounds,
+//       resizeHandle,
+//     };
+//   }
 
-    const resizeHandle = getResizeHandleAtPoint(point, shape, bounds, scale);
+//   return {
+//     selectedShape,
+//     selectedShapeBounds,
 
-    return {
-      shape,
-      bounds,
-      resizeHandle,
-    };
-  }
+//     setSelectedShape,
+//     setSelectedShapeBounds,
 
-  return {
-    selectedShape,
-    selectedShapeBounds,
-
-    setSelectedShape,
-    setSelectedShapeBounds,
-
-    clearSelection,
-    selectShape,
-  };
-}
+//     clearSelection,
+//     selectShape,
+//   };
+// }

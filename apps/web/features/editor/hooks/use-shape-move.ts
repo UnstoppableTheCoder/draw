@@ -1,16 +1,12 @@
-import { Dispatch, SetStateAction } from "react";
-import { SelectedShapeBounds, Shape } from "../types/types";
 import { getBoundingBox } from "../geometry/bounding-box";
+import { Shape } from "../types/types";
+import * as store from "../store/selectors";
 
-export default function useShapeMove({
-  setShapes,
-  setSelectedShape,
-  setSelectedShapeBounds,
-}: {
-  setShapes: Dispatch<SetStateAction<Shape[]>>;
-  setSelectedShape: Dispatch<SetStateAction<Shape | null>>;
-  setSelectedShapeBounds: Dispatch<SetStateAction<SelectedShapeBounds | null>>;
-}) {
+export default function useShapeMove() {
+  const setShapes = store.useSetShapes();
+  const setSelectedShape = store.useSetSelectedShape();
+  const setSelectedShapeBounds = store.useSetSelectedShapeBounds();
+
   const moveShape = ({
     selectedShape,
     dx,
@@ -35,37 +31,6 @@ export default function useShapeMove({
     setSelectedShape(updatedShape);
     setSelectedShapeBounds(getBoundingBox(updatedShape));
   };
-
-  // Moves the page up and down and left and right
-  // useEffect(() => {
-  //   const handleWheel = (e: WheelEvent) => {
-  //     if (!e.ctrlKey) {
-  //       dispatch(
-  //         setPanOffset({
-  //           x: panOffset.x - e.deltaX,
-  //           y: panOffset.y - e.deltaY,
-  //         }),
-  //       );
-  //     }
-
-  //     if (e.shiftKey) {
-  //       dispatch(
-  //         setPanOffset({
-  //           x: panOffset.x - e.deltaY,
-  //           y: panOffset.y - e.deltaX,
-  //         }),
-  //       );
-  //     }
-  //   };
-
-  //   window.addEventListener("wheel", handleWheel, {
-  //     passive: true,
-  //   });
-
-  //   return () => {
-  //     window.removeEventListener("wheel", handleWheel);
-  //   };
-  // }, [dispatch, panOffset]);
 
   return { moveShape };
 }

@@ -1,10 +1,6 @@
 import { ChangeEvent, KeyboardEvent, RefObject } from "react";
-import {
-  useTextEditingState,
-  useTextStyleState,
-  useViewportState,
-} from "../../store/selectors";
 import { getCanvasToScreenCoordinates } from "../../utils/get-coordinates";
+import * as store from "../../store/selectors";
 
 type TextEditorProps = {
   textareaRef: RefObject<HTMLTextAreaElement | null>;
@@ -18,9 +14,14 @@ export default function TextEditor({
   textareaRef,
   onKeyDown,
 }: TextEditorProps) {
-  const { panOffset, scale, scaleOffset } = useViewportState();
-  const { textEditingState, setTextEditingState } = useTextEditingState();
-  const { fontSize, fontFamily, lineHeightMultiplier } = useTextStyleState();
+  const panOffset = store.usePanOffset();
+  const scale = store.useScale();
+  const scaleOffset = store.useScaleOffset();
+  const setTextEditingState = store.useSetTextEditingState();
+  const fontSize = store.useFontSize();
+  const fontFamily = store.useFontFamily();
+  const lineHeightMultiplier = store.useLineHeightMultiplier();
+  const textEditingState = store.useTextEditingState();
 
   if (!textEditingState) return;
 

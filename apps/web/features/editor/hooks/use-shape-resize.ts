@@ -1,72 +1,26 @@
-import { Dispatch, RefObject, SetStateAction } from "react";
+import { RefObject } from "react";
 import { Point, PointTuple, SelectedShapeBounds, Shape } from "../types/types";
 import { ResizeHandleType } from "../types/resize-handle";
-import { getBoundingBox } from "../geometry/bounding-box";
 import { TOLERANCE } from "../constants/canvas";
 import { normalizeRect } from "../utils/normalize-rect";
 import { resizeFreeDrawShape } from "../resize/resize-freedraw";
+import { getBoundingBox } from "../geometry/bounding-box";
+import * as store from "../store/selectors";
 
 export default function useShapeResize({
-  setShapes,
-  setSelectedShape,
   resizableHandleRef,
-  setSelectedShapeBounds,
   lineResizeStateRef,
   resizeStartBoundsRef,
   freeDrawShapePointsRef,
 }: {
-  setShapes: Dispatch<SetStateAction<Shape[]>>;
-  setSelectedShape: Dispatch<SetStateAction<Shape | null>>;
   resizableHandleRef: RefObject<ResizeHandleType | null>;
-  setSelectedShapeBounds: Dispatch<SetStateAction<SelectedShapeBounds | null>>;
   lineResizeStateRef: RefObject<{ start: Point; end: Point } | null>;
   resizeStartBoundsRef: RefObject<SelectedShapeBounds | null>;
   freeDrawShapePointsRef: RefObject<PointTuple[]>;
 }) {
-  function initializeResize({
-    resizeHandle,
-    bounds,
-    shapeAtPosition,
-  }: {
-    resizeHandle: ResizeHandleType;
-    bounds: SelectedShapeBounds;
-    shapeAtPosition: Shape;
-  }) {
-    isResizingRef.current = true;
-    resizableHandleRef.current = resizeHandle;
-    resizeStartBoundsRef.current = bounds;
-
-    if (shapeAtPosition.type === "line" || shapeAtPosition.type === "arrow") {
-      const [startRel, endRel] = shapeAtPosition.points;
-      if (!startRel || !endRel) return;
-
-      const start = getAbsolutePoint(
-        shapeAtPosition.x,
-        shapeAtPosition.y,
-        startRel,
-      );
-
-      const end = getAbsolutePoint(
-        shapeAtPosition.x,
-        shapeAtPosition.y,
-        endRel,
-      );
-
-      lineResizeStateRef.current = {
-        start,
-        end,
-      };
-
-      return;
-    }
-
-    if (shapeAtPosition.type === "freedraw") {
-      resizeStartBoundsRef.current = getBoundingBox(shapeAtPosition);
-      freeDrawShapePointsRef.current = shapeAtPosition.points.map((p) => [
-        ...p,
-      ]);
-    }
-  }
+  const setShapes = store.useSetShapes();
+  const setSelectedShape = store.useSetSelectedShape();
+  const setSelectedShapeBounds = store.useSetSelectedShapeBounds();
 
   const resizeShape = (selectedShape: Shape, currentPoint: Point) => {
     if (selectedShape.type === "arrow" || selectedShape.type === "line") {
@@ -274,63 +228,6 @@ export default function useShapeResize({
     setSelectedShape(updatedShape);
     setSelectedShapeBounds(getBoundingBox(updatedShape));
   };
-
-  // UI - Cursor Type
-  function updateResizeCursor(point: Point, selectedShape: Shape) {
-    const resizeHandle = getResizeHandleAtPoint(
-      point,
-      selectedShape,
-      selectedShapeBounds,
-      scale,
-    );
-
-    resizableHandleRef.current = resizeHandle;
-
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    if (!resizeHandle) {
-      canvas.style.cursor = "default";
-      return;
-    }
-
-    switch (resizeHandle) {
-      case "top":
-      case "bottom":
-        canvas.style.cursor = "ns-resize";
-        break;
-
-      case "left":
-      case "right":
-        canvas.style.cursor = "ew-resize";
-        break;
-
-      case "top-left":
-      case "bottom-right":
-        canvas.style.cursor = "nwse-resize";
-        break;
-
-      case "top-right":
-      case "bottom-left":
-        canvas.style.cursor = "nesw-resize";
-        break;
-
-      case "start":
-      case "middle":
-      case "end":
-        canvas.style.cursor = "pointer";
-        break;
-    }
-  }
-
-  function finishResize() {
-    if (!isResizingRef.current) {
-      return false;
-    }
-
-    isResizingRef.current = false;
-    return true;
-  }
 
   return {
     resizeShape,

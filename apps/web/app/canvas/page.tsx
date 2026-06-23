@@ -1,8 +1,7 @@
+import Canvas from "@/features/editor/components/canvas/canvas";
+import { PropertiesPanel } from "@/features/editor/components/properties-panel/properties-panel";
+import Toolbar from "@/features/editor/components/toolbar/toolbar";
 import React from "react";
-
-import Canvas from "@/components/canvas/canvas";
-import Toolbar from "@/components/toolbar/toolbar";
-import { PropertiesPanel } from "@/components/properties-panel/properties-panel";
 
 const CanvasWrapper = () => {
   return (

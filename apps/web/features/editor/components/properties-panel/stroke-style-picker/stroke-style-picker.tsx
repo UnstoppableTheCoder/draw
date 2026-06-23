@@ -3,14 +3,13 @@
 import { Minus } from "lucide-react";
 import { PropertyItem } from "../property-item";
 import { PropertiesPanelItemWrapper } from "../properties-panel-item-wrapper";
-import { useAppSelector } from "@/hooks/hooks";
-import { selectTool } from "@/features/toolbar/toolbar-slice";
+import { useSelectedTool } from "@/features/editor/store/selectors";
 
 export const StrokeStylePicker = () => {
-  const selectedTool = useAppSelector(selectTool);
+  const selectedTool = useSelectedTool();
 
   // Rendering Stroke Style Picker Conditionally
-  if (selectedTool === "draw" || selectedTool === "text") {
+  if (selectedTool === "freedraw" || selectedTool === "text") {
     return;
   }
 

@@ -1,31 +1,20 @@
-import { KeyboardEvent, PointerEvent, RefObject } from "react";
+import { KeyboardEvent, PointerEvent, RefObject, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 import getTextDimensions from "../utils/get-text-dimensions";
-import {
-  useShapesState,
-  useTextEditingState,
-  useTextStyleState,
-  useToolState,
-} from "../store/selectors";
+import * as store from "../store/selectors";
 
 export default function useTextEditing(
   canvasRef: RefObject<HTMLCanvasElement | null>,
   textareaRef: RefObject<HTMLTextAreaElement | null>,
 ) {
-  const { fontSize, fontFamily } = useTextStyleState();
-  const { textEditingState, setTextEditingState } = useTextEditingState();
-  const { setShapes } = useShapesState();
-  const { setSelectedTool } = useToolState();
+  const setSelectedTool = store.useSetSelectedTool();
+  const setShapes = store.useSetShapes();
+  const setTextEditingState = store.useSetTextEditingState();
+  const fontSize = store.useFontSize();
+  const fontFamily = store.useFontFamily();
+  const textEditingState = store.useTextEditingState();
 
   const font = `${fontSize} ${fontFamily}`;
-
-  function initializeTextEditing(startPoint: Point) {
-    setTextEditingState({
-      x: startPoint.x,
-      y: startPoint.y,
-      text: "",
-    });
-  }
 
   const saveTextShape = () => {
     if (!textEditingState) return;

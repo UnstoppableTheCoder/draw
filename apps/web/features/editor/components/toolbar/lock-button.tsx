@@ -1,18 +1,17 @@
 "use client";
 
-import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
+import { useLockTool, useSetLockTool } from "../../store/selectors";
 import Hint from "../hint";
 import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
 import { Lock, LockOpen } from "lucide-react";
-import { setLock } from "@/features/toolbar/toolbar-slice";
 
 export default function LockButton() {
-  const dispatch = useAppDispatch();
-  const isLocked = useAppSelector((state) => state.toolbar.lock);
+  const isLocked = useLockTool();
+  const setIsLocked = useSetLockTool();
 
   const handleLockSelect = (isLocked: boolean) => {
-    dispatch(setLock({ lock: !isLocked }));
+    setIsLocked(!isLocked);
   };
 
   return (

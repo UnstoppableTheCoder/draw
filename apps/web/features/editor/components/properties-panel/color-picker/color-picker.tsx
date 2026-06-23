@@ -1,7 +1,7 @@
-import { Separator } from "@/components/ui/separator";
 import React from "react";
 import { ColorItem } from "./color-item";
 import { PropertiesPanelItemWrapper } from "../properties-panel-item-wrapper";
+import { Separator } from "../../ui/separator";
 
 const ColorPicker = ({ label, value, onChange }: any) => {
   const colors = {

@@ -3,18 +3,17 @@ import { IMAGE_GAP, MAX_IMAGE_SIZE } from "../constants/image";
 import { loadImageInfos } from "../utils/image-loader";
 import { createImageShape } from "../shapes/create-image-shape";
 import { getScreenToCanvasCoordinates } from "../utils/get-coordinates";
-import {
-  useShapesState,
-  useToolState,
-  useViewportState,
-} from "../store/selectors";
+import * as store from "../store/selectors";
 export default function useImageUpload(
   canvasRef: RefObject<HTMLCanvasElement | null>,
   imageInputRef: RefObject<HTMLInputElement | null>,
 ) {
-  const { panOffset, scale, scaleOffset } = useViewportState();
-  const { setShapes } = useShapesState();
-  const { selectedTool, setSelectedTool } = useToolState();
+  const panOffset = store.usePanOffset();
+  const scale = store.useScale();
+  const scaleOffset = store.useScaleOffset();
+  const selectedTool = store.useSelectedTool();
+  const setSelectedTool = store.useSetSelectedTool();
+  const setShapes = store.useSetShapes();
 
   const getGridSize = (count: number) => {
     const cols = Math.ceil(Math.sqrt(count));
@@ -74,8 +73,8 @@ export default function useImageUpload(
 
   // Clicks image input if tool is image
   useEffect(() => {
-    if (selectedTool === "image" && imageInputRef.current) {
-      imageInputRef.current.click();
+    if (selectedTool === "image") {
+      imageInputRef.current?.click();
     }
   }, [selectedTool]);
 

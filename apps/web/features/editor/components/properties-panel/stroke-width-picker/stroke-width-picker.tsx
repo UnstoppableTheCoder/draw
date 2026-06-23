@@ -3,11 +3,10 @@
 import { Minus } from "lucide-react";
 import { PropertiesPanelItemWrapper } from "../properties-panel-item-wrapper";
 import { PropertyItem } from "../property-item";
-import { useAppSelector } from "@/hooks/hooks";
-import { selectTool } from "@/features/toolbar/toolbar-slice";
+import { useSelectedTool } from "@/features/editor/store/selectors";
 
 export const StrokeWidthPicker = () => {
-  const selectedTool = useAppSelector(selectTool);
+  const selectedTool = useSelectedTool();
 
   // Rendering Stroke Width Picker Conditionally
   if (selectedTool === "text") {

@@ -1,12 +1,11 @@
-import { useAppSelector } from "@/hooks/hooks";
+import { useSelectedTool } from "@/features/editor/store/selectors";
 import { PropertiesPanelItemWrapper } from "../properties-panel-item-wrapper";
 import { FontFamilyPicker } from "./font-family-picker/font-family-picker";
 import { FontSizePicker } from "./font-size-picker/font-size-picker";
 import { TextAlignPicker } from "./text-align-picker/text-align-picker";
-import { selectTool } from "@/features/toolbar/toolbar-slice";
 
 export const FontTools = () => {
-  const selectedTool = useAppSelector(selectTool);
+  const selectedTool = useSelectedTool();
 
   // Rendering Font Tools Conditionally
   if (selectedTool !== "text") {

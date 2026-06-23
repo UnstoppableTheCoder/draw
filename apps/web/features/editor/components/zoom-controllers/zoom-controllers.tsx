@@ -1,33 +1,25 @@
 import { Minus, Plus } from "lucide-react";
 import { Button } from "../ui/button";
-import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
-import {
-  resetViewport,
-  selectPanOffset,
-  selectScale,
-  selectScaleOffset,
-  setScale,
-  setScaleOffset,
-} from "@/features/viewport/viewport-slice";
+
 import { RefObject, useEffect } from "react";
-import { MAX_SCALE, MIN_SCALE } from "../canvas/constants/canvas";
-import { getScreenToCanvasCoordinates } from "../canvas/utils/get-coordinates";
 import { Point } from "@/types/canvas.types";
+import { getScreenToCanvasCoordinates } from "../../utils/get-coordinates";
+import { MAX_SCALE, MIN_SCALE } from "../../constants/canvas";
+import * as store from "../../store/selectors";
 
 export default function ZoomControllers({
   canvasRef,
 }: {
   canvasRef: RefObject<HTMLCanvasElement | null>;
 }) {
-  const scale = useAppSelector(selectScale);
-  const panOffset = useAppSelector(selectPanOffset);
-  const scaleOffset = useAppSelector(selectScaleOffset);
-  const dispatch = useAppDispatch();
   const canvas = canvasRef.current;
+  const panOffset = store.usePanOffset();
+  const scale = store.useScale();
+  const scaleOffset = store.useScaleOffset();
+  const setScale = store.useSetScale();
+  const setScaleOffset = store.useSetScaleOffset();
 
-  const handleResetZoom = () => {
-    dispatch(resetViewport());
-  };
+  const handleResetZoom = () => {};
 
   const handleZoom = (direction: "in" | "out", point: Point) => {
     const canvas = canvasRef.current;
@@ -54,8 +46,8 @@ export default function ZoomControllers({
       y: point.y - panOffset.y - worldPoint.y * newScale,
     };
 
-    dispatch(setScale(newScale));
-    dispatch(setScaleOffset(newOffset));
+    setScale(newScale);
+    setScaleOffset(newOffset);
   };
 
   useEffect(() => {

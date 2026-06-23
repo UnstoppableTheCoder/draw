@@ -1,24 +1,12 @@
 import { RefObject } from "react";
 import { Point } from "../types/types";
-import { useAppDispatch } from "@/hooks/hooks";
-import { setPanOffset } from "@/features/viewport/viewport-slice";
+import * as store from "../store/selectors";
 
 export default function usePan(
   panStartMouseRef: RefObject<Point | null>,
   panStartOffsetRef: RefObject<Point | null>,
 ) {
-  const dispatch = useAppDispatch();
-
-  function initializePanState(event: PointerEvent<HTMLCanvasElement>) {
-    panStartMouseRef.current = {
-      x: event.clientX,
-      y: event.clientY,
-    };
-
-    panStartOffsetRef.current = {
-      ...panOffset,
-    };
-  }
+  const setPanOffset = store.useSetPanOffset();
 
   const handlePanMove = (clientX: number, clientY: number) => {
     const startMouse = panStartMouseRef.current;
@@ -26,17 +14,11 @@ export default function usePan(
 
     if (!startMouse || !startOffset) return;
 
-    dispatch(
-      setPanOffset({
-        x: startOffset.x + clientX - startMouse.x,
-        y: startOffset.y + clientY - startMouse.y,
-      }),
-    );
+    setPanOffset({
+      x: startOffset.x + clientX - startMouse.x,
+      y: startOffset.y + clientY - startMouse.y,
+    });
   };
-
-  function stopMiddleMousePan() {
-    isMiddleMousePanningRef.current = false;
-  }
 
   return {
     handlePanMove,
