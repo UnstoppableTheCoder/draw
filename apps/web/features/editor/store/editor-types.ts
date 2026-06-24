@@ -25,7 +25,9 @@ export interface EditorStore {
 
   // Selection
   selectedShape: Shape | null;
-  setSelectedShape: (shape: Shape | null) => void;
+  setSelectedShape: (
+    updater: Shape | null | ((prev: Shape | null) => Shape | null),
+  ) => void;
 
   selectedShapeBounds: SelectedShapeBounds | null;
   setSelectedShapeBounds: (shape: SelectedShapeBounds | null) => void;

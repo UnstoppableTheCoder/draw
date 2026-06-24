@@ -1,4 +1,4 @@
-import { KeyboardEvent, PointerEvent, RefObject, useEffect } from "react";
+import { KeyboardEvent, PointerEvent, RefObject } from "react";
 import { v4 as uuidv4 } from "uuid";
 import getTextDimensions from "../utils/get-text-dimensions";
 import * as store from "../store/selectors";
@@ -14,7 +14,7 @@ export default function useTextEditing(
   const fontFamily = store.useFontFamily();
   const textEditingState = store.useTextEditingState();
 
-  const font = `${fontSize} ${fontFamily}`;
+  const font = `${fontSize}px ${fontFamily}`;
 
   const saveTextShape = () => {
     if (!textEditingState) return;
@@ -27,46 +27,34 @@ export default function useTextEditing(
 
     const dimensions = getTextDimensions(canvasRef, text, font);
     if (!dimensions) return;
+
     const width = dimensions.width;
     const height = dimensions.height;
 
-    // Todo: Check if this is a canvas coordinate
     const { x, y } = textEditingState;
 
-    setShapes((prev) => {
-      // if (textEditingState.id) {
-      //   return prev.map((shape) =>
-      //     shape.id === textEditingState.id
-      //       ? {
-      //           ...shape,
-      //           text,
-      //         }
-      //       : shape,
-      //   );
-      // }
+    setShapes((prev) => [
+      ...prev,
+      {
+        id: uuidv4(),
+        type: "text",
+        text,
+        x,
+        y,
+        height,
+        width,
+        fontSize,
+        fontFamily,
+        strokeColor: "white",
+      },
+    ]);
 
-      return [
-        ...prev,
-        {
-          id: uuidv4(),
-          type: "text",
-          text,
-          x,
-          y,
-          height,
-          width,
-          fontSize,
-          fontFamily,
-          strokeColor: "white",
-        },
-      ];
-    });
-
+    // Reset to Default when the text is drawn
     setTextEditingState(null);
-    // Set Tool to "select"
     setSelectedTool("select");
   };
 
+  // Saves the text - if Escape clicked
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Escape") {
       saveTextShape();

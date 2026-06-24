@@ -1,26 +1,25 @@
-import { RefObject } from "react";
-import { Point, PointTuple, SelectedShapeBounds, Shape } from "../types/types";
-import { ResizeHandleType } from "../types/resize-handle";
+import { Point, Shape } from "../types/types";
 import { TOLERANCE } from "../constants/canvas";
 import { normalizeRect } from "../utils/normalize-rect";
 import { resizeFreeDrawShape } from "../resize/resize-freedraw";
 import { getBoundingBox } from "../geometry/bounding-box";
 import * as store from "../store/selectors";
+import { usePointerState } from "./use-pointer-state";
 
-export default function useShapeResize({
-  resizableHandleRef,
-  lineResizeStateRef,
-  resizeStartBoundsRef,
-  freeDrawShapePointsRef,
-}: {
-  resizableHandleRef: RefObject<ResizeHandleType | null>;
-  lineResizeStateRef: RefObject<{ start: Point; end: Point } | null>;
-  resizeStartBoundsRef: RefObject<SelectedShapeBounds | null>;
-  freeDrawShapePointsRef: RefObject<PointTuple[]>;
-}) {
+export default function useShapeResize(
+  pointerState?: ReturnType<typeof usePointerState>,
+) {
   const setShapes = store.useSetShapes();
   const setSelectedShape = store.useSetSelectedShape();
   const setSelectedShapeBounds = store.useSetSelectedShapeBounds();
+
+  const pointerStateInternal = pointerState ?? usePointerState();
+  const {
+    resizeStartBoundsRef,
+    resizableHandleRef,
+    freeDrawShapePointsRef,
+    lineResizeStateRef,
+  } = pointerStateInternal;
 
   const resizeShape = (selectedShape: Shape, currentPoint: Point) => {
     if (selectedShape.type === "arrow" || selectedShape.type === "line") {

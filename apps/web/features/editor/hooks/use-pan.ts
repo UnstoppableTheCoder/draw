@@ -14,6 +14,7 @@ export default function usePan(
 
     if (!startMouse || !startOffset) return;
 
+    // End - Start = Pan Offset
     setPanOffset({
       x: startOffset.x + clientX - startMouse.x,
       y: startOffset.y + clientY - startMouse.y,

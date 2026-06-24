@@ -164,22 +164,13 @@ function getSegmentHandle(
   selectedShape: LineShape | ArrowShape,
   scale: number,
 ): ResizeHandleType {
-  const [startRelativePoint, endRelativePoint] = selectedShape.points;
-
-  if (!startRelativePoint || !endRelativePoint) {
+  const [startRel, endRel] = selectedShape.points;
+  if (!startRel || !endRel) {
     return null;
   }
 
-  const start = getAbsolutePoint(
-    selectedShape.x,
-    selectedShape.y,
-    startRelativePoint,
-  );
-  const end = getAbsolutePoint(
-    selectedShape.x,
-    selectedShape.y,
-    endRelativePoint,
-  );
+  const start = getAbsolutePoint(selectedShape.x, selectedShape.y, startRel);
+  const end = getAbsolutePoint(selectedShape.x, selectedShape.y, endRel);
   const middle = {
     x: start.x + (end.x - start.x) / 2,
     y: start.y + (end.y - start.y) / 2,
@@ -202,7 +193,6 @@ function getSegmentHandle(
 
   for (const handle of handles) {
     if (isPointInCircle(handle.point, point, scale)) {
-      console.log("In circle: ", handle.type);
       return handle.type;
     }
   }
@@ -225,7 +215,6 @@ export function getResizeHandleAtPoint(
   }
 
   const { minX, minY, maxX, maxY } = bounds;
-
   const corner = getCornerHandle(point, bounds, scale);
   if (corner) {
     return corner;

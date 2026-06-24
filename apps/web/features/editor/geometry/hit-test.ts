@@ -240,8 +240,7 @@ export const isPointInSelectedShapeBounds = (
   if (!bounds) return false;
   const { minX, minY, maxX, maxY } = bounds;
 
-  // Adding the tolerance here so that even if you click a little away but resizeHandler is active
-  // You are able to resize
+  // Adding the tolerance here so that even if you click a little away - resizeHandler is active
   const inside =
     point.x >= minX - TOLERANCE &&
     point.y >= minY - TOLERANCE &&
@@ -250,12 +249,17 @@ export const isPointInSelectedShapeBounds = (
   return inside ? true : false;
 };
 
-export const getShapeAtPosition = (
-  point: Point,
-  shapes: Shape[],
-  selectedShape: Shape | null,
-  selectedShapeBounds: SelectedShapeBounds | null,
-): Shape | null => {
+export const getShapeAtPosition = ({
+  point,
+  shapes,
+  selectedShape,
+  selectedShapeBounds,
+}: {
+  point: Point;
+  shapes: Shape[];
+  selectedShape: Shape | null;
+  selectedShapeBounds: SelectedShapeBounds | null;
+}): Shape | null => {
   if (
     selectedShape &&
     isPointInSelectedShapeBounds(point, selectedShapeBounds)

@@ -52,14 +52,13 @@ export const useEditorStore = create<EditorStore>()(
 
       // Selection
       selectedShape: null,
-      setSelectedShape: (shape) =>
-        set(
-          {
-            selectedShape: shape,
-          },
-          false,
-          "selection/setSelectedShape",
-        ),
+      setSelectedShape: (updater) =>
+        set((state) => ({
+          selectedShape:
+            typeof updater === "function"
+              ? updater(state.selectedShape)
+              : updater,
+        })),
 
       selectedShapeBounds: null,
       setSelectedShapeBounds: (bounds) =>
@@ -97,14 +96,11 @@ export const useEditorStore = create<EditorStore>()(
         ),
 
       panOffset: { x: 0, y: 0 },
-      setPanOffset: (offset: Point) =>
-        set(
-          {
-            panOffset: offset,
-          },
-          false,
-          "viewport/setPanOffset",
-        ),
+      setPanOffset: (updater) =>
+        set((state) => ({
+          panOffset:
+            typeof updater === "function" ? updater(state.panOffset) : updater,
+        })),
 
       scaleOffset: { x: 0, y: 0 },
       setScaleOffset: (offset: Point) =>

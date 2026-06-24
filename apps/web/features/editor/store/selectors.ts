@@ -10,12 +10,12 @@ export const useSelectedTool = () =>
   useEditorStore((state) => state.selectedTool);
 
 export const useSetSelectedTool = () =>
-  useEditorStore((state) => state.setSelectedTool);
+  useEditorStore.getState().setSelectedTool;
 
 export const useLockTool = () => useEditorStore((state) => state.lockTool);
 
 export const useSetLockTool = () =>
-  useEditorStore((state) => state.setLockTool);
+  useEditorStore.getState().setLockTool;
 
 /* =========================
    Interaction
@@ -25,7 +25,7 @@ export const useInteractionMode = () =>
   useEditorStore((state) => state.interactionMode);
 
 export const useSetInteractionMode = () =>
-  useEditorStore((state) => state.setInteractionMode);
+  useEditorStore.getState().setInteractionMode;
 
 /* =========================
    Shapes
@@ -33,7 +33,7 @@ export const useSetInteractionMode = () =>
 
 export const useShapes = () => useEditorStore((state) => state.shapes);
 
-export const useSetShapes = () => useEditorStore((state) => state.setShapes);
+export const useSetShapes = () => useEditorStore.getState().setShapes;
 
 /* =========================
    Selection
@@ -43,13 +43,13 @@ export const useSelectedShape = () =>
   useEditorStore((state) => state.selectedShape);
 
 export const useSetSelectedShape = () =>
-  useEditorStore((state) => state.setSelectedShape);
+  useEditorStore.getState().setSelectedShape;
 
 export const useSelectedShapeBounds = () =>
   useEditorStore((state) => state.selectedShapeBounds);
 
 export const useSetSelectedShapeBounds = () =>
-  useEditorStore((state) => state.setSelectedShapeBounds);
+  useEditorStore.getState().setSelectedShapeBounds;
 
 /* =========================
    Text Editing
@@ -59,7 +59,7 @@ export const useTextEditingState = () =>
   useEditorStore((state) => state.textEditingState);
 
 export const useSetTextEditingState = () =>
-  useEditorStore((state) => state.setTextEditingState);
+  useEditorStore.getState().setTextEditingState;
 
 /* =========================
    Viewport
@@ -67,18 +67,18 @@ export const useSetTextEditingState = () =>
 
 export const useScale = () => useEditorStore((state) => state.scale);
 
-export const useSetScale = () => useEditorStore((state) => state.setScale);
+export const useSetScale = () => useEditorStore.getState().setScale;
 
 export const usePanOffset = () => useEditorStore((state) => state.panOffset);
 
 export const useSetPanOffset = () =>
-  useEditorStore((state) => state.setPanOffset);
+  useEditorStore.getState().setPanOffset;
 
 export const useScaleOffset = () =>
   useEditorStore((state) => state.scaleOffset);
 
 export const useSetScaleOffset = () =>
-  useEditorStore((state) => state.setScaleOffset);
+  useEditorStore.getState().setScaleOffset;
 
 /* =========================
    History
@@ -86,12 +86,12 @@ export const useSetScaleOffset = () =>
 
 export const useHistory = () => useEditorStore((state) => state.history);
 
-export const useSetHistory = () => useEditorStore((state) => state.setHistory);
+export const useSetHistory = () => useEditorStore.getState().setHistory;
 
 export const useRedoStack = () => useEditorStore((state) => state.redoStack);
 
 export const useSetRedoStack = () =>
-  useEditorStore((state) => state.setRedoStack);
+  useEditorStore.getState().setRedoStack;
 
 /* =========================
    Text Style
@@ -100,15 +100,15 @@ export const useSetRedoStack = () =>
 export const useFontSize = () => useEditorStore((state) => state.fontSize);
 
 export const useSetFontSize = () =>
-  useEditorStore((state) => state.setFontSize);
+  useEditorStore.getState().setFontSize;
 
 export const useFontFamily = () => useEditorStore((state) => state.fontFamily);
 
 export const useSetFontFamily = () =>
-  useEditorStore((state) => state.setFontFamily);
+  useEditorStore.getState().setFontFamily;
 
 export const useLineHeightMultiplier = () =>
   useEditorStore((state) => state.lineHeightMultiplier);
 
 export const useSetLineHeightMultiplier = () =>
-  useEditorStore((state) => state.setLineHeightMultiplier);
+  useEditorStore.getState().setLineHeightMultiplier;

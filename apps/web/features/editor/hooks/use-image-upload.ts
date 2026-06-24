@@ -4,6 +4,7 @@ import { loadImageInfos } from "../utils/image-loader";
 import { createImageShape } from "../shapes/create-image-shape";
 import { getScreenToCanvasCoordinates } from "../utils/get-coordinates";
 import * as store from "../store/selectors";
+
 export default function useImageUpload(
   canvasRef: RefObject<HTMLCanvasElement | null>,
   imageInputRef: RefObject<HTMLInputElement | null>,
