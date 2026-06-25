@@ -17,14 +17,14 @@ export const useEditorStore = create<EditorStore>()(
           "tool/setSelectedTool",
         ),
 
-      lockTool: false,
-      setLockTool: (lock) =>
+      isLocked: false,
+      setIsLocked: (lock) =>
         set(
           {
-            lockTool: lock,
+            isLocked: lock,
           },
           false,
-          "tool/setLockTool",
+          "tool/setIsLocked",
         ),
 
       // Interactions
@@ -53,12 +53,16 @@ export const useEditorStore = create<EditorStore>()(
       // Selection
       selectedShape: null,
       setSelectedShape: (updater) =>
-        set((state) => ({
-          selectedShape:
-            typeof updater === "function"
-              ? updater(state.selectedShape)
-              : updater,
-        })),
+        set(
+          (state) => ({
+            selectedShape:
+              typeof updater === "function"
+                ? updater(state.selectedShape)
+                : updater,
+          }),
+          false,
+          "selection/setSelectedShape",
+        ),
 
       selectedShapeBounds: null,
       setSelectedShapeBounds: (bounds) =>
@@ -97,10 +101,16 @@ export const useEditorStore = create<EditorStore>()(
 
       panOffset: { x: 0, y: 0 },
       setPanOffset: (updater) =>
-        set((state) => ({
-          panOffset:
-            typeof updater === "function" ? updater(state.panOffset) : updater,
-        })),
+        set(
+          (state) => ({
+            panOffset:
+              typeof updater === "function"
+                ? updater(state.panOffset)
+                : updater,
+          }),
+          false,
+          "viewport/setPanOffset",
+        ),
 
       scaleOffset: { x: 0, y: 0 },
       setScaleOffset: (offset: Point) =>

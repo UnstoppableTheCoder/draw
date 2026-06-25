@@ -202,7 +202,7 @@ const pointInImage = (point: Point, shape: ImageShape): ImageShape | null => {
   return inside ? shape : null;
 };
 
-export const pointInShape = (startPoint: Point, shape: Shape): Shape | null => {
+export const getPointInShape = (startPoint: Point, shape: Shape): Shape | null => {
   switch (shape.type) {
     case "rectangle":
       return pointInRectangle(startPoint, shape);
@@ -268,7 +268,7 @@ export const getShapeAtPosition = ({
   }
 
   for (const shape of shapes) {
-    const hitShape = pointInShape(point, shape);
+    const hitShape = getPointInShape(point, shape);
 
     if (hitShape) {
       return hitShape;

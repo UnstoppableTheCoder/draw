@@ -8,14 +8,14 @@ export function usePointerState() {
   const lastPointerRef = useRef<Point | null>(null);
 
   const drawingPointsRef = useRef<PointTuple[]>([]);
-  const isMiddleMousePanningRef = useRef(false);
+  const isPanningRef = useRef(false);
 
   const panStartMouseRef = useRef<Point | null>(null);
   const panStartOffsetRef = useRef<Point | null>(null);
 
   const isResizingRef = useRef(false);
   const resizableHandleRef = useRef<ResizeHandleType | null>(null);
-
+  const resizeStartFontSizeRef = useRef<number | null>(null);
   const resizeStartBoundsRef = useRef<SelectedShapeBounds | null>(null);
   const lineResizeStateRef = useRef<{
     start: Point;
@@ -32,7 +32,7 @@ export function usePointerState() {
 
     drawingPointsRef,
 
-    isMiddleMousePanningRef,
+    isPanningRef,
 
     panStartMouseRef,
     panStartOffsetRef,
@@ -40,6 +40,7 @@ export function usePointerState() {
     isResizingRef,
     resizableHandleRef,
     resizeStartBoundsRef,
+    resizeStartFontSizeRef,
 
     lineResizeStateRef,
     freeDrawShapePointsRef,

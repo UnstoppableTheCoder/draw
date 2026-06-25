@@ -5,21 +5,24 @@ import { resizeFreeDrawShape } from "../resize/resize-freedraw";
 import { getBoundingBox } from "../geometry/bounding-box";
 import * as store from "../store/selectors";
 import { usePointerState } from "./use-pointer-state";
+import resizeTextShape from "../resize/resize-text";
+import { RefObject } from "react";
 
 export default function useShapeResize(
-  pointerState?: ReturnType<typeof usePointerState>,
+  canvasRef: RefObject<HTMLCanvasElement | null>,
+  pointerRefs: ReturnType<typeof usePointerState>,
 ) {
   const setShapes = store.useSetShapes();
   const setSelectedShape = store.useSetSelectedShape();
   const setSelectedShapeBounds = store.useSetSelectedShapeBounds();
 
-  const pointerStateInternal = pointerState ?? usePointerState();
   const {
     resizeStartBoundsRef,
+    resizeStartFontSizeRef,
     resizableHandleRef,
     freeDrawShapePointsRef,
     lineResizeStateRef,
-  } = pointerStateInternal;
+  } = pointerRefs;
 
   const resizeShape = (selectedShape: Shape, currentPoint: Point) => {
     if (selectedShape.type === "arrow" || selectedShape.type === "line") {
@@ -47,7 +50,6 @@ export default function useShapeResize(
               [fixedEnd.x - currentPoint.x, fixedEnd.y - currentPoint.y],
             ],
           };
-
           break;
         }
 
@@ -63,12 +65,8 @@ export default function useShapeResize(
               [currentPoint.x - fixedStart.x, currentPoint.y - fixedStart.y],
             ],
           };
-
           break;
         }
-
-        default:
-          return;
       }
 
       setShapes((prevShapes) =>
@@ -82,10 +80,10 @@ export default function useShapeResize(
       return;
     }
 
-    const bounds = resizeStartBoundsRef.current;
-    if (!bounds || !resizableHandleRef.current) return;
+    const resizeStartBounds = resizeStartBoundsRef.current;
+    if (!resizeStartBounds) return;
 
-    let { minX, minY, maxX, maxY } = bounds;
+    let { minX, minY, maxX, maxY } = resizeStartBounds;
 
     // Removing the Tolerance here because for cursor click it was added when getting the boundingBox
     minX = minX + TOLERANCE;
@@ -197,8 +195,8 @@ export default function useShapeResize(
       const updatedShape = resizeFreeDrawShape({
         selectedShape,
         rect,
-        resizeStartBoundsRef,
-        freeDrawShapePointsRef,
+        resizeStartBounds,
+        freeDrawShapePoints: freeDrawShapePointsRef.current,
       });
       if (!updatedShape) return;
 
@@ -207,7 +205,28 @@ export default function useShapeResize(
           shape.id === selectedShape.id ? updatedShape : shape,
         ),
       );
+      setSelectedShape(updatedShape);
+      setSelectedShapeBounds(getBoundingBox(updatedShape));
+      return;
+    }
 
+    const resizeStartFontSize = resizeStartFontSizeRef.current;
+
+    if (selectedShape.type === "text") {
+      if (!resizeStartFontSize) return;
+      const updatedShape = resizeTextShape({
+        canvasRef,
+        selectedShape,
+        rect,
+        resizeStartBounds,
+        resizeStartFontSize,
+      });
+
+      setShapes((prevShapes) =>
+        prevShapes.map((shape) =>
+          shape.id === selectedShape.id ? updatedShape : shape,
+        ),
+      );
       setSelectedShape(updatedShape);
       setSelectedShapeBounds(getBoundingBox(updatedShape));
       return;
@@ -223,7 +242,6 @@ export default function useShapeResize(
         shape.id === selectedShape.id ? updatedShape : shape,
       ),
     );
-
     setSelectedShape(updatedShape);
     setSelectedShapeBounds(getBoundingBox(updatedShape));
   };

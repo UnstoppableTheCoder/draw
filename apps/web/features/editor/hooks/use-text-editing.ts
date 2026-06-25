@@ -14,8 +14,6 @@ export default function useTextEditing(
   const fontFamily = store.useFontFamily();
   const textEditingState = store.useTextEditingState();
 
-  const font = `${fontSize}px ${fontFamily}`;
-
   const saveTextShape = () => {
     if (!textEditingState) return;
 
@@ -25,7 +23,7 @@ export default function useTextEditing(
       return;
     }
 
-    const dimensions = getTextDimensions(canvasRef, text, font);
+    const dimensions = getTextDimensions(canvasRef, text, fontSize, fontFamily);
     if (!dimensions) return;
 
     const width = dimensions.width;

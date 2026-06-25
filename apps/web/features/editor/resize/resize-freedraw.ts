@@ -1,12 +1,11 @@
-import { RefObject } from "react";
 import { FreeDrawShape, PointTuple, SelectedShapeBounds } from "../types/types";
 import { TOLERANCE } from "../constants/canvas";
 
 export function resizeFreeDrawShape({
   selectedShape,
   rect,
-  resizeStartBoundsRef,
-  freeDrawShapePointsRef,
+  resizeStartBounds,
+  freeDrawShapePoints,
 }: {
   selectedShape: FreeDrawShape;
   rect: {
@@ -15,10 +14,10 @@ export function resizeFreeDrawShape({
     width: number;
     height: number;
   };
-  resizeStartBoundsRef: RefObject<SelectedShapeBounds | null>;
-  freeDrawShapePointsRef: RefObject<PointTuple[]>;
+  resizeStartBounds: SelectedShapeBounds;
+  freeDrawShapePoints: PointTuple[];
 }) {
-  const originalBounds = resizeStartBoundsRef.current;
+  const originalBounds = resizeStartBounds;
   if (!originalBounds) return;
 
   let { minX, minY, maxX, maxY } = originalBounds;
@@ -29,7 +28,7 @@ export function resizeFreeDrawShape({
   maxX = maxX - TOLERANCE;
   maxY = maxY - TOLERANCE;
 
-  const originalPoints = freeDrawShapePointsRef.current;
+  const originalPoints = freeDrawShapePoints;
 
   if (!originalPoints) {
     return selectedShape;

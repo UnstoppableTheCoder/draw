@@ -13,7 +13,7 @@ import { usePointerState } from "./use-pointer-state";
 export default function useSelectionInteraction(
   canvasRef: React.RefObject<HTMLCanvasElement | null>,
   scale: number,
-  pointerState: ReturnType<typeof usePointerState>,
+  pointerRefs: ReturnType<typeof usePointerState>,
 ) {
   const selectedShape = store.useSelectedShape();
   const selectedShapeBounds = store.useSelectedShapeBounds();
@@ -25,10 +25,11 @@ export default function useSelectionInteraction(
     isResizingRef,
     isPointerDownRef,
     resizeStartBoundsRef,
-  } = pointerState;
+    resizeStartFontSizeRef,
+  } = pointerRefs;
 
   const { moveShape } = useShapeMove();
-  const { resizeShape } = useShapeResize(pointerState);
+  const { resizeShape } = useShapeResize(canvasRef, pointerRefs);
 
   // Handles cursor type change over Selected shape
   function updateResizeCursor(point: Point, selectedShapeLocal: Shape) {
@@ -94,7 +95,7 @@ export default function useSelectionInteraction(
         ([px, py]) => [shapeAtPosition.x + px, shapeAtPosition.y + py],
       );
 
-      pointerState.freeDrawShapePointsRef.current = absPoints;
+      pointerRefs.freeDrawShapePointsRef.current = absPoints;
     }
 
     // If resizing a line/arrow, store absolute start/end points for the resize state
@@ -112,7 +113,7 @@ export default function useSelectionInteraction(
         shapeAtPosition.y,
         endRel,
       );
-      pointerState.lineResizeStateRef.current = {
+      pointerRefs.lineResizeStateRef.current = {
         start: startAbs,
         end: endAbs,
       };
@@ -132,7 +133,12 @@ export default function useSelectionInteraction(
 
     isResizingRef.current = true;
     resizableHandleRef.current = resizeHandle;
-    resizeStartBoundsRef.current = bounds;
+    resizeStartBoundsRef.current = bounds; // always remains the same
+
+    if (shapeAtPosition.type === "text") {
+      resizeStartFontSizeRef.current = shapeAtPosition.fontSize;
+    }
+
     return true;
   }
 

@@ -1,14 +1,14 @@
 "use client";
 
-import { useLockTool, useSetLockTool } from "../../store/selectors";
+import { useIsLocked, useSetIsLocked } from "../../store/selectors";
 import Hint from "../hint";
 import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
 import { Lock, LockOpen } from "lucide-react";
 
 export default function LockButton() {
-  const isLocked = useLockTool();
-  const setIsLocked = useSetLockTool();
+  const isLocked = useIsLocked();
+  const setIsLocked = useSetIsLocked();
 
   const handleLockSelect = (isLocked: boolean) => {
     setIsLocked(!isLocked);

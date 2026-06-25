@@ -6,6 +6,9 @@ import usePan from "./use-pan";
 import { getScreenToCanvasCoordinates } from "../utils/get-coordinates";
 import * as store from "../store/selectors";
 import { usePointerState } from "./use-pointer-state";
+import { ToolType } from "@/types/toolbar.types";
+import { getCanvasCursor } from "../utils/get-canvas-cursor";
+import useCanvasEraser from "./use-canvas-eraser";
 
 export default function useCanvasInteractions(
   canvasRef: RefObject<HTMLCanvasElement | null>,
@@ -36,6 +39,7 @@ export default function useCanvasInteractions(
     pointerRefs.panStartMouseRef,
     pointerRefs.panStartOffsetRef,
   );
+  const eraser = useCanvasEraser();
 
   // Sets the required initial states
   function initializePointerState(event: PointerEvent<HTMLCanvasElement>) {
@@ -61,7 +65,7 @@ export default function useCanvasInteractions(
   function handleMiddleMousePan(event: PointerEvent<HTMLCanvasElement>) {
     if (event.button !== 1) return false;
 
-    pointerRefs.isMiddleMousePanningRef.current = true;
+    pointerRefs.isPanningRef.current = true;
     pointerRefs.panStartMouseRef.current = {
       x: event.clientX,
       y: event.clientY,
@@ -101,6 +105,12 @@ export default function useCanvasInteractions(
     setSelectedShapeBounds(null);
   }
 
+  function updateCanvasCursor(tool: ToolType, isPanning: boolean) {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    canvas.style.cursor = getCanvasCursor(tool, isPanning);
+  }
+
   // ============== DOM Pointer Events Handlers ==============
   function handlePointerDown(event: PointerEvent<HTMLCanvasElement>) {
     event.preventDefault();
@@ -121,6 +131,8 @@ export default function useCanvasInteractions(
         y: event.clientY,
       };
       pointerRefs.panStartOffsetRef.current = { ...panOffset };
+      pointerRefs.isPanningRef.current = true;
+      updateCanvasCursor(selectedTool, pointerRefs.isPanningRef.current);
       return;
     }
 
@@ -140,9 +152,11 @@ export default function useCanvasInteractions(
   }
 
   function handlePointerMove(event: React.PointerEvent<HTMLCanvasElement>) {
+    updateCanvasCursor(selectedTool, pointerRefs.isPanningRef.current);
+
     if (
       (selectedTool === "pan" && pointerRefs.isPointerDownRef.current) ||
-      pointerRefs.isMiddleMousePanningRef.current
+      pointerRefs.isPanningRef.current
     ) {
       handlePanMove(event.clientX, event.clientY);
       return;
@@ -160,7 +174,13 @@ export default function useCanvasInteractions(
         delta.dx,
         delta.dy,
       );
+
       if (handled) return;
+    }
+
+    if (selectedTool === "eraser") {
+      eraser.onPointerMove(endPoint);
+      return;
     }
 
     // default -> drawing preview
@@ -168,15 +188,14 @@ export default function useCanvasInteractions(
   }
 
   function handlePointerUp(event: PointerEvent<HTMLCanvasElement>) {
-    if (event.button === 1) {
-      pointerRefs.isMiddleMousePanningRef.current = false;
-      return;
-    }
-
+    pointerRefs.isPanningRef.current = false;
     pointerRefs.isPointerDownRef.current = false;
     pointerRefs.resizableHandleRef.current = null;
     pointerRefs.resizeStartBoundsRef.current = null;
+    pointerRefs.resizeStartFontSizeRef.current = null;
     pointerRefs.lineResizeStateRef.current = null;
+
+    updateCanvasCursor(selectedTool, pointerRefs.isPanningRef.current);
 
     // finish resize if any
     if (pointerRefs.isResizingRef.current) {
@@ -185,7 +204,11 @@ export default function useCanvasInteractions(
     }
 
     // reset tool for certain tools
-    if (selectedTool !== "pan" && selectedTool !== "freedraw") {
+    if (
+      selectedTool !== "pan" &&
+      selectedTool !== "freedraw" &&
+      selectedTool !== "eraser"
+    ) {
       setSelectedTool("select");
     }
 

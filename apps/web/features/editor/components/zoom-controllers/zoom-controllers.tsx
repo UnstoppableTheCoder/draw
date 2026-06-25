@@ -18,8 +18,18 @@ export default function ZoomControllers({
   const scaleOffset = store.useScaleOffset();
   const setScale = store.useSetScale();
   const setScaleOffset = store.useSetScaleOffset();
+  const setPanOffset = store.useSetPanOffset();
 
-  const handleResetZoom = () => {};
+  const handleResetZoom = () => {
+    setScale(1);
+    setScaleOffset({ x: 0, y: 0 });
+  };
+
+  // const handleScrollBack = () => {
+  //   setScale(1);
+  //   setScaleOffset({ x: 0, y: 0 });
+  //   setPanOffset({ x: 0, y: 0 });
+  // };
 
   const handleZoom = (direction: "in" | "out", point: Point) => {
     const canvas = canvasRef.current;

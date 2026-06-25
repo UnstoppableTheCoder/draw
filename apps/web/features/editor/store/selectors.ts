@@ -12,10 +12,9 @@ export const useSelectedTool = () =>
 export const useSetSelectedTool = () =>
   useEditorStore.getState().setSelectedTool;
 
-export const useLockTool = () => useEditorStore((state) => state.lockTool);
+export const useIsLocked = () => useEditorStore((state) => state.isLocked);
 
-export const useSetLockTool = () =>
-  useEditorStore.getState().setLockTool;
+export const useSetIsLocked = () => useEditorStore.getState().setIsLocked;
 
 /* =========================
    Interaction
@@ -71,14 +70,12 @@ export const useSetScale = () => useEditorStore.getState().setScale;
 
 export const usePanOffset = () => useEditorStore((state) => state.panOffset);
 
-export const useSetPanOffset = () =>
-  useEditorStore.getState().setPanOffset;
+export const useSetPanOffset = () => useEditorStore.getState().setPanOffset;
 
 export const useScaleOffset = () =>
   useEditorStore((state) => state.scaleOffset);
 
-export const useSetScaleOffset = () =>
-  useEditorStore.getState().setScaleOffset;
+export const useSetScaleOffset = () => useEditorStore.getState().setScaleOffset;
 
 /* =========================
    History
@@ -90,8 +87,7 @@ export const useSetHistory = () => useEditorStore.getState().setHistory;
 
 export const useRedoStack = () => useEditorStore((state) => state.redoStack);
 
-export const useSetRedoStack = () =>
-  useEditorStore.getState().setRedoStack;
+export const useSetRedoStack = () => useEditorStore.getState().setRedoStack;
 
 /* =========================
    Text Style
@@ -99,13 +95,11 @@ export const useSetRedoStack = () =>
 
 export const useFontSize = () => useEditorStore((state) => state.fontSize);
 
-export const useSetFontSize = () =>
-  useEditorStore.getState().setFontSize;
+export const useSetFontSize = () => useEditorStore.getState().setFontSize;
 
 export const useFontFamily = () => useEditorStore((state) => state.fontFamily);
 
-export const useSetFontFamily = () =>
-  useEditorStore.getState().setFontFamily;
+export const useSetFontFamily = () => useEditorStore.getState().setFontFamily;
 
 export const useLineHeightMultiplier = () =>
   useEditorStore((state) => state.lineHeightMultiplier);

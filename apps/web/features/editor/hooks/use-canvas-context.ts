@@ -38,7 +38,7 @@ export default function useCanvasContext(
       selectedShape,
     });
 
-    ctx.restore();
+    // ctx.restore();
   }, [
     shapes,
     scale,

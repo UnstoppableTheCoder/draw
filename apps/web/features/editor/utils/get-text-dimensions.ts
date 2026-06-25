@@ -8,7 +8,8 @@ type Dimensions = {
 export default function getTextDimensions(
   canvasRef: RefObject<HTMLCanvasElement | null>,
   text: string,
-  font: string,
+  fontSize: number,
+  fontFamily: string,
 ): Dimensions | null {
   if (!canvasRef) return null;
 
@@ -16,11 +17,11 @@ export default function getTextDimensions(
   if (!ctx) return null;
 
   // font -> "20 Arial"
-  ctx.font = font;
+  ctx.font = `${fontSize}px ${fontFamily}`;
 
   const lines = text.split("\n");
   const width = Math.max(...lines.map((line) => ctx.measureText(line).width));
-  const totalHeight = lines.length * parseInt(font) * 1.2;
 
+  const totalHeight = lines.length * fontSize * 1.2;
   return { width, height: totalHeight };
 }

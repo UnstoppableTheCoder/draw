@@ -10,10 +10,10 @@ import {
 export interface EditorStore {
   // Tool
   selectedTool: ToolType;
-  lockTool: boolean;
+  isLocked: boolean;
 
   setSelectedTool: (tool: ToolType) => void;
-  setLockTool: (lock: boolean) => void;
+  setIsLocked: (lock: boolean) => void;
 
   // Interaction Mode
   interactionMode: InteractionMode;
