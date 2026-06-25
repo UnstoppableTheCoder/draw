@@ -50,6 +50,20 @@ export const useEditorStore = create<EditorStore>()(
           "shapes/setShapes",
         ),
 
+      // Eraser Points
+      eraserPoints: [],
+      setEraserPoints: (updater) =>
+        set(
+          (state) => ({
+            eraserPoints:
+              typeof updater === "function"
+                ? updater(state.eraserPoints)
+                : updater,
+          }),
+          false,
+          "eraser/setEraserPoints",
+        ),
+
       // Selection
       selectedShape: null,
       setSelectedShape: (updater) =>

@@ -1,10 +1,20 @@
+import { RefObject } from "react";
 import { getPointInShape } from "../geometry/hit-test";
-import { useSetShapes, useShapes } from "../store/selectors";
+import {
+  useSetEraserPoints,
+  useSetShapes,
+  useShapes,
+} from "../store/selectors";
 import { Point } from "../types/types";
+import { clearCanvas } from "../draw/clear-canvas";
 
-export default function useCanvasEraser() {
+export default function useCanvasEraser(
+  ctxRef: RefObject<CanvasRenderingContext2D | null>,
+) {
   const shapes = useShapes();
   const setShapes = useSetShapes();
+
+  const setEraserPoints = useSetEraserPoints();
 
   function deleteShape(hitShapeId: string) {
     setShapes((prevShapes) =>
@@ -12,9 +22,15 @@ export default function useCanvasEraser() {
     );
   }
 
-  function onPointerMove(point: Point) {
+  function onPointerMoveErase(point: Point) {
+    // Todo: Fix hit testing for lines
+
+    setEraserPoints((prevPoints) => [...prevPoints, [point.x, point.y]]);
+
+    const ERASER_TOLERANCE = 10;
+
     for (const shape of shapes) {
-      const hitShape = getPointInShape(point, shape);
+      const hitShape = getPointInShape(point, shape, ERASER_TOLERANCE);
 
       if (hitShape && hitShape.id) {
         deleteShape(hitShape.id);
@@ -22,7 +38,16 @@ export default function useCanvasEraser() {
     }
   }
 
+  function resetEraserBackground() {
+    const ctx = ctxRef.current;
+    if (!ctx) return;
+
+    setEraserPoints([]);
+    clearCanvas(ctx);
+  }
+
   return {
-    onPointerMove,
+    onPointerMoveErase,
+    resetEraserBackground,
   };
 }

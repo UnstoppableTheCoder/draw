@@ -1,4 +1,9 @@
-import { Point, SelectedShapeBounds, Shape } from "../types/types";
+import {
+  Point,
+  SelectedShapeBounds,
+  Shape,
+  TextEditingState,
+} from "../types/types";
 import { clearCanvas } from "./clear-canvas";
 import { drawArrow } from "./draw-arrow";
 import drawSelectionBounds from "./draw-selection-bounds";
@@ -20,6 +25,7 @@ export const renderShapes = ({
   scaleOffset,
   bounds,
   selectedShape,
+  textEditingState,
 }: {
   ctx: CanvasRenderingContext2D;
   shapes: Shape[];
@@ -29,7 +35,10 @@ export const renderShapes = ({
   scaleOffset: Point;
   bounds?: SelectedShapeBounds | null;
   selectedShape?: Shape | null;
+  textEditingState?: TextEditingState;
 }) => {
+  console.log(shapes);
+
   clearCanvas(ctx);
 
   ctx.save();
@@ -39,7 +48,12 @@ export const renderShapes = ({
 
   const allShapes = previewShape ? [...shapes, previewShape] : shapes;
 
-  allShapes.forEach((shape) => {
+  for (let i = allShapes.length; i >= 0; i--) {
+    const shape = allShapes[i];
+    
+    // Skip the rendering of the text if text is being edited
+    if (!shape || shape.id === textEditingState?.id) continue;
+
     switch (shape.type) {
       case "rectangle":
         drawRectangle(ctx, shape);
@@ -73,7 +87,7 @@ export const renderShapes = ({
         drawImage(ctx, shape);
         break;
     }
-  });
+  }
 
   if (bounds && selectedShape) {
     if (selectedShape.type === "arrow" || selectedShape.type === "line") {

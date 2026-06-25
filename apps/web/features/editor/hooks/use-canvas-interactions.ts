@@ -9,12 +9,12 @@ import { usePointerState } from "./use-pointer-state";
 import { ToolType } from "@/types/toolbar.types";
 import { getCanvasCursor } from "../utils/get-canvas-cursor";
 import useCanvasEraser from "./use-canvas-eraser";
+import useCanvasRenderer from "./use-canvas-renderer";
 
 export default function useCanvasInteractions(
   canvasRef: RefObject<HTMLCanvasElement | null>,
+  pointerRefs: ReturnType<typeof usePointerState>,
 ) {
-  const pointerRefs = usePointerState();
-
   const scale = store.useScale();
   const panOffset = store.usePanOffset();
   const scaleOffset = store.useScaleOffset();
@@ -23,6 +23,7 @@ export default function useCanvasInteractions(
   const setSelectedShapeBounds = store.useSetSelectedShapeBounds();
   const setTextEditingState = store.useSetTextEditingState();
   const setSelectedTool = store.useSetSelectedTool();
+  const selectedShape = store.useSelectedShape();
 
   const { ctxRef } = useCanvasContext(canvasRef);
   const drawing = useDrawing({
@@ -39,7 +40,8 @@ export default function useCanvasInteractions(
     pointerRefs.panStartMouseRef,
     pointerRefs.panStartOffsetRef,
   );
-  const eraser = useCanvasEraser();
+  const eraser = useCanvasEraser(ctxRef);
+  useCanvasRenderer(ctxRef);
 
   // Sets the required initial states
   function initializePointerState(event: PointerEvent<HTMLCanvasElement>) {
@@ -152,12 +154,16 @@ export default function useCanvasInteractions(
   }
 
   function handlePointerMove(event: React.PointerEvent<HTMLCanvasElement>) {
-    updateCanvasCursor(selectedTool, pointerRefs.isPanningRef.current);
+    const isPointerDown = pointerRefs.isPointerDownRef.current;
+    const isPanning = pointerRefs.isPanningRef.current;
 
-    if (
-      (selectedTool === "pan" && pointerRefs.isPointerDownRef.current) ||
-      pointerRefs.isPanningRef.current
-    ) {
+    updateCanvasCursor(selectedTool, isPanning);
+
+    if (selectedTool === "text") {
+      return;
+    }
+
+    if ((selectedTool === "pan" && isPointerDown) || isPanning) {
       handlePanMove(event.clientX, event.clientY);
       return;
     }
@@ -178,8 +184,8 @@ export default function useCanvasInteractions(
       if (handled) return;
     }
 
-    if (selectedTool === "eraser") {
-      eraser.onPointerMove(endPoint);
+    if (selectedTool === "eraser" && isPointerDown) {
+      eraser.onPointerMoveErase(endPoint);
       return;
     }
 
@@ -187,20 +193,52 @@ export default function useCanvasInteractions(
     drawing.onPointerMoveDrawing(event);
   }
 
-  function handlePointerUp(event: PointerEvent<HTMLCanvasElement>) {
+  function resetPointerState() {
     pointerRefs.isPanningRef.current = false;
     pointerRefs.isPointerDownRef.current = false;
     pointerRefs.resizableHandleRef.current = null;
     pointerRefs.resizeStartBoundsRef.current = null;
     pointerRefs.resizeStartFontSizeRef.current = null;
     pointerRefs.lineResizeStateRef.current = null;
+  }
 
+  function handlePointerUp(event: PointerEvent<HTMLCanvasElement>) {
+    const isResizing = pointerRefs.isResizingRef.current;
     updateCanvasCursor(selectedTool, pointerRefs.isPanningRef.current);
+    resetPointerState();
+
+    if (selectedShape && selectedShape.type === "text") {
+      const isDragging = pointerRefs.isDraggingRef.current;
+      const pointerDownTime = pointerRefs.pointerDownTimeRef.current;
+      if (!pointerDownTime) return;
+      const duration = performance.now() - pointerDownTime;
+
+      if (duration <= 250 && !isDragging) {
+        // Start Editing
+        setTextEditingState({
+          id: selectedShape.id,
+          x: selectedShape.x,
+          y: selectedShape.y,
+          text: selectedShape.text,
+        });
+
+        // Clear Selection if shape is being edited
+        clearSelection();
+      }
+
+      pointerRefs.pointerDownTimeRef.current = null;
+    }
+
+    pointerRefs.isDraggingRef.current = false;
 
     // finish resize if any
-    if (pointerRefs.isResizingRef.current) {
+    if (isResizing) {
       pointerRefs.isResizingRef.current = false;
       return;
+    }
+
+    if (selectedTool === "eraser") {
+      eraser.resetEraserBackground();
     }
 
     // reset tool for certain tools

@@ -2,6 +2,7 @@ import { ToolType } from "@/types/toolbar.types";
 import {
   InteractionMode,
   Point,
+  PointTuple,
   SelectedShapeBounds,
   Shape,
   TextEditingState,
@@ -22,6 +23,12 @@ export interface EditorStore {
   // Shapes
   shapes: Shape[];
   setShapes: (updater: Shape[] | ((prev: Shape[]) => Shape[])) => void;
+
+  // Eraser Points
+  eraserPoints: PointTuple[];
+  setEraserPoints: (
+    updater: PointTuple[] | ((prev: PointTuple[]) => PointTuple[]),
+  ) => void;
 
   // Selection
   selectedShape: Shape | null;

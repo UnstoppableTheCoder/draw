@@ -23,6 +23,7 @@ export default function TextEditor({
   const lineHeightMultiplier = store.useLineHeightMultiplier();
   const textEditingState = store.useTextEditingState();
 
+  // Decides if the textarea should appear or not
   if (!textEditingState) return;
 
   const handleOnChange = (e: ChangeEvent<HTMLTextAreaElement>) =>

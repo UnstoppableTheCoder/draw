@@ -16,7 +16,7 @@ import { getAbsolutePoint } from "../utils/get-absolute-point";
 
 type PointsShape = ArrowShape | LineShape | FreeDrawShape;
 
-function pointInPolygon(point: Point, vertices: Point[]) {
+function pointInPolygon(point: Point, vertices: Point[], tolerance?: number) {
   let inside = false;
 
   for (let i = 0, j = vertices.length - 1; i < vertices.length; j = i++) {
@@ -89,7 +89,11 @@ function distanceToSegment(point: Point, start: Point, end: Point): number {
   return Math.hypot(point.x - closestX, point.y - closestY);
 }
 
-function pointInSegment(point: Point, shape: PointsShape): PointsShape | null {
+function pointInSegment(
+  point: Point,
+  shape: PointsShape,
+  tolerance?: number,
+): PointsShape | null {
   for (let i = 0; i < shape.points.length - 1; i++) {
     // firstPoint, secondPoint -> Relative Distance Point from Start (x, y)
     const firstPoint = shape.points[i];
@@ -102,7 +106,7 @@ function pointInSegment(point: Point, shape: PointsShape): PointsShape | null {
 
     const distance = distanceToSegment(point, startPoint, endPoint);
 
-    if (distance <= TOLERANCE) {
+    if (distance <= (tolerance ?? TOLERANCE)) {
       return shape;
     }
   }
@@ -113,12 +117,13 @@ function pointInSegment(point: Point, shape: PointsShape): PointsShape | null {
 export const pointInRectangle = (
   point: Point,
   shape: RectangleShape,
+  tolerance?: number,
 ): RectangleShape | null => {
   const inside =
-    point.x >= shape.x - TOLERANCE &&
-    point.y >= shape.y - TOLERANCE &&
-    point.x <= shape.x + shape.width + TOLERANCE &&
-    point.y <= shape.y + shape.height + TOLERANCE;
+    point.x >= shape.x - (tolerance ?? TOLERANCE) &&
+    point.y >= shape.y - (tolerance ?? TOLERANCE) &&
+    point.x <= shape.x + shape.width + (tolerance ?? TOLERANCE) &&
+    point.y <= shape.y + shape.height + (tolerance ?? TOLERANCE);
 
   return inside ? shape : null;
 };
@@ -126,6 +131,7 @@ export const pointInRectangle = (
 const pointInDiamond = (
   point: Point,
   shape: DiamondShape,
+  tolerance?: number,
 ): DiamondShape | null => {
   const centerX = shape.x + shape.width / 2;
   const centerY = shape.y + shape.height / 2;
@@ -138,7 +144,9 @@ const pointInDiamond = (
 
   // Formula
   const inside =
-    dx / (halfWidth + TOLERANCE) + dy / (halfHeight + TOLERANCE) <= 1;
+    dx / (halfWidth + (tolerance ?? TOLERANCE)) +
+      dy / (halfHeight + (tolerance ?? TOLERANCE)) <=
+    1;
 
   return inside ? shape : null;
 };
@@ -146,6 +154,7 @@ const pointInDiamond = (
 const pointInEllipse = (
   point: Point,
   shape: EllipseShape,
+  tolerance?: number,
 ): EllipseShape | null => {
   const radiusX = shape.width / 2;
   const radiusY = shape.height / 2;
@@ -160,73 +169,94 @@ const pointInEllipse = (
   // Equation of an Ellipse -> (x - cx)^2 / a^2 + (y - cy)^2 / b^2 <= 1
   // (x, y) -> point, (cx, cy) -> center, (a, b) -> radius (rx, ry)
   const inside =
-    (dx * dx) / (radiusX + TOLERANCE) ** 2 +
-      (dy * dy) / (radiusY + TOLERANCE) ** 2 <=
+    (dx * dx) / (radiusX + (tolerance ?? TOLERANCE)) ** 2 +
+      (dy * dy) / (radiusY + (tolerance ?? TOLERANCE)) ** 2 <=
     1;
 
   return inside ? shape : null;
 };
 
-const pointInArrow = (point: Point, shape: ArrowShape): PointsShape | null => {
-  return pointInSegment(point, shape);
+const pointInArrow = (
+  point: Point,
+  shape: ArrowShape,
+  tolerance?: number,
+): PointsShape | null => {
+  return pointInSegment(point, shape, tolerance);
 };
 
-const pointInLine = (point: Point, shape: LineShape): PointsShape | null => {
-  return pointInSegment(point, shape);
+const pointInLine = (
+  point: Point,
+  shape: LineShape,
+  tolerance?: number,
+): PointsShape | null => {
+  return pointInSegment(point, shape, tolerance);
 };
 
 const pointInFreeDraw = (
   point: Point,
   shape: FreeDrawShape,
+  tolerance?: number,
 ): PointsShape | null => {
-  return pointInSegment(point, shape);
+  return pointInSegment(point, shape, tolerance);
 };
 
-const pointInText = (point: Point, shape: TextShape): TextShape | null => {
+const pointInText = (
+  point: Point,
+  shape: TextShape,
+  tolerance?: number,
+): TextShape | null => {
   const inside =
-    point.x >= shape.x - TOLERANCE &&
-    point.y >= shape.y - TOLERANCE &&
-    point.x <= shape.x + shape.width + TOLERANCE &&
-    point.y <= shape.y + shape.height + TOLERANCE;
+    point.x >= shape.x - (tolerance ?? TOLERANCE) &&
+    point.y >= shape.y - (tolerance ?? TOLERANCE) &&
+    point.x <= shape.x + shape.width + (tolerance ?? TOLERANCE) &&
+    point.y <= shape.y + shape.height + (tolerance ?? TOLERANCE);
 
   return inside ? shape : null;
 };
 
-const pointInImage = (point: Point, shape: ImageShape): ImageShape | null => {
+const pointInImage = (
+  point: Point,
+  shape: ImageShape,
+  tolerance?: number,
+): ImageShape | null => {
   const inside =
-    point.x >= shape.x - TOLERANCE &&
-    point.y >= shape.y - TOLERANCE &&
-    point.x <= shape.x + shape.width + TOLERANCE &&
-    point.y <= shape.y + shape.height + TOLERANCE;
+    point.x >= shape.x - (tolerance ?? TOLERANCE) &&
+    point.y >= shape.y - (tolerance ?? TOLERANCE) &&
+    point.x <= shape.x + shape.width + (tolerance ?? TOLERANCE) &&
+    point.y <= shape.y + shape.height + (tolerance ?? TOLERANCE);
 
   return inside ? shape : null;
 };
 
-export const getPointInShape = (startPoint: Point, shape: Shape): Shape | null => {
+export const getPointInShape = (
+  startPoint: Point,
+  shape: Shape,
+  tolerance?: number,
+): Shape | null => {
   switch (shape.type) {
     case "rectangle":
-      return pointInRectangle(startPoint, shape);
+      return pointInRectangle(startPoint, shape, tolerance);
 
     case "diamond":
-      return pointInDiamond(startPoint, shape);
+      return pointInDiamond(startPoint, shape, tolerance);
 
     case "ellipse":
-      return pointInEllipse(startPoint, shape);
+      return pointInEllipse(startPoint, shape, tolerance);
 
     case "arrow":
-      return pointInArrow(startPoint, shape);
+      return pointInArrow(startPoint, shape, tolerance);
 
     case "line":
-      return pointInLine(startPoint, shape);
+      return pointInLine(startPoint, shape, tolerance);
 
     case "freedraw":
-      return pointInFreeDraw(startPoint, shape);
+      return pointInFreeDraw(startPoint, shape, tolerance);
 
     case "text":
-      return pointInText(startPoint, shape);
+      return pointInText(startPoint, shape, tolerance);
 
     case "image":
-      return pointInImage(startPoint, shape);
+      return pointInImage(startPoint, shape, tolerance);
 
     default:
       return null;
@@ -267,7 +297,10 @@ export const getShapeAtPosition = ({
     return selectedShape;
   }
 
-  for (const shape of shapes) {
+  for (let i = shapes.length; i >= 0; i--) {
+    const shape = shapes[i];
+    if (!shape) continue;
+
     const hitShape = getPointInShape(point, shape);
 
     if (hitShape) {

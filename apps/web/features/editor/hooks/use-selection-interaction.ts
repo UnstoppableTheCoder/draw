@@ -20,6 +20,8 @@ export default function useSelectionInteraction(
   const setSelectedShape = store.useSetSelectedShape();
   const setSelectedShapeBounds = store.useSetSelectedShapeBounds();
   const shapes = store.useShapes();
+  const setTextEditingState = store.useSetTextEditingState();
+
   const {
     resizableHandleRef,
     isResizingRef,
@@ -77,6 +79,12 @@ export default function useSelectionInteraction(
 
   // Handles Select and Resize on Pointer Down
   function onPointerDownSelection(point: Point) {
+    if (selectedShape?.type === "text" && selectedShape) {
+      pointerRefs.pointerDownTimeRef.current = performance.now();
+    } else {
+      pointerRefs.pointerDownTimeRef.current = null;
+    }
+
     const shapeAtPosition = getShapeAtPosition({
       point,
       shapes,
@@ -119,6 +127,11 @@ export default function useSelectionInteraction(
       };
     }
 
+    // if (shapeAtPosition.type === "text") {
+    //   pointerRefs.textEditStateRef.current = shapeAtPosition;
+    //   return;
+    // }
+
     const resizeHandle = getResizeHandleAtPoint(
       point,
       shapeAtPosition,
@@ -144,6 +157,10 @@ export default function useSelectionInteraction(
 
   // Handles Move, Resize, Cursor Type
   function onPointerMoveSelection(endPoint: Point, dx: number, dy: number) {
+    if (selectedShape && pointerRefs.isPointerDownRef.current) {
+      pointerRefs.isDraggingRef.current = true;
+    }
+
     // Handle Drag or Resize
     if (selectedShape && isPointerDownRef.current) {
       if (isResizingRef.current) {

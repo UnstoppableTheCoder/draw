@@ -24,6 +24,10 @@ export function usePointerState() {
 
   const freeDrawShapePointsRef = useRef<PointTuple[]>([]);
 
+  // Refs for text editing
+  const pointerDownTimeRef = useRef<number | null>(null);
+  const isDraggingRef = useRef<boolean>(false);
+
   return {
     isPointerDownRef,
 
@@ -44,5 +48,8 @@ export function usePointerState() {
 
     lineResizeStateRef,
     freeDrawShapePointsRef,
+
+    pointerDownTimeRef,
+    isDraggingRef,
   };
 }

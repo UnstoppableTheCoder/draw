@@ -9,20 +9,19 @@ import useTextEditing from "../../hooks/use-text-editing";
 import useTextEditorResize from "../../hooks/use-text-editor-resize";
 import useCanvasInteractions from "../../hooks/use-canvas-interactions";
 import { useSetPanOffset } from "../../store/selectors";
+import { usePointerState } from "../../hooks/use-pointer-state";
 
 const Canvas = () => {
   // Refs
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const imageInputRef = useRef<HTMLInputElement | null>(null);
+  const pointerRefs = usePointerState();
 
   const setPanOffset = useSetPanOffset();
 
-  const canvasInteractions = useCanvasInteractions(canvasRef);
-  const { handleKeyDown, handleParentPointerDown } = useTextEditing(
-    canvasRef,
-    textareaRef,
-  );
+  const canvasInteractions = useCanvasInteractions(canvasRef, pointerRefs);
+  const textEditing = useTextEditing(canvasRef, textareaRef, pointerRefs);
   const { handleImageInputChange } = useImageUpload(canvasRef, imageInputRef);
   useTextEditorResize(canvasRef, textareaRef);
   useCanvasResize(canvasRef);
@@ -48,18 +47,22 @@ const Canvas = () => {
   }, [setPanOffset]);
 
   return (
-    <div onPointerDown={handleParentPointerDown}>
+    <div onPointerDown={textEditing.handleParentPointerDown}>
       <canvas
         ref={canvasRef}
         height={window.innerHeight}
         width={window.innerWidth}
-        style={{ backgroundColor: "#2c2c2c" }}
+        style={{ backgroundColor: "#000000" }}
         onPointerDown={canvasInteractions.handlePointerDown}
         onPointerMove={canvasInteractions.handlePointerMove}
         onPointerUp={canvasInteractions.handlePointerUp}
+        onDoubleClick={textEditing.handleDoubleClick}
       ></canvas>
 
-      <TextEditor textareaRef={textareaRef} onKeyDown={handleKeyDown} />
+      <TextEditor
+        textareaRef={textareaRef}
+        onKeyDown={textEditing.handleKeyDown}
+      />
 
       {/* Image Input */}
       <input
