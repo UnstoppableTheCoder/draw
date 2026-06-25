@@ -8,7 +8,6 @@ import { usePointerState } from "./use-pointer-state";
 export default function useTextEditing(
   canvasRef: RefObject<HTMLCanvasElement | null>,
   textareaRef: RefObject<HTMLTextAreaElement | null>,
-  pointerRefs: ReturnType<typeof usePointerState>,
 ) {
   const setSelectedTool = store.useSetSelectedTool();
   const setShapes = store.useSetShapes();
@@ -19,6 +18,7 @@ export default function useTextEditing(
   const panOffset = store.usePanOffset();
   const scale = store.useScale();
   const scaleOffset = store.useScaleOffset();
+  const selectedTool = store.useSelectedTool();
 
   // If we have id in textEditingState - we are editing a shape
   const saveTextShape = () => {
@@ -64,9 +64,9 @@ export default function useTextEditing(
               text,
               x,
               y,
-              height,
-              width,
-              fontSize,
+              height: height / scale,
+              width: width / scale,
+              fontSize: fontSize / scale,
               fontFamily,
               strokeColor: "white",
             },
@@ -97,7 +97,7 @@ export default function useTextEditing(
 
   const handleDoubleClick = (e: PointerEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas || selectedTool === "eraser") return;
 
     const point = getScreenToCanvasCoordinates({
       screenX: e.clientX,
@@ -108,6 +108,7 @@ export default function useTextEditing(
       scaleOffset,
     });
 
+    // Once the value is set - textarea appears
     setTextEditingState({ x: point.x, y: point.y, text: "" });
   };
 

@@ -10,6 +10,7 @@ import { ToolType } from "@/types/toolbar.types";
 import { getCanvasCursor } from "../utils/get-canvas-cursor";
 import useCanvasEraser from "./use-canvas-eraser";
 import useCanvasRenderer from "./use-canvas-renderer";
+import { isLocalURL } from "next/dist/shared/lib/router/utils/is-local-url";
 
 export default function useCanvasInteractions(
   canvasRef: RefObject<HTMLCanvasElement | null>,
@@ -24,6 +25,7 @@ export default function useCanvasInteractions(
   const setTextEditingState = store.useSetTextEditingState();
   const setSelectedTool = store.useSetSelectedTool();
   const selectedShape = store.useSelectedShape();
+  const isLocked = store.useIsLocked();
 
   const { ctxRef } = useCanvasContext(canvasRef);
   const drawing = useDrawing({
@@ -40,7 +42,7 @@ export default function useCanvasInteractions(
     pointerRefs.panStartMouseRef,
     pointerRefs.panStartOffsetRef,
   );
-  const eraser = useCanvasEraser(ctxRef);
+  const eraser = useCanvasEraser(ctxRef, canvasRef);
   useCanvasRenderer(ctxRef);
 
   // Sets the required initial states
@@ -205,6 +207,7 @@ export default function useCanvasInteractions(
   function handlePointerUp(event: PointerEvent<HTMLCanvasElement>) {
     const isResizing = pointerRefs.isResizingRef.current;
     updateCanvasCursor(selectedTool, pointerRefs.isPanningRef.current);
+
     resetPointerState();
 
     if (selectedShape && selectedShape.type === "text") {
@@ -245,7 +248,8 @@ export default function useCanvasInteractions(
     if (
       selectedTool !== "pan" &&
       selectedTool !== "freedraw" &&
-      selectedTool !== "eraser"
+      selectedTool !== "eraser" &&
+      !isLocked
     ) {
       setSelectedTool("select");
     }

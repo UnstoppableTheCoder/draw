@@ -2,23 +2,21 @@ import { Minus, Plus } from "lucide-react";
 import { Button } from "../ui/button";
 
 import { RefObject, useEffect } from "react";
-import { Point } from "@/types/canvas.types";
 import { getScreenToCanvasCoordinates } from "../../utils/get-coordinates";
 import { MAX_SCALE, MIN_SCALE } from "../../constants/canvas";
 import * as store from "../../store/selectors";
+import { Point } from "@/types/canvas.types";
 
 export default function ZoomControllers({
   canvasRef,
 }: {
   canvasRef: RefObject<HTMLCanvasElement | null>;
 }) {
-  const canvas = canvasRef.current;
   const panOffset = store.usePanOffset();
   const scale = store.useScale();
   const scaleOffset = store.useScaleOffset();
   const setScale = store.useSetScale();
   const setScaleOffset = store.useSetScaleOffset();
-  const setPanOffset = store.useSetPanOffset();
 
   const handleResetZoom = () => {
     setScale(1);
@@ -31,13 +29,15 @@ export default function ZoomControllers({
   //   setPanOffset({ x: 0, y: 0 });
   // };
 
-  const handleZoom = (direction: "in" | "out", point: Point) => {
+  const handleZoom = (direction: "in" | "out", point?: Point) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
+    let zoomPoint = point ?? { x: canvas.width / 2, y: canvas.height / 2 };
+
     const worldPoint = getScreenToCanvasCoordinates({
-      screenX: point.x,
-      screenY: point.y,
+      screenX: zoomPoint.x,
+      screenY: zoomPoint.y,
       canvas,
       panOffset,
       scale,
@@ -52,8 +52,8 @@ export default function ZoomControllers({
     if (newScale === scale) return;
 
     const newOffset = {
-      x: point.x - panOffset.x - worldPoint.x * newScale,
-      y: point.y - panOffset.y - worldPoint.y * newScale,
+      x: zoomPoint.x - panOffset.x - worldPoint.x * newScale,
+      y: zoomPoint.y - panOffset.y - worldPoint.y * newScale,
     };
 
     setScale(newScale);
@@ -90,12 +90,10 @@ export default function ZoomControllers({
     };
   }, [scale]);
 
-  if (!canvas) return;
-  const point = { x: canvas?.width / 2, y: canvas?.height / 2 };
   return (
     <div className="flex items-center space-x-2 bg-neutral-200 rounded-md">
       <Button
-        onClick={() => handleZoom("out", point)}
+        onClick={() => handleZoom("out")}
         size="sm"
         variant={"outline"}
         className="cursor-pointer"
@@ -108,7 +106,7 @@ export default function ZoomControllers({
       </p>
 
       <Button
-        onClick={() => handleZoom("in", point)}
+        onClick={() => handleZoom("in")}
         size="sm"
         variant={"outline"}
         className="cursor-pointer"

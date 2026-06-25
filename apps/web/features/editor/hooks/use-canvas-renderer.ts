@@ -54,6 +54,12 @@ export default function useCanvasRenderer(
 
   // Draws Eraser Background
   useEffect(() => {
-    drawEraserBackground(ctxRef, eraserPoints);
+    drawEraserBackground({
+      ctxRef,
+      eraserPoints,
+      panOffset,
+      scale,
+      scaleOffset,
+    });
   }, [eraserPoints]);
 }

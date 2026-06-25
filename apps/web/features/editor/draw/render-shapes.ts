@@ -37,8 +37,6 @@ export const renderShapes = ({
   selectedShape?: Shape | null;
   textEditingState?: TextEditingState;
 }) => {
-  console.log(shapes);
-
   clearCanvas(ctx);
 
   ctx.save();
@@ -50,7 +48,7 @@ export const renderShapes = ({
 
   for (let i = allShapes.length; i >= 0; i--) {
     const shape = allShapes[i];
-    
+
     // Skip the rendering of the text if text is being edited
     if (!shape || shape.id === textEditingState?.id) continue;
 

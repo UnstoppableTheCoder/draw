@@ -127,11 +127,6 @@ export default function useSelectionInteraction(
       };
     }
 
-    // if (shapeAtPosition.type === "text") {
-    //   pointerRefs.textEditStateRef.current = shapeAtPosition;
-    //   return;
-    // }
-
     const resizeHandle = getResizeHandleAtPoint(
       point,
       shapeAtPosition,
