@@ -1,5 +1,10 @@
 import { useEffect, useRef } from "react";
-import { Point, PointTuple, SelectedShapeBounds } from "../../types/types";
+import {
+  EraserPoint,
+  Point,
+  PointTuple,
+  SelectedShapeBounds,
+} from "../../types/types";
 import { ResizeHandleType } from "../../types/resize-handle";
 import { useSelectedTool } from "../../store/selectors";
 
@@ -31,6 +36,8 @@ export function usePointerState() {
   const pointerDownTimeRef = useRef<number | null>(null);
   const isDraggingRef = useRef<boolean>(false);
 
+  const eraserPointsRef = useRef<EraserPoint[]>([]);
+
   useEffect(() => {
     isPointerDownRef.current = false;
     startPointRef.current = null;
@@ -47,6 +54,7 @@ export function usePointerState() {
     freeDrawShapePointsRef.current = [];
     pointerDownTimeRef.current = null;
     isDraggingRef.current = false;
+    eraserPointsRef.current = [];
   }, [selectedTool]);
 
   return {
@@ -72,5 +80,7 @@ export function usePointerState() {
 
     pointerDownTimeRef,
     isDraggingRef,
+
+    eraserPointsRef,
   };
 }

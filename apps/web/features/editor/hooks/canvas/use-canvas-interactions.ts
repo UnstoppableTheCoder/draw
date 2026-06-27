@@ -41,7 +41,7 @@ export default function useCanvasInteractions(
     pointerRefs.panStartMouseRef,
     pointerRefs.panStartOffsetRef,
   );
-  const eraser = useCanvasEraser(ctxRef);
+  const eraser = useCanvasEraser(ctxRef, pointerRefs);
   useCanvasRenderer(ctxRef);
   const pointerHelpers = usePointer(canvasRef, pointerRefs);
   const canvasCursor = useCanvasCursor({

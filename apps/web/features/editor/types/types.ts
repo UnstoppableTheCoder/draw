@@ -177,3 +177,7 @@ export type InteractionMode =
   | "resizing"
   | "panning"
   | "text-editing";
+
+export type EraserPoint = Point & {
+  time: number;
+};

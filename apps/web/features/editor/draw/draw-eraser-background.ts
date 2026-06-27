@@ -1,5 +1,5 @@
 import { RefObject } from "react";
-import { Point, PointTuple } from "../types/types";
+import { EraserPoint, Point } from "../types/types";
 
 export default function drawEraserBackground({
   ctxRef,
@@ -9,7 +9,7 @@ export default function drawEraserBackground({
   scaleOffset,
 }: {
   ctxRef: RefObject<CanvasRenderingContext2D | null>;
-  eraserPoints: PointTuple[];
+  eraserPoints: EraserPoint[];
   panOffset: Point;
   scale: number;
   scaleOffset: Point;
@@ -29,13 +29,13 @@ export default function drawEraserBackground({
   ctx.scale(scale, scale);
 
   ctx.beginPath();
-  ctx.moveTo(firstPoint[0], firstPoint[1]);
+  ctx.moveTo(firstPoint.x, firstPoint.y);
 
   for (let i = 1; i < eraserPoints.length; i++) {
     const point = eraserPoints[i];
     if (!point) continue;
 
-    ctx.lineTo(point[0], point[1]);
+    ctx.lineTo(point.x, point.y);
   }
 
   ctx.stroke();

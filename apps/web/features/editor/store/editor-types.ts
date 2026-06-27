@@ -1,5 +1,6 @@
 import { ToolType } from "@/types/toolbar.types";
 import {
+  EraserPoint,
   InteractionMode,
   Point,
   PointTuple,
@@ -22,9 +23,9 @@ export interface EditorStore {
   setShapes: (updater: Shape[] | ((prev: Shape[]) => Shape[])) => void;
 
   // Eraser Points
-  eraserPoints: PointTuple[];
+  eraserPoints: EraserPoint[];
   setEraserPoints: (
-    updater: PointTuple[] | ((prev: PointTuple[]) => PointTuple[]),
+    updater: EraserPoint[] | ((prev: EraserPoint[]) => EraserPoint[]),
   ) => void;
 
   // Selection
