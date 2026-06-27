@@ -1,6 +1,6 @@
 import { RefObject } from "react";
-import { Point } from "../types/types";
-import * as store from "../store/selectors";
+import { Point } from "../../types/types";
+import * as store from "../../store/selectors";
 
 export default function usePan(
   panStartMouseRef: RefObject<Point | null>,

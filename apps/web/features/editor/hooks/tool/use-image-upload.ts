@@ -1,9 +1,9 @@
 import { ChangeEvent, RefObject, useEffect } from "react";
-import { IMAGE_GAP, MAX_IMAGE_SIZE } from "../constants/image";
-import { loadImageInfos } from "../utils/image-loader";
-import { createImageShape } from "../shapes/create-image-shape";
-import { getScreenToCanvasCoordinates } from "../utils/get-coordinates";
-import * as store from "../store/selectors";
+import { IMAGE_GAP, MAX_IMAGE_SIZE } from "../../constants/image";
+import { loadImageInfos } from "../../utils/image-loader";
+import { createImageShape } from "../../shapes/create-image-shape";
+import * as store from "../../store/selectors";
+import useViewportHelpers from "../viewport/use-viewport";
 
 export default function useImageUpload(
   canvasRef: RefObject<HTMLCanvasElement | null>,
@@ -15,6 +15,13 @@ export default function useImageUpload(
   const selectedTool = store.useSelectedTool();
   const setSelectedTool = store.useSetSelectedTool();
   const setShapes = store.useSetShapes();
+
+  const viewportHelpers = useViewportHelpers({
+    canvasRef,
+    panOffset,
+    scale,
+    scaleOffset,
+  });
 
   const getGridSize = (count: number) => {
     const cols = Math.ceil(Math.sqrt(count));
@@ -36,14 +43,12 @@ export default function useImageUpload(
 
     const CELL_SIZE = MAX_IMAGE_SIZE + IMAGE_GAP;
 
-    const { x: centerX, y: centerY } = getScreenToCanvasCoordinates({
-      screenX: canvas.width / 2,
-      screenY: canvas.height / 2,
-      canvas,
-      panOffset,
-      scale,
-      scaleOffset,
-    });
+    const canvasCoords = viewportHelpers.getScreenToCanvasCoordinates(
+      canvas.width / 2,
+      canvas.height / 2,
+    );
+    if (!canvasCoords) return;
+    const { x: centerX, y: centerY } = canvasCoords;
 
     // Formula
     const gridWidth = cols * CELL_SIZE - IMAGE_GAP;

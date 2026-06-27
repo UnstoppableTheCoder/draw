@@ -43,7 +43,7 @@ export type DrawableTool =
   | "image";
 
 export interface BaseShape {
-  id?: string;
+  id: string;
   type: DrawableTool;
   x: number;
   y: number;
@@ -119,8 +119,8 @@ export interface FreeDrawShape extends BaseShape {
 export interface TextShape extends BaseShape {
   type: "text";
   text: string;
-  width: number;
-  height: number;
+  width?: number;
+  height?: number;
   fontSize: number;
   fontFamily: string; // know more
   textAlign?: "left" | "center" | "right";
@@ -151,12 +151,17 @@ export type Shape =
   | TextShape
   | ImageShape;
 
-export type TextEditingState = {
+export interface TextEditingState extends Omit<
+  TextShape,
+  "id" | "fontSize" | "fontFamily"
+> {
   id?: string;
   x: number;
   y: number;
   text: string;
-};
+  fontSize?: number;
+  fontFamily?: string;
+}
 
 export type SelectedShapeBounds = {
   minX: number;

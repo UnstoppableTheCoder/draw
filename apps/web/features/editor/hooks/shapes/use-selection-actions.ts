@@ -1,16 +1,16 @@
-import { Point, PointTuple, Shape } from "../types/types";
-import * as store from "../store/selectors";
-import { getShapeAtPosition } from "../geometry/hit-test";
+import { Point, PointTuple, Shape } from "../../types/types";
+import * as store from "../../store/selectors";
+import { getShapeAtPosition } from "../../geometry/hit-test";
 import {
   getBoundingBox,
   getResizeHandleAtPoint,
-} from "../geometry/bounding-box";
-import { getAbsolutePoint } from "../utils/get-absolute-point";
+} from "../../geometry/bounding-box";
+import { getAbsolutePoint } from "../../utils/get-absolute-point";
 import useShapeMove from "./use-shape-move";
 import useShapeResize from "./use-shape-resize";
-import { usePointerState } from "./use-pointer-state";
+import { usePointerState } from "../pointer/use-pointer-state";
 
-export default function useSelectionInteraction(
+export default function useSelectionActions(
   canvasRef: React.RefObject<HTMLCanvasElement | null>,
   scale: number,
   pointerRefs: ReturnType<typeof usePointerState>,
@@ -19,8 +19,8 @@ export default function useSelectionInteraction(
   const selectedShapeBounds = store.useSelectedShapeBounds();
   const setSelectedShape = store.useSetSelectedShape();
   const setSelectedShapeBounds = store.useSetSelectedShapeBounds();
-  const shapes = store.useShapes();
   const setTextEditingState = store.useSetTextEditingState();
+  const shapes = store.useShapes();
 
   const {
     resizableHandleRef,
@@ -192,5 +192,16 @@ export default function useSelectionInteraction(
     return false;
   }
 
-  return { onPointerDownSelection, onPointerMoveSelection, updateResizeCursor };
+  // Clear Selection
+  function clearSelection() {
+    setSelectedShape(null);
+    setSelectedShapeBounds(null);
+  }
+
+  return {
+    onPointerDownSelection,
+    onPointerMoveSelection,
+    updateResizeCursor,
+    clearSelection,
+  };
 }

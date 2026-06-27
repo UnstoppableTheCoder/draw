@@ -36,7 +36,7 @@ export default function resizeTextShape({
 
   const scale = oldHeight === 0 ? 1 : newHeight / oldHeight;
 
-  updatedShape.fontSize = Math.max(0, resizeStartFontSize * scale);
+  updatedShape.fontSize = Math.max(1, resizeStartFontSize * scale);
 
   const dimensions = getTextDimensions(
     canvasRef,

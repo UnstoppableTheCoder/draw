@@ -1,6 +1,6 @@
 import { ToolType } from "@/types/toolbar.types";
-import { renderShapes } from "../draw/render-shapes";
-import { createShape } from "./create-shape";
+import { renderShapes } from "./render-shapes";
+import { createShape } from "../shapes/create-shape";
 import { Point, PointTuple, Shape } from "../types/types";
 
 type RenderPreviewShapeProps = {

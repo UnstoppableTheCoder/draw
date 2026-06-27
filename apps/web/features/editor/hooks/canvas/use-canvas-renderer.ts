@@ -1,7 +1,7 @@
 import { RefObject, useEffect } from "react";
-import { renderShapes } from "../draw/render-shapes";
-import * as store from "../store/selectors";
-import drawEraserBackground from "../draw/draw-eraser-background";
+import { renderShapes } from "../../draw/render-shapes";
+import * as store from "../../store/selectors";
+import drawEraserBackground from "../../draw/draw-eraser-background";
 
 export default function useCanvasRenderer(
   ctxRef: RefObject<CanvasRenderingContext2D | null>,

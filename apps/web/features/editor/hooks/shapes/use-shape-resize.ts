@@ -1,11 +1,11 @@
-import { Point, Shape } from "../types/types";
-import { TOLERANCE } from "../constants/canvas";
-import { normalizeRect } from "../utils/normalize-rect";
-import { resizeFreeDrawShape } from "../resize/resize-freedraw";
-import { getBoundingBox } from "../geometry/bounding-box";
-import * as store from "../store/selectors";
-import { usePointerState } from "./use-pointer-state";
-import resizeTextShape from "../resize/resize-text";
+import { Point, Shape } from "../../types/types";
+import { TOLERANCE } from "../../constants/canvas";
+import { normalizeRect } from "../../utils/normalize-rect";
+import { resizeFreeDrawShape } from "../../resize/resize-freedraw";
+import { getBoundingBox } from "../../geometry/bounding-box";
+import * as store from "../../store/selectors";
+import { usePointerState } from "../pointer/use-pointer-state";
+import resizeTextShape from "../../resize/resize-text";
 import { RefObject } from "react";
 
 export default function useShapeResize(

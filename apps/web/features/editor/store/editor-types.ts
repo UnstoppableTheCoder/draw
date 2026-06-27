@@ -6,6 +6,7 @@ import {
   SelectedShapeBounds,
   Shape,
   TextEditingState,
+  TextShape,
 } from "../types/types";
 
 export interface EditorStore {
@@ -15,10 +16,6 @@ export interface EditorStore {
 
   setSelectedTool: (tool: ToolType) => void;
   setIsLocked: (lock: boolean) => void;
-
-  // Interaction Mode
-  interactionMode: InteractionMode;
-  setInteractionMode: (mode: InteractionMode) => void;
 
   // Shapes
   shapes: Shape[];
@@ -59,11 +56,11 @@ export interface EditorStore {
   setScaleOffset: (offset: Point) => void;
 
   // History
-  history: Shape[][];
-  setHistory: (updater: Shape[][] | ((prev: Shape[][]) => Shape[][])) => void;
-
+  undoStack: Shape[][];
   redoStack: Shape[][];
-  setRedoStack: (updater: Shape[][] | ((prev: Shape[][]) => Shape[][])) => void;
+  pushHistory: () => void;
+  undo: () => void;
+  redo: () => void;
 
   // Text Style
   fontSize: number;

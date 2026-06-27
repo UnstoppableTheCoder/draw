@@ -2,14 +2,15 @@
 
 import { useEffect, useRef } from "react";
 import TextEditor from "./text-editor";
-import useImageUpload from "../../hooks/use-image-upload";
-import useCanvasResize from "../../hooks/use-canvas-resize";
-import ZoomControllers from "../zoom-controllers/zoom-controllers";
-import useTextEditing from "../../hooks/use-text-editing";
-import useTextEditorResize from "../../hooks/use-text-editor-resize";
-import useCanvasInteractions from "../../hooks/use-canvas-interactions";
+import useCanvasResize from "../../hooks/canvas/use-canvas-resize";
+import ZoomControllers from "./zoom-controllers";
+import useTextEditing from "../../hooks/text/use-text-editing";
+import useTextEditorResize from "../../hooks/text/use-text-editor-resize";
+import useCanvasInteractions from "../../hooks/canvas/use-canvas-interactions";
 import { useSetPanOffset } from "../../store/selectors";
-import { usePointerState } from "../../hooks/use-pointer-state";
+import { usePointerState } from "../../hooks/pointer/use-pointer-state";
+import useImageUpload from "../../hooks/tool/use-image-upload";
+import { UndoRedo } from "./undo-redo";
 
 const Canvas = () => {
   // Refs
@@ -21,7 +22,7 @@ const Canvas = () => {
   const setPanOffset = useSetPanOffset();
 
   const canvasInteractions = useCanvasInteractions(canvasRef, pointerRefs);
-  const textEditing = useTextEditing(canvasRef, textareaRef, pointerRefs);
+  const textEditing = useTextEditing(canvasRef, textareaRef);
   const { handleImageInputChange } = useImageUpload(canvasRef, imageInputRef);
   useTextEditorResize(canvasRef, textareaRef);
   useCanvasResize(canvasRef);
@@ -47,7 +48,10 @@ const Canvas = () => {
   }, [setPanOffset]);
 
   return (
-    <div onPointerDown={textEditing.handleParentPointerDown}>
+    <div
+      onPointerDown={textEditing.handleParentPointerDown}
+      className="overflow-hidden"
+    >
       <canvas
         ref={canvasRef}
         height={window.innerHeight}
@@ -60,6 +64,7 @@ const Canvas = () => {
       ></canvas>
 
       <TextEditor
+        canvasRef={canvasRef}
         textareaRef={textareaRef}
         onKeyDown={textEditing.handleKeyDown}
       />
@@ -76,6 +81,7 @@ const Canvas = () => {
       {/* Undo & Redo */}
       <div className="absolute z-50 bottom-4 left-4 space-x-4 flex items-center">
         <ZoomControllers canvasRef={canvasRef} />
+        <UndoRedo />
       </div>
     </div>
   );

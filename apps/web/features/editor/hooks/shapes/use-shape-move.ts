@@ -1,6 +1,6 @@
-import { getBoundingBox } from "../geometry/bounding-box";
-import { Shape } from "../types/types";
-import * as store from "../store/selectors";
+import { getBoundingBox } from "../../geometry/bounding-box";
+import { Shape } from "../../types/types";
+import * as store from "../../store/selectors";
 
 export default function useShapeMove() {
   const setShapes = store.useSetShapes();

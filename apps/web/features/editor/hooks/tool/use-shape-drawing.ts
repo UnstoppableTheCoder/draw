@@ -1,10 +1,10 @@
 import { PointerEvent, RefObject } from "react";
-import { Point, PointTuple } from "../types/types";
-import { renderPreviewShape } from "../shapes/render-preview-shape";
-import { createShape } from "../shapes/create-shape";
-import { getScreenToCanvasCoordinates } from "../utils/get-coordinates";
-import { updateDrawingPoints } from "../shapes/update-shape";
-import * as store from "../store/selectors";
+import { Point, PointTuple } from "../../types/types";
+import { renderPreviewShape } from "../../draw/render-preview-shape";
+import { createShape } from "../../shapes/create-shape";
+import { updateDrawingPoints } from "../../shapes/update-shape";
+import * as store from "../../store/selectors";
+import useViewportHelpers from "../viewport/use-viewport";
 
 type UseDrawingArgs = {
   canvasRef: RefObject<HTMLCanvasElement | null>;
@@ -16,7 +16,7 @@ type UseDrawingArgs = {
   };
 };
 
-export default function useDrawing({
+export default function useShapeDrawing({
   canvasRef,
   ctxRef,
   pointerStateRefs,
@@ -29,17 +29,18 @@ export default function useDrawing({
   const panOffset = store.usePanOffset();
   const scale = store.useScale();
   const scaleOffset = store.useScaleOffset();
+  const pushHistory = store.usePushHistory();
+
+  const viewportHelpers = useViewportHelpers({
+    canvasRef,
+    panOffset,
+    scale,
+    scaleOffset,
+  });
 
   // Get Canvas Point
   function getCanvasPointFromEvent(e: PointerEvent<HTMLCanvasElement>) {
-    return getScreenToCanvasCoordinates({
-      screenX: e.clientX,
-      screenY: e.clientY,
-      canvas: e.currentTarget,
-      panOffset,
-      scale,
-      scaleOffset,
-    });
+    return viewportHelpers.getScreenToCanvasCoordinates(e.clientX, e.clientY);
   }
 
   // Sets Initial Point on Pointer Down - for Shapes With Points
@@ -61,7 +62,9 @@ export default function useDrawing({
 
     const start = startPointRef.current;
     if (!start) return;
+
     const end = getCanvasPointFromEvent(e);
+    if (!end) return;
 
     const relativePoint: PointTuple = [end.x - start.x, end.y - start.y];
 
@@ -90,8 +93,11 @@ export default function useDrawing({
   function onPointerUpDrawing(e: PointerEvent<HTMLCanvasElement>) {
     const start = startPointRef.current;
     if (!start) return;
-    const end = getCanvasPointFromEvent(e);
 
+    const end = getCanvasPointFromEvent(e);
+    if (!end) return;
+
+    // Selected Tool decides if the shape is going to be created or not
     const shape = createShape({
       tool: selectedTool,
       startPoint: start,
@@ -99,6 +105,7 @@ export default function useDrawing({
       points: drawingPointsRef.current,
     });
 
+    pushHistory();
     if (shape) setShapes((prev) => [...prev, shape]);
 
     // reset

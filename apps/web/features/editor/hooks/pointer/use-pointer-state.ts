@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
-import { Point, PointTuple, SelectedShapeBounds } from "../types/types";
-import { ResizeHandleType } from "../types/resize-handle";
-import { useSelectedTool } from "../store/selectors";
+import { Point, PointTuple, SelectedShapeBounds } from "../../types/types";
+import { ResizeHandleType } from "../../types/resize-handle";
+import { useSelectedTool } from "../../store/selectors";
 
 export function usePointerState() {
   const selectedTool = useSelectedTool();

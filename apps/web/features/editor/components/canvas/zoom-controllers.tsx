@@ -2,10 +2,10 @@ import { Minus, Plus } from "lucide-react";
 import { Button } from "../ui/button";
 
 import { RefObject, useEffect } from "react";
-import { getScreenToCanvasCoordinates } from "../../utils/get-coordinates";
 import { MAX_SCALE, MIN_SCALE } from "../../constants/canvas";
 import * as store from "../../store/selectors";
 import { Point } from "@/types/canvas.types";
+import useViewportHelpers from "../../hooks/viewport/use-viewport";
 
 export default function ZoomControllers({
   canvasRef,
@@ -17,6 +17,13 @@ export default function ZoomControllers({
   const scaleOffset = store.useScaleOffset();
   const setScale = store.useSetScale();
   const setScaleOffset = store.useSetScaleOffset();
+
+  const viewportHelpers = useViewportHelpers({
+    canvasRef,
+    panOffset,
+    scale,
+    scaleOffset,
+  });
 
   const handleResetZoom = () => {
     setScale(1);
@@ -35,21 +42,17 @@ export default function ZoomControllers({
 
     let zoomPoint = point ?? { x: canvas.width / 2, y: canvas.height / 2 };
 
-    const worldPoint = getScreenToCanvasCoordinates({
-      screenX: zoomPoint.x,
-      screenY: zoomPoint.y,
-      canvas,
-      panOffset,
-      scale,
-      scaleOffset,
-    });
+    const worldPoint = viewportHelpers.getScreenToCanvasCoordinates(
+      zoomPoint.x,
+      zoomPoint.y,
+    );
 
     const newScale = Math.max(
       MIN_SCALE,
       Math.min(MAX_SCALE, direction === "in" ? scale + 0.1 : scale - 0.1),
     );
 
-    if (newScale === scale) return;
+    if (newScale === scale || !worldPoint) return;
 
     const newOffset = {
       x: zoomPoint.x - panOffset.x - worldPoint.x * newScale,
@@ -91,27 +94,32 @@ export default function ZoomControllers({
   }, [scale]);
 
   return (
-    <div className="flex items-center space-x-2 bg-neutral-200 rounded-md">
+    <div className="flex items-center overflow-hidden rounded-xl border border-neutral-300 bg-white shadow-sm">
       <Button
+        variant="ghost"
+        size="icon"
         onClick={() => handleZoom("out")}
-        size="sm"
-        variant={"outline"}
-        className="cursor-pointer"
+        className="w-10 cursor-pointer rounded-none border-r border-neutral-200 p-0 hover:bg-neutral-100"
       >
-        <Minus className="w-4 h-4" />
+        <Minus className="h-4 w-4" />
       </Button>
 
-      <p className="text-sm cursor-pointer" onClick={handleResetZoom}>
-        {new Intl.NumberFormat("en-GB", { style: "percent" }).format(scale)}
-      </p>
+      <button
+        onClick={handleResetZoom}
+        className="min-w-[64px] cursor-pointer border-r border-neutral-200 px-3 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-100"
+      >
+        {new Intl.NumberFormat("en-GB", {
+          style: "percent",
+        }).format(scale)}
+      </button>
 
       <Button
+        variant="ghost"
+        size="icon"
         onClick={() => handleZoom("in")}
-        size="sm"
-        variant={"outline"}
-        className="cursor-pointer"
+        className="w-10 cursor-pointer rounded-none p-0 hover:bg-neutral-100"
       >
-        <Plus className="w-4 h-4" />
+        <Plus className="h-4 w-4" />
       </Button>
     </div>
   );
