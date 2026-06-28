@@ -1,49 +1,36 @@
-import { FreeDrawShape, PointTuple, SelectedShapeBounds } from "../types/types";
 import { TOLERANCE } from "../constants/canvas";
+import { FreeDrawShape, PointTuple, SelectedShapeBounds } from "../types/types";
 
 export function resizeFreeDrawShape({
-  selectedShape,
+  shape,
   rect,
-  resizeStartBounds,
-  freeDrawShapePoints,
+  initialBounds,
+  freeDrawPoints,
 }: {
-  selectedShape: FreeDrawShape;
+  shape: FreeDrawShape;
   rect: {
     x: number;
     y: number;
     width: number;
     height: number;
   };
-  resizeStartBounds: SelectedShapeBounds;
-  freeDrawShapePoints: PointTuple[];
+  initialBounds: SelectedShapeBounds;
+  freeDrawPoints: PointTuple[];
 }) {
-  const originalBounds = resizeStartBounds;
-  if (!originalBounds) return;
+  let { minX, minY, maxX, maxY } = initialBounds;
 
-  let { minX, minY, maxX, maxY } = originalBounds;
-
-  // Removing the added Tolerance
-  minX = minX + TOLERANCE;
-  minY = minY + TOLERANCE;
-  maxX = maxX - TOLERANCE;
-  maxY = maxY - TOLERANCE;
-
-  const originalPoints = freeDrawShapePoints;
-
-  if (!originalPoints) {
-    return selectedShape;
-  }
+  minX += TOLERANCE;
+  minY += TOLERANCE;
+  maxX -= TOLERANCE;
+  maxY -= TOLERANCE;
 
   const oldWidth = maxX - minX;
   const oldHeight = maxY - minY;
 
-  const newWidth = rect.width;
-  const newHeight = rect.height;
+  const scaleX = oldWidth === 0 ? 1 : rect.width / oldWidth;
+  const scaleY = oldHeight === 0 ? 1 : rect.height / oldHeight;
 
-  const scaleX = oldWidth === 0 ? 1 : newWidth / oldWidth;
-  const scaleY = oldHeight === 0 ? 1 : newHeight / oldHeight;
-
-  let scaledPoints: [number, number][] = originalPoints.map(([px, py]) => [
+  let scaledPoints: PointTuple[] = freeDrawPoints.map(([px, py]) => [
     (px - minX) * scaleX + minX,
     (py - minY) * scaleY + minY,
   ]);
@@ -56,13 +43,10 @@ export function resizeFreeDrawShape({
     newMinY = Math.min(newMinY, py);
   }
 
-  // It makes the points start with [0, 0]
-  scaledPoints = scaledPoints.map(([px, py]) => {
-    return [px - newMinX, py - newMinY];
-  });
+  scaledPoints = scaledPoints.map(([px, py]) => [px - newMinX, py - newMinY]);
 
   return {
-    ...selectedShape,
+    ...shape,
     x: rect.x,
     y: rect.y,
     points: scaledPoints,

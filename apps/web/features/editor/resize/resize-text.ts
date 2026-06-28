@@ -5,25 +5,25 @@ import getTextDimensions from "../utils/get-text-dimensions";
 
 export default function resizeTextShape({
   canvasRef,
-  selectedShape,
+  shape,
   rect,
-  resizeStartBounds,
-  resizeStartFontSize,
+  initialBounds,
+  initialFontSize,
 }: {
   canvasRef: RefObject<HTMLCanvasElement | null>;
-  selectedShape: TextShape;
+  shape: TextShape;
   rect: {
     x: number;
     y: number;
     width: number;
     height: number;
   };
-  resizeStartBounds: SelectedShapeBounds;
-  resizeStartFontSize: number;
+  initialBounds: SelectedShapeBounds;
+  initialFontSize: number;
 }) {
-  const updatedShape = { ...selectedShape, ...rect };
+  const updatedShape = { ...shape, ...rect };
 
-  let { minX, minY, maxX, maxY } = resizeStartBounds;
+  let { minX, minY, maxX, maxY } = initialBounds;
 
   // Removing the added Tolerance
   minX = minX + TOLERANCE;
@@ -36,7 +36,7 @@ export default function resizeTextShape({
 
   const scale = oldHeight === 0 ? 1 : newHeight / oldHeight;
 
-  updatedShape.fontSize = Math.max(1, resizeStartFontSize * scale);
+  updatedShape.fontSize = Math.max(1, initialFontSize * scale);
 
   const dimensions = getTextDimensions(
     canvasRef,

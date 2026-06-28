@@ -2,47 +2,50 @@ import { Point, Shape } from "../../types/types";
 import { TOLERANCE } from "../../constants/canvas";
 import { normalizeRect } from "../../utils/normalize-rect";
 import { resizeFreeDrawShape } from "../../resize/resize-freedraw";
-import { getBoundingBox } from "../../geometry/bounding-box";
-import * as store from "../../store/selectors";
 import { usePointerState } from "../pointer/use-pointer-state";
 import resizeTextShape from "../../resize/resize-text";
 import { RefObject } from "react";
+import useCanvasRenderer from "../canvas/use-canvas-renderer";
 
 export default function useShapeResize(
-  canvasRef: RefObject<HTMLCanvasElement | null>,
+  sceneCanvasRef: RefObject<HTMLCanvasElement | null>,
+  overlayCanvasRef: RefObject<HTMLCanvasElement | null>,
   pointerRefs: ReturnType<typeof usePointerState>,
 ) {
-  const setShapes = store.useSetShapes();
-  const setSelectedShape = store.useSetSelectedShape();
-  const setSelectedShapeBounds = store.useSetSelectedShapeBounds();
+  const renderer = useCanvasRenderer(pointerRefs);
 
-  const {
-    resizeStartBoundsRef,
-    resizeStartFontSizeRef,
-    resizableHandleRef,
-    freeDrawShapePointsRef,
-    lineResizeStateRef,
-  } = pointerRefs;
+  const resizeShape = (currentPoint: Point) => {
+    const interaction = pointerRefs.interactionRef.current;
 
-  const resizeShape = (selectedShape: Shape, currentPoint: Point) => {
-    if (selectedShape.type === "arrow" || selectedShape.type === "line") {
-      const handle = resizableHandleRef.current;
-      const resizeState = lineResizeStateRef.current;
+    if (interaction.type !== "resize") {
+      return;
+    }
 
-      if (!handle || !resizeState) {
+    const {
+      previewShape,
+      handle,
+      bounds,
+      initialBounds,
+      initialFontSize,
+      freeDrawPoints,
+      lineResizeState,
+    } = interaction;
+
+    if (previewShape.type === "arrow" || previewShape.type === "line") {
+      if (!handle || !lineResizeState) {
         return;
       }
 
       let updatedShape: Shape = {
-        ...selectedShape,
+        ...previewShape,
       };
 
       switch (handle) {
         case "start": {
-          const fixedEnd = resizeState.end;
+          const fixedEnd = lineResizeState.end;
 
           updatedShape = {
-            ...selectedShape,
+            ...previewShape,
             x: currentPoint.x,
             y: currentPoint.y,
             points: [
@@ -54,11 +57,11 @@ export default function useShapeResize(
         }
 
         case "end": {
-          const fixedStart = resizeState.start;
+          const fixedStart = lineResizeState.start;
 
           updatedShape = {
-            ...selectedShape,
-            x: fixedStart.x, // You can skip setting x & y here because they are already set
+            ...previewShape,
+            x: fixedStart.x,
             y: fixedStart.y,
             points: [
               [0, 0],
@@ -69,23 +72,14 @@ export default function useShapeResize(
         }
       }
 
-      setShapes((prevShapes) =>
-        prevShapes.map((shape) =>
-          shape.id === selectedShape.id ? updatedShape : shape,
-        ),
-      );
-
-      setSelectedShape(updatedShape);
-      setSelectedShapeBounds(getBoundingBox(updatedShape));
+      interaction.previewShape = updatedShape;
+      renderer.renderOverlay(overlayCanvasRef);
       return;
     }
 
-    const resizeStartBounds = resizeStartBoundsRef.current;
-    if (!resizeStartBounds) return;
+    // Other Shapes
+    let { minX, minY, maxX, maxY } = initialBounds;
 
-    let { minX, minY, maxX, maxY } = resizeStartBounds;
-
-    // Removing the Tolerance here because for cursor click it was added when getting the boundingBox
     minX = minX + TOLERANCE;
     minY = minY + TOLERANCE;
     maxX = maxX - TOLERANCE;
@@ -94,7 +88,7 @@ export default function useShapeResize(
     let start: Point;
     let end: Point;
 
-    switch (resizableHandleRef.current) {
+    switch (handle) {
       case "top":
         start = {
           x: minX,
@@ -191,59 +185,46 @@ export default function useShapeResize(
 
     const rect = normalizeRect(start, end);
 
-    if (selectedShape.type === "freedraw") {
+    if (previewShape.type === "freedraw") {
+      if (!freeDrawPoints) return;
+
       const updatedShape = resizeFreeDrawShape({
-        selectedShape,
+        shape: previewShape,
         rect,
-        resizeStartBounds,
-        freeDrawShapePoints: freeDrawShapePointsRef.current,
+        initialBounds,
+        freeDrawPoints,
       });
       if (!updatedShape) return;
 
-      setShapes((prevShapes) =>
-        prevShapes.map((shape) =>
-          shape.id === selectedShape.id ? updatedShape : shape,
-        ),
-      );
-      setSelectedShape(updatedShape);
-      setSelectedShapeBounds(getBoundingBox(updatedShape));
+      interaction.previewShape = updatedShape;
+
+      renderer.renderOverlay(overlayCanvasRef);
       return;
     }
 
-    const resizeStartFontSize = resizeStartFontSizeRef.current;
+    if (previewShape.type === "text") {
+      if (initialFontSize == null) return;
 
-    if (selectedShape.type === "text") {
-      if (!resizeStartFontSize) return;
       const updatedShape = resizeTextShape({
-        canvasRef,
-        selectedShape,
+        canvasRef: overlayCanvasRef,
+        shape: previewShape,
         rect,
-        resizeStartBounds,
-        resizeStartFontSize,
+        initialBounds,
+        initialFontSize,
       });
 
-      setShapes((prevShapes) =>
-        prevShapes.map((shape) =>
-          shape.id === selectedShape.id ? updatedShape : shape,
-        ),
-      );
-      setSelectedShape(updatedShape);
-      setSelectedShapeBounds(getBoundingBox(updatedShape));
+      interaction.previewShape = updatedShape;
+      renderer.renderOverlay(overlayCanvasRef);
       return;
     }
 
     const updatedShape = {
-      ...selectedShape,
+      ...previewShape,
       ...rect,
     };
 
-    setShapes((prevShapes) =>
-      prevShapes.map((shape) =>
-        shape.id === selectedShape.id ? updatedShape : shape,
-      ),
-    );
-    setSelectedShape(updatedShape);
-    setSelectedShapeBounds(getBoundingBox(updatedShape));
+    interaction.previewShape = updatedShape;
+    renderer.renderOverlay(overlayCanvasRef);
   };
 
   return {

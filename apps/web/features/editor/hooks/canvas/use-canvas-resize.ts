@@ -1,22 +1,26 @@
-"use client";
-
 import { RefObject, useEffect } from "react";
 
 export default function useCanvasResize(
-  canvasRef: RefObject<HTMLCanvasElement | null>,
+  sceneCanvasRef: RefObject<HTMLCanvasElement | null>,
+  overlayCanvasRef: RefObject<HTMLCanvasElement | null>,
 ) {
   useEffect(() => {
-    const handleResize = () => {
-      if (!canvasRef.current) return;
+    function resize() {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
 
-      canvasRef.current.width = window.innerWidth;
-      canvasRef.current.height = window.innerHeight;
-    };
+      [sceneCanvasRef, overlayCanvasRef].forEach((ref) => {
+        if (!ref.current) return;
 
-    window.addEventListener("resize", handleResize);
+        ref.current.width = width;
+        ref.current.height = height;
+      });
+    }
 
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
+    resize();
+
+    window.addEventListener("resize", resize);
+
+    return () => window.removeEventListener("resize", resize);
   }, []);
 }

@@ -1,5 +1,6 @@
-import { Point, PointTuple, Shape } from "../../types/types";
+import { RefObject } from "react";
 import * as store from "../../store/selectors";
+import { Point, PointTuple, Shape } from "../../types/types";
 import { getShapeAtPosition } from "../../geometry/hit-test";
 import {
   getBoundingBox,
@@ -10,49 +11,36 @@ import useShapeMove from "./use-shape-move";
 import useShapeResize from "./use-shape-resize";
 import { usePointerState } from "../pointer/use-pointer-state";
 
-export default function useSelectionActions(
-  canvasRef: React.RefObject<HTMLCanvasElement | null>,
-  scale: number,
-  pointerRefs: ReturnType<typeof usePointerState>,
-) {
-  const selectedShape = store.useSelectedShape();
-  const selectedShapeBounds = store.useSelectedShapeBounds();
-  const setSelectedShape = store.useSetSelectedShape();
-  const setSelectedShapeBounds = store.useSetSelectedShapeBounds();
-  const setTextEditingState = store.useSetTextEditingState();
+export default function useSelectionActions({
+  overlayCanvasRef,
+  pointerRefs,
+}: {
+  overlayCanvasRef: RefObject<HTMLCanvasElement | null>;
+  pointerRefs: ReturnType<typeof usePointerState>;
+}) {
   const shapes = store.useShapes();
+  const scale = store.useScale();
 
-  const {
-    resizableHandleRef,
-    isResizingRef,
-    isPointerDownRef,
-    resizeStartBoundsRef,
-    resizeStartFontSizeRef,
-  } = pointerRefs;
+  const { moveShape } = useShapeMove(pointerRefs);
+  const { resizeShape } = useShapeResize(overlayCanvasRef, pointerRefs);
 
-  const { moveShape } = useShapeMove();
-  const { resizeShape } = useShapeResize(canvasRef, pointerRefs);
-
-  // Handles cursor type change over Selected shape
-  function updateResizeCursor(point: Point, selectedShapeLocal: Shape) {
-    const resizeHandle = getResizeHandleAtPoint(
+  function updateResizeCursor(point: Point, shape: Shape) {
+    const handle = getResizeHandleAtPoint(
       point,
-      selectedShapeLocal, // selectedShape or hoveredShape
-      selectedShapeBounds, // can be null - if shape is just hovered & not selected
+      shape,
+      selectedShapeBounds,
       scale,
     );
-    resizableHandleRef.current = resizeHandle;
+    const canvas = overlayCanvasRef.current;
 
-    const canvas = canvasRef.current;
     if (!canvas) return;
 
-    // When just shape is hovered
-    if (!resizeHandle && selectedShapeLocal) {
+    if (!handle) {
       canvas.style.cursor = "all-scroll";
       return;
     }
 
-    switch (resizeHandle) {
+    switch (handle) {
       case "top":
       case "bottom":
         canvas.style.cursor = "ns-resize";
@@ -77,100 +65,95 @@ export default function useSelectionActions(
     }
   }
 
-  // Handles Select and Resize on Pointer Down
   function onPointerDownSelection(point: Point) {
-    if (selectedShape?.type === "text" && selectedShape) {
-      pointerRefs.pointerDownTimeRef.current = performance.now();
-    } else {
-      pointerRefs.pointerDownTimeRef.current = null;
-    }
+    pointerRefs.pointerDownTimeRef.current =
+      selectedShape?.type === "text" ? performance.now() : null;
 
-    const shapeAtPosition = getShapeAtPosition({
+    const hitShape = getShapeAtPosition({
       point,
       shapes,
       selectedShape,
       selectedShapeBounds,
     });
-    if (!shapeAtPosition) return false;
 
-    setSelectedShape(shapeAtPosition);
-    const bounds = getBoundingBox(shapeAtPosition);
+    if (!hitShape) {
+      return false;
+    }
+
+    setSelectedShape(hitShape);
+    const bounds = getBoundingBox(hitShape);
     setSelectedShapeBounds(bounds);
 
-    // If this is a freedraw shape, capture its absolute points so resize can scale them
-    if (shapeAtPosition.type === "freedraw") {
-      const absPoints: PointTuple[] = (shapeAtPosition.points || []).map(
-        ([px, py]) => [shapeAtPosition.x + px, shapeAtPosition.y + py],
-      );
-
-      pointerRefs.freeDrawShapePointsRef.current = absPoints;
-    }
-
-    // If resizing a line/arrow, store absolute start/end points for the resize state
-    if (shapeAtPosition.type === "line" || shapeAtPosition.type === "arrow") {
-      const [startRel, endRel] = shapeAtPosition.points;
-      if (!startRel || !endRel) return;
-
-      const startAbs = getAbsolutePoint(
-        shapeAtPosition.x,
-        shapeAtPosition.y,
-        startRel,
-      );
-      const endAbs = getAbsolutePoint(
-        shapeAtPosition.x,
-        shapeAtPosition.y,
-        endRel,
-      );
-      pointerRefs.lineResizeStateRef.current = {
-        start: startAbs,
-        end: endAbs,
-      };
-    }
-
-    const resizeHandle = getResizeHandleAtPoint(
-      point,
-      shapeAtPosition,
-      bounds,
-      scale,
-    );
+    const resizeHandle = getResizeHandleAtPoint(point, hitShape, bounds, scale);
 
     if (!resizeHandle) {
-      isResizingRef.current = false;
+      pointerRefs.interactionRef.current = {
+        type: "move",
+        activeShapeId: hitShape.id,
+        previewShape: structuredClone(hitShape),
+        dragOffset: {
+          x: point.x - hitShape.x,
+          y: point.y - hitShape.y,
+        },
+        initialBounds: bounds,
+      };
+
       return true;
     }
 
-    isResizingRef.current = true;
-    resizableHandleRef.current = resizeHandle;
-    resizeStartBoundsRef.current = bounds; // always remains the same
+    let freeDrawPoints: PointTuple[] | undefined;
 
-    if (shapeAtPosition.type === "text") {
-      resizeStartFontSizeRef.current = shapeAtPosition.fontSize;
+    if (hitShape.type === "freedraw") {
+      freeDrawPoints = hitShape.points.map(([px, py]) => [
+        hitShape.x + px,
+        hitShape.y + py,
+      ]);
     }
+
+    let lineResizeState:
+      | {
+          start: Point;
+          end: Point;
+        }
+      | undefined;
+
+    if (hitShape.type === "line" || hitShape.type === "arrow") {
+      const [startRel, endRel] = hitShape.points;
+      if (!startRel || !endRel) return;
+
+      lineResizeState = {
+        start: getAbsolutePoint(hitShape.x, hitShape.y, startRel),
+        end: getAbsolutePoint(hitShape.x, hitShape.y, endRel),
+      };
+    }
+
+    pointerRefs.interactionRef.current = {
+      type: "resize",
+      activeShapeId: hitShape.id,
+      previewShape: structuredClone(hitShape),
+      handle: resizeHandle,
+      initialBounds: bounds,
+      initialFontSize: hitShape.type === "text" ? hitShape.fontSize : undefined,
+      freeDrawPoints,
+      lineResizeState,
+    };
 
     return true;
   }
 
-  // Handles Move, Resize, Cursor Type
   function onPointerMoveSelection(endPoint: Point, dx: number, dy: number) {
-    if (selectedShape && pointerRefs.isPointerDownRef.current) {
-      pointerRefs.isDraggingRef.current = true;
+    const interaction = pointerRefs.interactionRef.current;
+
+    switch (interaction.type) {
+      case "move":
+        moveShape(endPoint);
+        return true;
+
+      case "resize":
+        resizeShape(endPoint);
+        return true;
     }
 
-    // Handle Drag or Resize
-    if (selectedShape && isPointerDownRef.current) {
-      if (isResizingRef.current) {
-        resizeShape(selectedShape, endPoint);
-      } else {
-        moveShape({
-          selectedShape,
-          dx,
-          dy,
-        });
-      }
-      return true;
-    }
-
-    // Hover state
     const hovered = getShapeAtPosition({
       point: endPoint,
       shapes,
@@ -183,8 +166,8 @@ export default function useSelectionActions(
       return true;
     }
 
-    // Nothing hovered -> reset cursor
-    const canvas = canvasRef.current;
+    const canvas = overlayCanvasRef.current;
+
     if (canvas) {
       canvas.style.cursor = "default";
     }
@@ -192,7 +175,6 @@ export default function useSelectionActions(
     return false;
   }
 
-  // Clear Selection
   function clearSelection() {
     setSelectedShape(null);
     setSelectedShapeBounds(null);
@@ -201,7 +183,6 @@ export default function useSelectionActions(
   return {
     onPointerDownSelection,
     onPointerMoveSelection,
-    updateResizeCursor,
     clearSelection,
   };
 }

@@ -2,19 +2,19 @@ import { RefObject } from "react";
 import { EraserPoint, Point } from "../types/types";
 
 export default function drawEraserBackground({
-  ctxRef,
+  overlayCanvasRef,
   eraserPoints,
   panOffset,
   scale,
   scaleOffset,
 }: {
-  ctxRef: RefObject<CanvasRenderingContext2D | null>;
+  overlayCanvasRef: RefObject<HTMLCanvasElement | null>;
   eraserPoints: EraserPoint[];
   panOffset: Point;
   scale: number;
   scaleOffset: Point;
 }) {
-  const ctx = ctxRef.current;
+  const ctx = overlayCanvasRef.current?.getContext("2d");
   if (!ctx) return;
 
   ctx.lineWidth = 8 / scale;

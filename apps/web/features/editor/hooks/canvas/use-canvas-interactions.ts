@@ -1,5 +1,4 @@
 import { PointerEvent, RefObject } from "react";
-import useCanvasContext from "./use-canvas-context";
 import useSelectionActions from "../shapes/use-selection-actions";
 import * as store from "../../store/selectors";
 import { usePointerState } from "../pointer/use-pointer-state";
@@ -10,42 +9,41 @@ import usePan from "../tool/use-pan";
 import useShapeDrawing from "../tool/use-shape-drawing";
 import usePointer from "../pointer/use-pointer";
 import useCanvasEraser from "../tool/use-canvas-eraser";
-import useTextEditing from "../text/use-text-editing";
-import { v4 as uuidv4 } from "uuid";
 
-export default function useCanvasInteractions(
-  canvasRef: RefObject<HTMLCanvasElement | null>,
-  pointerRefs: ReturnType<typeof usePointerState>,
-) {
+export default function useCanvasInteractions({
+  sceneCanvasRef,
+  overlayCanvasRef,
+  pointerRefs,
+}: {
+  sceneCanvasRef: RefObject<HTMLCanvasElement | null>;
+  overlayCanvasRef: RefObject<HTMLCanvasElement | null>;
+  pointerRefs: ReturnType<typeof usePointerState>;
+}) {
   const scale = store.useScale();
   const selectedTool = store.useSelectedTool();
   const setTextEditingState = store.useSetTextEditingState();
   const setSelectedTool = store.useSetSelectedTool();
-  const selectedShape = store.useSelectedShape();
   const isLocked = store.useIsLocked();
-  const fontSize = store.useFontSize();
-  const fontFamily = store.useFontFamily();
 
-  const { ctxRef } = useCanvasContext(canvasRef);
   const drawing = useShapeDrawing({
-    canvasRef,
-    ctxRef,
-    pointerStateRefs: {
-      startPointRef: pointerRefs.startPointRef,
-      drawingPointsRef: pointerRefs.drawingPointsRef,
-      lastPointerRef: pointerRefs.lastPointerRef,
-    },
+    sceneCanvasRef,
+    overlayCanvasRef,
+    pointerRefs,
   });
-  const selection = useSelectionActions(canvasRef, scale, pointerRefs);
-  const { handlePanMove } = usePan(
-    pointerRefs.panStartMouseRef,
-    pointerRefs.panStartOffsetRef,
-  );
-  const eraser = useCanvasEraser(ctxRef, pointerRefs);
-  useCanvasRenderer(ctxRef);
-  const pointerHelpers = usePointer(canvasRef, pointerRefs);
+
+  const selection = useSelectionActions({
+    overlayCanvasRef,
+    pointerRefs,
+    scale,
+  });
+
+  const { handlePanMove } = usePan(pointerRefs);
+
+  const eraser = useCanvasEraser(overlayCanvasRef, pointerRefs);
+  useCanvasRenderer(sceneCanvasRef, pointerRefs);
+  const pointerHelpers = usePointer(overlayCanvasRef, pointerRefs);
   const canvasCursor = useCanvasCursor({
-    canvasRef,
+    overlayCanvasRef,
     selectedTool,
     isPanningRef: pointerRefs.isPanningRef,
   });

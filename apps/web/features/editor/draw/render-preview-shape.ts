@@ -2,29 +2,24 @@ import { ToolType } from "@/types/toolbar.types";
 import { renderShapes } from "./render-shapes";
 import { createShape } from "../shapes/create-shape";
 import { Point, PointTuple, Shape } from "../types/types";
+import { RefObject } from "react";
 
 type RenderPreviewShapeProps = {
-  ctx: CanvasRenderingContext2D;
+  overlayCanvasRef: RefObject<HTMLCanvasElement | null>;
   tool: ToolType;
   startPoint: Point;
   endPoint: Point;
   points: PointTuple[];
   shapes: Shape[];
-  scale: number;
-  panOffset: Point;
-  scaleOffset: Point;
 };
 
 export const renderPreviewShape = ({
-  ctx,
+  overlayCanvasRef,
   tool,
   startPoint,
   endPoint,
   points,
   shapes,
-  scale,
-  panOffset,
-  scaleOffset,
 }: RenderPreviewShapeProps) => {
   const previewShape = createShape({
     tool,
@@ -33,14 +28,11 @@ export const renderPreviewShape = ({
     points,
   });
 
-  if (!previewShape) return;
+  const ctx = overlayCanvasRef.current?.getContext("2d");
+  if (!previewShape || !ctx) return;
 
   renderShapes({
     ctx,
     shapes,
-    previewShape,
-    scale,
-    panOffset,
-    scaleOffset,
   });
 };

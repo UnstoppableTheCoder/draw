@@ -8,7 +8,7 @@ import { usePointerState } from "../pointer/use-pointer-state";
 import drawEraserBackground from "../../draw/draw-eraser-background";
 
 export default function useCanvasEraser(
-  ctxRef: RefObject<CanvasRenderingContext2D | null>,
+  overlayCanvasRef: RefObject<HTMLCanvasElement | null>,
   pointerRefs: ReturnType<typeof usePointerState>,
 ) {
   const shapes = store.useShapes();
@@ -18,6 +18,8 @@ export default function useCanvasEraser(
   const scaleOffset = store.useScaleOffset();
 
   const eraserPointsRef = pointerRefs.eraserPointsRef;
+
+  const ctx = overlayCanvasRef.current?.getContext("2d");
 
   function addEraserPoints(point: Point) {
     const now = performance.now();
@@ -34,7 +36,7 @@ export default function useCanvasEraser(
 
   function animateEraserBackground(eraserPoints: EraserPoint[]) {
     drawEraserBackground({
-      ctxRef,
+      overlayCanvasRef,
       eraserPoints,
       panOffset,
       scale,
@@ -59,7 +61,6 @@ export default function useCanvasEraser(
   }
 
   function onPointerMoveErase(point: Point) {
-    const ctx = ctxRef.current;
     if (!ctx) return;
     // clearCanvas(ctx);
 
@@ -69,7 +70,6 @@ export default function useCanvasEraser(
   }
 
   function resetEraserBackground() {
-    const ctx = ctxRef.current;
     if (!ctx) return;
 
     eraserPointsRef.current = [];

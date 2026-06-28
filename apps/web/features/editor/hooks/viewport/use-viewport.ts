@@ -1,21 +1,16 @@
 import { RefObject } from "react";
-
-type Point = {
-  x: number;
-  y: number;
-};
+import { usePanOffset, useScale, useScaleOffset } from "../../store/selectors";
+import { Point } from "../../types/types";
 
 export default function useViewportHelpers({
   canvasRef,
-  panOffset,
-  scale,
-  scaleOffset,
 }: {
   canvasRef: RefObject<HTMLCanvasElement | null>;
-  panOffset: Point;
-  scale: number;
-  scaleOffset: Point;
 }) {
+  const panOffset = usePanOffset();
+  const scale = useScale();
+  const scaleOffset = useScaleOffset();
+
   const getScreenToCanvasCoordinates = (
     screenX: number,
     screenY: number,

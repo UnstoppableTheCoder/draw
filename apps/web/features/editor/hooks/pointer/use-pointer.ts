@@ -4,18 +4,13 @@ import * as store from "../../store/selectors";
 import useViewportHelpers from "../viewport/use-viewport";
 
 export default function usePointer(
-  canvasRef: RefObject<HTMLCanvasElement | null>,
+  overlayCanvasRef: RefObject<HTMLCanvasElement | null>,
   pointerRefs: ReturnType<typeof usePointerState>,
 ) {
   const panOffset = store.usePanOffset();
-  const scale = store.useScale();
-  const scaleOffset = store.useScaleOffset();
 
   const viewportHelpers = useViewportHelpers({
-    canvasRef,
-    panOffset,
-    scale,
-    scaleOffset,
+    canvasRef: overlayCanvasRef,
   });
 
   // Sets the required initial states
@@ -30,7 +25,6 @@ export default function usePointer(
     );
 
     pointerRefs.startPointRef.current = point;
-    pointerRefs.lastPointerRef.current = point;
     return point;
   }
 
@@ -58,33 +52,16 @@ export default function usePointer(
     return viewportHelpers.getScreenToCanvasCoordinates(e.clientX, e.clientY);
   }
 
-  // Get Delta & Update Last Point
-  function getPointerDelta(endPoint: any) {
-    const last = pointerRefs.lastPointerRef.current;
-    if (!last) return null;
-
-    const dx = endPoint.x - last.x;
-    const dy = endPoint.y - last.y;
-
-    pointerRefs.lastPointerRef.current = endPoint;
-    return { dx, dy };
-  }
-
   // Resets the required pointer states - pointerUp
   function resetPointerState() {
     pointerRefs.isPanningRef.current = false;
     pointerRefs.isPointerDownRef.current = false;
-    pointerRefs.resizableHandleRef.current = null;
-    pointerRefs.resizeStartBoundsRef.current = null;
-    pointerRefs.resizeStartFontSizeRef.current = null;
-    pointerRefs.lineResizeStateRef.current = null;
   }
 
   return {
     initializePointerState,
     handleMiddleMousePan,
     getCurrentCanvasPoint,
-    getPointerDelta,
     resetPointerState,
     initializePanState,
   };

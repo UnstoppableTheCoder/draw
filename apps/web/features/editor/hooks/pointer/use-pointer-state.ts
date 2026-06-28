@@ -1,86 +1,124 @@
-import { useEffect, useRef } from "react";
+import { RefObject, useEffect, useRef } from "react";
 import {
   EraserPoint,
   Point,
   PointTuple,
   SelectedShapeBounds,
+  Shape,
 } from "../../types/types";
 import { ResizeHandleType } from "../../types/resize-handle";
 import { useSelectedTool } from "../../store/selectors";
 
+export type InteractionState =
+  | {
+      type: "none";
+    }
+  | {
+      type: "draw";
+      previewShape: Shape;
+    }
+  | {
+      type: "select";
+      activeShapeId: string;
+      previewShape: Shape;
+      dragOffset: Point;
+      bounds: SelectedShapeBounds;
+    }
+  | {
+      type: "move";
+      activeShapeId: string;
+      previewShape: Shape;
+      dragOffset: Point;
+      bounds: SelectedShapeBounds;
+    }
+  | {
+      type: "resize";
+      activeShapeId: string;
+      previewShape: Shape;
+      handle: ResizeHandleType;
+      bounds: SelectedShapeBounds;
+      initialBounds: SelectedShapeBounds;
+      initialFontSize?: number;
+      freeDrawPoints?: PointTuple[];
+      lineResizeState?: {
+        start: Point;
+        end: Point;
+      };
+    }
+  | {
+      type: "rotate";
+      activeShapeId: string;
+      previewShape: Shape;
+      bounds: SelectedShapeBounds;
+      startAngle: number;
+      rotationCenter: Point;
+    }
+  | {
+      type: "selection-box";
+      startPoint: Point;
+      endPoint: Point;
+    };
+
+export function createEmptyInteraction(): InteractionState {
+  return {
+    type: "none",
+  };
+}
+
+export function resetInteraction(interactionRef: RefObject<InteractionState>) {
+  interactionRef.current = createEmptyInteraction();
+}
+
 export function usePointerState() {
   const selectedTool = useSelectedTool();
-
   const isPointerDownRef = useRef(false);
   const startPointRef = useRef<Point | null>(null);
-  const lastPointerRef = useRef<Point | null>(null);
-
   const drawingPointsRef = useRef<PointTuple[]>([]);
   const isPanningRef = useRef(false);
-
   const panStartMouseRef = useRef<Point | null>(null);
   const panStartOffsetRef = useRef<Point | null>(null);
-
-  const isResizingRef = useRef(false);
-  const resizableHandleRef = useRef<ResizeHandleType | null>(null);
-  const resizeStartFontSizeRef = useRef<number | null>(null);
-  const resizeStartBoundsRef = useRef<SelectedShapeBounds | null>(null);
-  const lineResizeStateRef = useRef<{
-    start: Point;
-    end: Point;
-  } | null>(null);
-
-  const freeDrawShapePointsRef = useRef<PointTuple[]>([]);
-
-  // Refs for text editing
   const pointerDownTimeRef = useRef<number | null>(null);
-  const isDraggingRef = useRef<boolean>(false);
-
   const eraserPointsRef = useRef<EraserPoint[]>([]);
+  const interactionRef = useRef<InteractionState>(createEmptyInteraction());
 
   useEffect(() => {
     isPointerDownRef.current = false;
+
     startPointRef.current = null;
-    lastPointerRef.current = null;
+
     drawingPointsRef.current = [];
+
     isPanningRef.current = false;
     panStartMouseRef.current = null;
     panStartOffsetRef.current = null;
-    isResizingRef.current = false;
-    resizableHandleRef.current = null;
-    resizeStartFontSizeRef.current = null;
-    resizeStartBoundsRef.current = null;
-    lineResizeStateRef.current = null;
-    freeDrawShapePointsRef.current = [];
+
     pointerDownTimeRef.current = null;
-    isDraggingRef.current = false;
+
     eraserPointsRef.current = [];
+
+    resetInteraction(interactionRef);
   }, [selectedTool]);
 
   return {
+    // Pointer
     isPointerDownRef,
-
     startPointRef,
-    lastPointerRef,
 
+    // Drawing
     drawingPointsRef,
 
+    // Panning
     isPanningRef,
-
     panStartMouseRef,
     panStartOffsetRef,
 
-    isResizingRef,
-    resizableHandleRef,
-    resizeStartBoundsRef,
-    resizeStartFontSizeRef,
-
-    lineResizeStateRef,
-    freeDrawShapePointsRef,
-
+    // Text
     pointerDownTimeRef,
-    isDraggingRef,
 
+    // Eraser
     eraserPointsRef,
+
+    // Interaction
+    interactionRef,
   };
 }

@@ -1,12 +1,5 @@
-import {
-  Point,
-  SelectedShapeBounds,
-  Shape,
-  TextEditingState,
-} from "../types/types";
-import { clearCanvas } from "./clear-canvas";
+import { Shape } from "../types/types";
 import { drawArrow } from "./draw-arrow";
-import drawSelectionBounds from "./draw-selection-bounds";
 import { drawDiamond } from "./draw-diamond";
 import { drawEllipse } from "./draw-ellipse";
 import { drawFreeDraw } from "./draw-freedraw";
@@ -14,43 +7,16 @@ import { drawImage } from "./draw-image";
 import { drawLine } from "./draw-line";
 import { drawRectangle } from "./draw-rectangle";
 import { drawText } from "./draw-text";
-import drawLineSelection from "./draw-line-selection";
 
-export const renderShapes = ({
-  ctx,
-  shapes,
-  previewShape,
-  scale,
-  panOffset,
-  scaleOffset,
-  bounds,
-  selectedShape,
-  textEditingState,
-}: {
+type Props = {
   ctx: CanvasRenderingContext2D;
   shapes: Shape[];
-  previewShape?: Shape;
-  scale: number;
-  panOffset: Point;
-  scaleOffset: Point;
-  bounds?: SelectedShapeBounds | null;
-  selectedShape?: Shape | null;
-  textEditingState?: TextEditingState;
-}) => {
-  clearCanvas(ctx);
+  skipShapeId: string | undefined;
+};
 
-  ctx.save();
-  ctx.translate(panOffset.x, panOffset.y);
-  ctx.translate(scaleOffset.x, scaleOffset.y);
-  ctx.scale(scale, scale);
-
-  const allShapes = previewShape ? [...shapes, previewShape] : shapes;
-
-  for (let i = allShapes.length; i >= 0; i--) {
-    const shape = allShapes[i];
-
-    // Skip the rendering of the text if text is being edited
-    if (!shape || shape.id === textEditingState?.id) continue;
+export const renderShapes = ({ ctx, shapes, skipShapeId }: Props) => {
+  for (const shape of shapes) {
+    if (shape.id === skipShapeId) continue;
 
     switch (shape.type) {
       case "rectangle":
@@ -86,14 +52,4 @@ export const renderShapes = ({
         break;
     }
   }
-
-  if (bounds && selectedShape) {
-    if (selectedShape.type === "arrow" || selectedShape.type === "line") {
-      drawLineSelection(ctx, scale, selectedShape);
-    } else {
-      drawSelectionBounds(ctx, scale, bounds);
-    }
-  }
-
-  ctx.restore();
 };

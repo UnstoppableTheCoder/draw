@@ -1,42 +1,33 @@
 import { PointerEvent, RefObject } from "react";
-import { Point, PointTuple } from "../../types/types";
-import { renderPreviewShape } from "../../draw/render-preview-shape";
 import { createShape } from "../../shapes/create-shape";
 import { updateDrawingPoints } from "../../shapes/update-shape";
 import * as store from "../../store/selectors";
 import useViewportHelpers from "../viewport/use-viewport";
+import useCanvasRenderer from "../canvas/use-canvas-renderer";
+import { usePointerState } from "../pointer/use-pointer-state";
 
 type UseDrawingArgs = {
-  canvasRef: RefObject<HTMLCanvasElement | null>;
-  ctxRef: { current: CanvasRenderingContext2D | null };
-  pointerStateRefs: {
-    startPointRef: RefObject<Point | null>;
-    drawingPointsRef: RefObject<PointTuple[]>;
-    lastPointerRef: RefObject<Point | null>;
-  };
+  sceneCanvasRef: RefObject<HTMLCanvasElement | null>;
+  overlayCanvasRef: RefObject<HTMLCanvasElement | null>;
+  pointerRefs: ReturnType<typeof usePointerState>;
 };
 
 export default function useShapeDrawing({
-  canvasRef,
-  ctxRef,
-  pointerStateRefs,
+  sceneCanvasRef,
+  overlayCanvasRef,
+  pointerRefs,
 }: UseDrawingArgs) {
-  const { startPointRef, drawingPointsRef, lastPointerRef } = pointerStateRefs;
+  const { startPointRef, drawingPointsRef } = pointerRefs;
 
-  const shapes = store.useShapes();
   const setShapes = store.useSetShapes();
   const selectedTool = store.useSelectedTool();
-  const panOffset = store.usePanOffset();
-  const scale = store.useScale();
-  const scaleOffset = store.useScaleOffset();
   const pushHistory = store.usePushHistory();
 
   const viewportHelpers = useViewportHelpers({
-    canvasRef,
-    panOffset,
-    scale,
-    scaleOffset,
+    canvasRef: overlayCanvasRef,
   });
+
+  const renderer = useCanvasRenderer(pointerRefs);
 
   // Get Canvas Point
   function getCanvasPointFromEvent(e: PointerEvent<HTMLCanvasElement>) {
@@ -45,9 +36,9 @@ export default function useShapeDrawing({
 
   // Sets Initial Point on Pointer Down - for Shapes With Points
   function onPointerDownDrawing(e: PointerEvent<HTMLCanvasElement>) {
-    if (!canvasRef.current) return;
+    if (!overlayCanvasRef.current) return;
 
-    canvasRef.current.setPointerCapture(e.pointerId);
+    overlayCanvasRef.current.setPointerCapture(e.pointerId);
     const point = getCanvasPointFromEvent(e);
 
     startPointRef.current = point;
@@ -57,9 +48,6 @@ export default function useShapeDrawing({
 
   // Handles Drawing During Mouse Move
   function onPointerMoveDrawing(e: React.PointerEvent<HTMLCanvasElement>) {
-    const ctx = ctxRef.current;
-    if (!ctx) return;
-
     const start = startPointRef.current;
     if (!start) return;
 
@@ -74,17 +62,19 @@ export default function useShapeDrawing({
       currentPoints: drawingPointsRef.current,
     });
 
-    renderPreviewShape({
-      ctx,
-      tool: selectedTool,
-      startPoint: start,
-      endPoint: end,
-      points: drawingPointsRef.current,
-      shapes,
-      scale,
-      panOffset,
-      scaleOffset,
-    });
+    renderer?.renderOverlay();
+
+    // renderPreviewShape({
+    //   overlayCanvasRef,
+    //   tool: selectedTool,
+    //   startPoint: start,
+    //   endPoint: end,
+    //   points: drawingPointsRef.current,
+    //   shapes,
+    //   scale,
+    //   panOffset,
+    //   scaleOffset,
+    // });
 
     lastPointerRef.current = end;
   }
