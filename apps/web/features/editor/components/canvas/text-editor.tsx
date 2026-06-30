@@ -19,13 +19,13 @@ export default function TextEditor({
   const setTextEditingState = store.useSetTextEditingState();
   const lineHeightMultiplier = store.useLineHeightMultiplier();
 
-  const { clientToCanvas } = useViewportHelpers(canvasRef);
+  const { canvasToClient } = useViewportHelpers(canvasRef);
 
   if (!textEditingState) {
     return null;
   }
 
-  const point = clientToCanvas(textEditingState.x, textEditingState.y);
+  const point = canvasToClient(textEditingState.x, textEditingState.y);
   if (!point) return;
 
   function handleChange(e: ChangeEvent<HTMLTextAreaElement>) {

@@ -13,7 +13,7 @@ export default function getTextDimensions({
   text: string;
   fontSize: number;
   fontFamily: string;
-}): Dimensions | null {
+}): Dimensions {
   // font -> "20 Arial"
   ctx.font = `${fontSize}px ${fontFamily}`;
 

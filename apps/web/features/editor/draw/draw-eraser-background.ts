@@ -19,11 +19,6 @@ export default function drawEraserBackground({
   const firstPoint = eraserPoints[0];
   if (!firstPoint) return;
 
-  ctx.save();
-  ctx.translate(panOffset.x, panOffset.y);
-  ctx.translate(scaleOffset.x, scaleOffset.y);
-  ctx.scale(scale, scale);
-
   ctx.beginPath();
   ctx.moveTo(firstPoint.x, firstPoint.y);
 
@@ -35,5 +30,4 @@ export default function drawEraserBackground({
   }
 
   ctx.stroke();
-  ctx.restore();
 }

@@ -48,7 +48,8 @@ export default function useCreateCanvasRenderer({
     const ctx = sceneCanvasRef.current?.getContext("2d");
     if (!ctx) return;
 
-    const { shapes, textEditingState } = useEditorStore.getState();
+    const { shapes, textEditingState, scale, panOffset, scaleOffset } =
+      useEditorStore.getState();
 
     const interaction = pointerRefs.interactionRef.current;
 
@@ -57,6 +58,12 @@ export default function useCreateCanvasRenderer({
     ctx.save();
 
     viewportHelpers.applyViewportTransform(ctx);
+    console.log("scene: ===> ");
+    console.log({
+      scale,
+      panOffset,
+      scaleOffset,
+    });
 
     let skipShapeId: string | undefined;
 
@@ -70,6 +77,8 @@ export default function useCreateCanvasRenderer({
       default:
         skipShapeId = textEditingState?.id;
     }
+
+    console.log("scene shapes rendering");
 
     renderShapes({
       ctx,
@@ -87,11 +96,6 @@ export default function useCreateCanvasRenderer({
 
     const interaction = pointerRefs.interactionRef.current;
 
-    if (interaction.type === "selection-box") {
-      clearCanvas(ctx);
-      return;
-    }
-
     const { selectedShape, scale, panOffset, scaleOffset } =
       useEditorStore.getState();
 
@@ -99,6 +103,12 @@ export default function useCreateCanvasRenderer({
 
     ctx.save();
     viewportHelpers.applyViewportTransform(ctx);
+    console.log("overlay: ===> ");
+    console.log({
+      scale,
+      panOffset,
+      scaleOffset,
+    });
 
     const isTransformInteraction =
       interaction.type === "move" ||
@@ -111,6 +121,7 @@ export default function useCreateCanvasRenderer({
         : null;
 
     if (previewShape) {
+      console.log("overlay shapes rendering");
       renderShapes({
         ctx,
         shapes: [previewShape],

@@ -38,10 +38,26 @@ export default function useViewportHelpers(
     [canvasRef, screenToCanvas],
   );
 
+  const canvasToClient = useCallback(
+    (clientX: number, clientY: number): Point | null => {
+      const canvas = canvasRef?.current;
+      if (!canvas) return null;
+
+      const rect = canvas.getBoundingClientRect();
+
+      const screenPoint = canvasToScreen({ x: clientX, y: clientY });
+
+      return {
+        x: screenPoint.x + rect.left,
+        y: screenPoint.y + rect.top,
+      };
+    },
+    [canvasRef, canvasToScreen],
+  );
+
   const applyViewportTransform = useCallback(
     (ctx: CanvasRenderingContext2D) => {
       const { scale, panOffset, scaleOffset } = useEditorStore.getState();
-
       ctx.translate(panOffset.x + scaleOffset.x, panOffset.y + scaleOffset.y);
 
       ctx.scale(scale, scale);
@@ -53,6 +69,7 @@ export default function useViewportHelpers(
     canvasToScreen,
     screenToCanvas,
     clientToCanvas,
+    canvasToClient,
     applyViewportTransform,
   };
 }

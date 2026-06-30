@@ -75,7 +75,7 @@ export default function useCanvasInteractions({
         break;
 
       case "text":
-        text.startEditingText(startPoint);
+        text.onPointerDownText(startPoint);
         break;
 
       default:
@@ -140,12 +140,6 @@ export default function useCanvasInteractions({
 
     setTextEditingState({ ...selectedShape });
     setSelectedShape(null);
-  }
-
-  function handleEraseEnd() {
-    if (selectedTool === "eraser") {
-      eraser.onPointerUpErase();
-    }
   }
 
   function handleToolReset() {

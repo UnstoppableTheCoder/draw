@@ -5,7 +5,12 @@ import { ToolbarItemType, ToolType } from "@/types/toolbar.types";
 import { JSX } from "react";
 import Hint from "../hint";
 import { Button } from "../ui/button";
-import { useSelectedTool, useSetSelectedTool } from "../../store/selectors";
+import {
+  useSelectedTool,
+  useSetSelectedShape,
+  useSetSelectedTool,
+} from "../../store/selectors";
+import useToolActions from "../../hooks/tool/use-tool-actions";
 
 type ToolbarButtonProp = {
   item: Omit<ToolbarItemType, "icon"> & { icon: JSX.Element };
@@ -13,12 +18,7 @@ type ToolbarButtonProp = {
 
 export const ToolbarButton = ({ item }: ToolbarButtonProp) => {
   const selectedTool = useSelectedTool();
-  const setSelectedTool = useSetSelectedTool();
-
-  // Sets the tool
-  const handleToolSelect = (tool: ToolType) => {
-    setSelectedTool(tool);
-  };
+  const { selectTool } = useToolActions();
 
   return (
     <Hint label={item.label} side="bottom" align="center" sideOffset={10}>
@@ -28,7 +28,7 @@ export const ToolbarButton = ({ item }: ToolbarButtonProp) => {
           "active:border active:border-black",
         )}
         variant={"ghost"}
-        onClick={() => handleToolSelect(item.tool)}
+        onClick={() => selectTool(item.tool)}
       >
         {item.icon}
       </Button>

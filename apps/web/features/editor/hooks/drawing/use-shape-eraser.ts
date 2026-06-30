@@ -66,14 +66,7 @@ export default function useShapeEraser({
     invalidate();
   }
 
-  function onPointerUpErase() {
-    eraserTrailRef.current = [];
-
-    invalidateOverlay();
-  }
-
   return {
     onPointerMoveErase,
-    onPointerUpErase,
   };
 }

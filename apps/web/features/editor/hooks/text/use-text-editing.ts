@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 import getTextDimensions from "../../utils/get-text-dimensions";
 import * as store from "../../store/selectors";
 import useViewportHelpers from "../viewport/use-viewport-helpers";
-import { Point } from "../../types/types";
+import { Point, Shape } from "../../types/types";
 
 export default function useTextEditing(
   canvasRef: RefObject<HTMLCanvasElement | null>,
@@ -24,53 +24,80 @@ export default function useTextEditing(
     if (!textEditingState) return;
 
     const text = textEditingState.text.trim();
+
     if (!text) {
-      setTextEditingState(null);
+      finishTextEditing();
       return;
     }
 
     const ctx = canvasRef.current?.getContext("2d");
     if (!ctx) return;
-    const dimensions = getTextDimensions({ ctx, text, fontSize, fontFamily });
-    if (!dimensions) return;
 
-    const width = dimensions.width;
-    const height = dimensions.height;
+    setShapes((prevShapes) =>
+      textEditingState.id
+        ? updateTextShape(prevShapes, textEditingState.id, text, ctx)
+        : createTextShape(prevShapes, textEditingState, text, ctx),
+    );
 
-    setShapes((prevShapes) => {
-      return textEditingState.id
-        ? prevShapes.map((shape) =>
-            shape.id === textEditingState.id && shape.type === "text"
-              ? {
-                  ...shape,
-                  text,
-                  ...getTextDimensions({
-                    ctx,
-                    text,
-                    fontSize: shape.fontSize,
-                    fontFamily: shape.fontFamily,
-                  }),
-                }
-              : shape,
-          )
-        : [
-            ...prevShapes,
-            {
-              ...textEditingState,
-              id: uuidv4(),
-              height: height / scale,
-              width: width / scale,
-              fontSize: fontSize / scale,
-              fontFamily,
-              strokeColor: "white",
-            },
-          ];
-    });
+    finishTextEditing();
+  };
 
-    // Reset to Default when the text is drawn
+  function finishTextEditing() {
     setTextEditingState(null);
     setSelectedTool("select");
-  };
+  }
+
+  function updateTextShape(
+    shapes: Shape[],
+    id: string,
+    text: string,
+    ctx: CanvasRenderingContext2D,
+  ): Shape[] {
+    return shapes.map((shape) => {
+      if (shape.id !== id || shape.type !== "text") {
+        return shape;
+      }
+
+      return {
+        ...shape,
+        text,
+        ...getTextDimensions({
+          ctx,
+          text,
+          fontSize: shape.fontSize,
+          fontFamily: shape.fontFamily,
+        }),
+      };
+    });
+  }
+
+  function createTextShape(
+    shapes: Shape[],
+    editingState: NonNullable<typeof textEditingState>,
+    text: string,
+    ctx: CanvasRenderingContext2D,
+  ): Shape[] {
+    const { width, height } = getTextDimensions({
+      ctx,
+      text,
+      fontSize,
+      fontFamily,
+    });
+
+    return [
+      ...shapes,
+      {
+        ...editingState,
+        id: uuidv4(),
+        text,
+        width: width / scale,
+        height: height / scale,
+        fontSize: fontSize / scale,
+        fontFamily,
+        strokeColor: "white",
+      },
+    ];
+  }
 
   // Saves the text - if Escape clicked
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -86,18 +113,11 @@ export default function useTextEditing(
     const point = viewportHelpers.clientToCanvas(e.clientX, e.clientY);
     if (!point) return;
 
-    // Once the value is set - textarea appears
-    setTextEditingState({
-      type: "text",
-      x: point.x,
-      y: point.y,
-      text: "",
-    });
+    onPointerDownText(point);
   };
 
-  function startEditingText(point: Point) {
+  function onPointerDownText(point: Point) {
     setTextEditingState({
-      id: uuidv4(),
       type: "text",
       x: point.x,
       y: point.y,
@@ -119,7 +139,7 @@ export default function useTextEditing(
   return {
     handleKeyDown,
     handleDoubleClick,
-    startEditingText,
+    onPointerDownText,
     finishEditingIfClickedOutside,
   };
 }
