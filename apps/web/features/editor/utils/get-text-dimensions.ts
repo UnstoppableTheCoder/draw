@@ -1,21 +1,19 @@
-import { RefObject } from "react";
-
 type Dimensions = {
   width: number;
   height: number;
 };
 
-export default function getTextDimensions(
-  canvasRef: RefObject<HTMLCanvasElement | null>,
-  text: string,
-  fontSize: number,
-  fontFamily: string,
-): Dimensions | null {
-  if (!canvasRef) return null;
-
-  const ctx = canvasRef.current?.getContext("2d");
-  if (!ctx) return null;
-
+export default function getTextDimensions({
+  ctx,
+  text,
+  fontSize,
+  fontFamily,
+}: {
+  ctx: CanvasRenderingContext2D;
+  text: string;
+  fontSize: number;
+  fontFamily: string;
+}): Dimensions | null {
   // font -> "20 Arial"
   ctx.font = `${fontSize}px ${fontFamily}`;
 

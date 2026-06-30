@@ -2,7 +2,7 @@ import { KeyboardEvent, PointerEvent, RefObject } from "react";
 import { v4 as uuidv4 } from "uuid";
 import getTextDimensions from "../../utils/get-text-dimensions";
 import * as store from "../../store/selectors";
-import useViewportHelpers from "../viewport/use-viewport";
+import useViewportHelpers from "../viewport/use-viewport-helpers";
 import { Point } from "../../types/types";
 
 export default function useTextEditing(
@@ -15,19 +15,11 @@ export default function useTextEditing(
   const fontSize = store.useFontSize();
   const fontFamily = store.useFontFamily();
   const textEditingState = store.useTextEditingState();
-  const panOffset = store.usePanOffset();
   const scale = store.useScale();
-  const scaleOffset = store.useScaleOffset();
   const selectedTool = store.useSelectedTool();
 
-  const viewportHelpers = useViewportHelpers({
-    canvasRef,
-    panOffset,
-    scale,
-    scaleOffset,
-  });
+  const viewportHelpers = useViewportHelpers(canvasRef);
 
-  // If we have id in textEditingState - we are editing a shape
   const saveTextShape = () => {
     if (!textEditingState) return;
 
@@ -37,7 +29,9 @@ export default function useTextEditing(
       return;
     }
 
-    const dimensions = getTextDimensions(canvasRef, text, fontSize, fontFamily);
+    const ctx = canvasRef.current?.getContext("2d");
+    if (!ctx) return;
+    const dimensions = getTextDimensions({ ctx, text, fontSize, fontFamily });
     if (!dimensions) return;
 
     const width = dimensions.width;
@@ -50,12 +44,12 @@ export default function useTextEditing(
               ? {
                   ...shape,
                   text,
-                  ...getTextDimensions(
-                    canvasRef,
+                  ...getTextDimensions({
+                    ctx,
                     text,
-                    shape.fontSize,
-                    shape.fontFamily,
-                  ),
+                    fontSize: shape.fontSize,
+                    fontFamily: shape.fontFamily,
+                  }),
                 }
               : shape,
           )
@@ -85,21 +79,11 @@ export default function useTextEditing(
     }
   };
 
-  // if click is outside the textarea -> saves text shape
-  const handleParentPointerDown = (e: PointerEvent<HTMLDivElement>) => {
-    if (textEditingState && e.target !== textareaRef.current) {
-      saveTextShape();
-    }
-  };
-
   const handleDoubleClick = (e: PointerEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
     if (!canvas || selectedTool === "eraser") return;
 
-    const point = viewportHelpers.getScreenToCanvasCoordinates(
-      e.clientX,
-      e.clientY,
-    );
+    const point = viewportHelpers.clientToCanvas(e.clientX, e.clientY);
     if (!point) return;
 
     // Once the value is set - textarea appears
@@ -118,13 +102,24 @@ export default function useTextEditing(
       x: point.x,
       y: point.y,
       text: "",
+      fontSize,
+      fontFamily,
     });
+  }
+
+  function finishEditingIfClickedOutside(event: PointerEvent) {
+    if (!textEditingState) return;
+
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+
+    saveTextShape();
   }
 
   return {
     handleKeyDown,
-    handleParentPointerDown,
     handleDoubleClick,
     startEditingText,
+    finishEditingIfClickedOutside,
   };
 }

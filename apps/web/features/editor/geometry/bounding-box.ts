@@ -39,6 +39,7 @@ export function getBoundingBox(shape: Shape) {
 
   const updateBoundsForShapesWithoutPoints = (shape: ShapeWithoutPoints) => {
     const { x, y, width, height } = shape;
+    if (!width || !height) return;
 
     updateBounds({ x, y });
 
@@ -200,18 +201,23 @@ function getSegmentHandle(
   return null;
 }
 
-export function getResizeHandleAtPoint(
-  point: Point,
-  selectedShape: Shape,
-  bounds: SelectedShapeBounds | null,
-  scale: number,
-): ResizeHandleType {
+export function getResizeHandleAtPoint({
+  point,
+  shape,
+  bounds,
+  scale,
+}: {
+  point: Point;
+  shape: Shape;
+  bounds: SelectedShapeBounds | null;
+  scale: number;
+}): ResizeHandleType {
   if (!bounds) {
     return null;
   }
 
-  if (selectedShape.type === "line" || selectedShape.type === "arrow") {
-    return getSegmentHandle(point, selectedShape, scale);
+  if (shape.type === "line" || shape.type === "arrow") {
+    return getSegmentHandle(point, shape, scale);
   }
 
   const { minX, minY, maxX, maxY } = bounds;

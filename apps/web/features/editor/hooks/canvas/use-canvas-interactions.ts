@@ -1,25 +1,33 @@
 import { PointerEvent, RefObject } from "react";
-import useSelectionActions from "../shapes/use-selection-actions";
 import * as store from "../../store/selectors";
 import { usePointerState } from "../pointer/use-pointer-state";
-import useCanvasRenderer from "./use-canvas-renderer";
 import useCanvasCursor from "./use-canvas-cursor";
 import { Point } from "../../types/types";
-import usePan from "../tool/use-pan";
-import useShapeDrawing from "../tool/use-shape-drawing";
-import usePointer from "../pointer/use-pointer";
-import useCanvasEraser from "../tool/use-canvas-eraser";
+import usePan from "../viewport/use-viewport-pan";
+import usePointer from "../pointer/use-pointer-helpers";
+import useShapeResize from "../drawing/use-shape-resize";
+import useShapeDrawing from "../drawing/use-shape-drawing";
+import useSelectionActions from "../drawing/use-shape-selection";
+import useShapeMove from "../drawing/use-shape-move";
+import useTextEditing from "../text/use-text-editing";
+import useShapeEraser from "../drawing/use-shape-eraser";
+import { useCanvasRenderer } from "../../renderer/use-renderer";
+
+const STICKY_TOOLS = new Set(["pan", "freedraw", "eraser"]);
 
 export default function useCanvasInteractions({
   sceneCanvasRef,
   overlayCanvasRef,
   pointerRefs,
+  textareaRef,
 }: {
   sceneCanvasRef: RefObject<HTMLCanvasElement | null>;
   overlayCanvasRef: RefObject<HTMLCanvasElement | null>;
   pointerRefs: ReturnType<typeof usePointerState>;
+  textareaRef: RefObject<HTMLTextAreaElement | null>;
 }) {
-  const scale = store.useScale();
+  const selectedShape = store.useSelectedShape();
+  const setSelectedShape = store.useSetSelectedShape();
   const selectedTool = store.useSelectedTool();
   const setTextEditingState = store.useSetTextEditingState();
   const setSelectedTool = store.useSetSelectedTool();
@@ -30,34 +38,26 @@ export default function useCanvasInteractions({
     overlayCanvasRef,
     pointerRefs,
   });
-
   const selection = useSelectionActions({
+    sceneCanvasRef,
     overlayCanvasRef,
     pointerRefs,
-    scale,
   });
-
   const { handlePanMove } = usePan(pointerRefs);
-
-  const eraser = useCanvasEraser(overlayCanvasRef, pointerRefs);
-  useCanvasRenderer(sceneCanvasRef, pointerRefs);
+  const eraser = useShapeEraser({
+    sceneCanvasRef,
+    overlayCanvasRef,
+    pointerRefs,
+  });
   const pointerHelpers = usePointer(overlayCanvasRef, pointerRefs);
   const canvasCursor = useCanvasCursor({
     overlayCanvasRef,
-    selectedTool,
-    isPanningRef: pointerRefs.isPanningRef,
+    pointerRefs,
   });
-
-  function startEditingText(point: Point) {
-    setTextEditingState({
-      type: "text",
-      x: point.x,
-      y: point.y,
-      text: "",
-      fontSize,
-      fontFamily,
-    });
-  }
+  const { invalidate } = useCanvasRenderer();
+  const move = useShapeMove(sceneCanvasRef, overlayCanvasRef, pointerRefs);
+  const resize = useShapeResize(overlayCanvasRef, pointerRefs);
+  const text = useTextEditing(sceneCanvasRef, textareaRef);
 
   function routePointerDown(
     event: PointerEvent<HTMLCanvasElement>,
@@ -75,10 +75,15 @@ export default function useCanvasInteractions({
         break;
 
       case "text":
-        startEditingText(startPoint);
+        text.startEditingText(startPoint);
         break;
 
       default:
+        pointerRefs.interactionRef.current = {
+          type: "draw",
+          previewShape: null,
+        };
+
         // Set States for drawing tools with points
         drawing.onPointerDownDrawing(event);
     }
@@ -87,14 +92,10 @@ export default function useCanvasInteractions({
   function routePointerMove(
     event: React.PointerEvent<HTMLCanvasElement>,
     endPoint: Point,
-    delta: { dx: number; dy: number },
   ) {
     const isPointerDown = pointerRefs.isPointerDownRef.current;
 
     switch (selectedTool) {
-      case "text":
-        return;
-
       case "pan":
         if (isPointerDown) {
           handlePanMove(event.clientX, event.clientY);
@@ -102,15 +103,7 @@ export default function useCanvasInteractions({
         return;
 
       case "select": {
-        const handled = selection.onPointerMoveSelection(
-          endPoint,
-          delta.dx,
-          delta.dy,
-        );
-
-        if (!handled) {
-          drawing.onPointerMoveDrawing(event);
-        }
+        selection.onPointerMoveSelection(endPoint);
         return;
       }
 
@@ -128,63 +121,46 @@ export default function useCanvasInteractions({
   }
 
   function handleTextEditingOnPointerUp() {
-    if (selectedShape && selectedShape.type === "text") {
-      const isDragging = pointerRefs.isDraggingRef.current;
-      const pointerDownTime = pointerRefs.pointerDownTimeRef.current;
-      if (!pointerDownTime) return;
-      const duration = performance.now() - pointerDownTime;
+    const pointerDownTime = pointerRefs.pointerDownTimeRef.current;
 
-      if (duration <= 250 && !isDragging) {
-        // Start Editing
-        setTextEditingState({ ...selectedShape });
+    // Always reset the timestamp before returning.
+    pointerRefs.pointerDownTimeRef.current = null;
 
-        // Clear Selection if shape is being edited
-        selection.clearSelection();
-      }
+    if (!pointerDownTime) return;
+    if (!selectedShape || selectedShape.type !== "text") return;
 
-      pointerRefs.pointerDownTimeRef.current = null;
-    }
-  }
+    const interaction = pointerRefs.interactionRef.current;
 
-  function handleResizeEnd() {
-    const isResizing = pointerRefs.isResizingRef.current;
-    if (isResizing) {
-      pointerRefs.isResizingRef.current = false;
-      return;
-    }
+    // Only allow editing after a simple click, not a drag or resize
+    if (interaction.type !== "select") return;
+
+    const duration = performance.now() - pointerDownTime;
+
+    if (duration > 250) return;
+
+    setTextEditingState({ ...selectedShape });
+    setSelectedShape(null);
   }
 
   function handleEraseEnd() {
     if (selectedTool === "eraser") {
-      eraser.resetEraserBackground();
+      eraser.onPointerUpErase();
     }
   }
 
   function handleToolReset() {
-    if (
-      selectedTool !== "pan" &&
-      selectedTool !== "freedraw" &&
-      selectedTool !== "eraser" &&
-      !isLocked
-    ) {
+    if (!isLocked && !STICKY_TOOLS.has(selectedTool)) {
       setSelectedTool("select");
     }
-  }
-
-  function handleDrawingEnd(event: PointerEvent<HTMLCanvasElement>) {
-    drawing.onPointerUpDrawing(event);
   }
 
   // ============== DOM Pointer Events Handlers ==============
   function handlePointerDown(event: PointerEvent<HTMLCanvasElement>) {
     event.preventDefault();
-
-    // clear selection if needed
-    selection.clearSelection();
+    text.finishEditingIfClickedOutside(event);
 
     // Sets the required initial states for Middle Mouse Pan
     if (pointerHelpers.handleMiddleMousePan(event)) {
-      canvasCursor.updateCursor();
       return;
     }
 
@@ -208,24 +184,41 @@ export default function useCanvasInteractions({
     const endPoint = pointerHelpers.getCurrentCanvasPoint(event);
     if (!endPoint) return;
 
-    const delta = pointerHelpers.getPointerDelta(endPoint);
-    if (!delta) return;
-
-    routePointerMove(event, endPoint, delta);
+    routePointerMove(event, endPoint);
   }
 
   function handlePointerUp(event: PointerEvent<HTMLCanvasElement>) {
-    pointerHelpers.resetPointerState();
-    canvasCursor.updateCursor();
-
     handleTextEditingOnPointerUp();
 
-    pointerRefs.isDraggingRef.current = false;
+    const interaction = pointerRefs.interactionRef.current;
 
-    handleResizeEnd();
-    handleEraseEnd();
+    switch (interaction.type) {
+      case "draw":
+        drawing.onPointerUpDrawing(event);
+        break;
+
+      case "move":
+        move.onPointerUp();
+        break;
+
+      case "resize":
+        resize.onPointerUp();
+        break;
+
+      // case "rotate":
+      //   rotate.onPointerUp();
+      //   break;
+    }
+
     handleToolReset();
-    handleDrawingEnd(event);
+
+    pointerHelpers.resetPointerState();
+    pointerRefs.eraserTrailRef.current = [];
+    canvasCursor.updateCursor();
+
+    pointerRefs.interactionRef.current.type = "select";
+
+    invalidate();
   }
 
   return { handlePointerDown, handlePointerMove, handlePointerUp };

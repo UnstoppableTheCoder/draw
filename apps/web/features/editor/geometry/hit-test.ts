@@ -13,6 +13,7 @@ import {
   TextShape,
 } from "../types/types";
 import { getAbsolutePoint } from "../utils/get-absolute-point";
+import { getBoundingBox } from "./bounding-box";
 
 type PointsShape = ArrowShape | LineShape | FreeDrawShape;
 
@@ -205,11 +206,14 @@ const pointInText = (
   shape: TextShape,
   tolerance?: number,
 ): TextShape | null => {
+  const { x, y, width, height } = shape;
+  if (!width || !height) return null;
+
   const inside =
-    point.x >= shape.x - (tolerance ?? TOLERANCE) &&
-    point.y >= shape.y - (tolerance ?? TOLERANCE) &&
-    point.x <= shape.x + shape.width + (tolerance ?? TOLERANCE) &&
-    point.y <= shape.y + shape.height + (tolerance ?? TOLERANCE);
+    point.x >= x - (tolerance ?? TOLERANCE) &&
+    point.y >= y - (tolerance ?? TOLERANCE) &&
+    point.x <= x + width + (tolerance ?? TOLERANCE) &&
+    point.y <= y + height + (tolerance ?? TOLERANCE);
 
   return inside ? shape : null;
 };
@@ -283,18 +287,17 @@ export const getShapeAtPosition = ({
   point,
   shapes,
   selectedShape,
-  selectedShapeBounds,
 }: {
   point: Point;
   shapes: Shape[];
-  selectedShape: Shape | null;
-  selectedShapeBounds: SelectedShapeBounds | null;
+  selectedShape?: Shape | null;
 }): Shape | null => {
-  if (
-    selectedShape &&
-    isPointInSelectedShapeBounds(point, selectedShapeBounds)
-  ) {
-    return selectedShape;
+  if (selectedShape) {
+    const selectedShapeBounds = getBoundingBox(selectedShape);
+
+    if (isPointInSelectedShapeBounds(point, selectedShapeBounds)) {
+      return selectedShape;
+    }
   }
 
   for (let i = shapes.length; i >= 0; i--) {

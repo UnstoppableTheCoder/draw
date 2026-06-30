@@ -1,6 +1,6 @@
 import { ChangeEvent, KeyboardEvent, RefObject } from "react";
 import * as store from "../../store/selectors";
-import useViewportHelpers from "../../hooks/viewport/use-viewport";
+import useViewportHelpers from "../../hooks/viewport/use-viewport-helpers";
 
 type TextEditorProps = {
   canvasRef: RefObject<HTMLCanvasElement | null>;
@@ -13,30 +13,19 @@ export default function TextEditor({
   textareaRef,
   onKeyDown,
 }: TextEditorProps) {
-  const panOffset = store.usePanOffset();
   const scale = store.useScale();
-  const scaleOffset = store.useScaleOffset();
 
   const textEditingState = store.useTextEditingState();
   const setTextEditingState = store.useSetTextEditingState();
   const lineHeightMultiplier = store.useLineHeightMultiplier();
 
-  const { getCanvasToScreenCoordinates } = useViewportHelpers({
-    canvasRef,
-    panOffset,
-    scale,
-    scaleOffset,
-  });
+  const { clientToCanvas } = useViewportHelpers(canvasRef);
 
   if (!textEditingState) {
     return null;
   }
 
-  const point = getCanvasToScreenCoordinates(
-    textEditingState.x,
-    textEditingState.y,
-  );
-
+  const point = clientToCanvas(textEditingState.x, textEditingState.y);
   if (!point) return;
 
   function handleChange(e: ChangeEvent<HTMLTextAreaElement>) {
@@ -71,7 +60,7 @@ export default function TextEditor({
       onChange={handleChange}
       onKeyDown={onKeyDown}
       className="fixed field-sizing-content resize-none border-none outline-none bg-transparent overflow-hidden"
-      style={style}
+      style={{ ...style, zIndex: 2 }}
     />
   );
 }

@@ -11,7 +11,7 @@ import { drawText } from "./draw-text";
 type Props = {
   ctx: CanvasRenderingContext2D;
   shapes: Shape[];
-  skipShapeId: string | undefined;
+  skipShapeId?: string;
 };
 
 export const renderShapes = ({ ctx, shapes, skipShapeId }: Props) => {

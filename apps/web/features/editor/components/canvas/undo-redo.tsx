@@ -2,19 +2,10 @@
 
 import { Redo2, Undo2 } from "lucide-react";
 import { Button } from "../ui/button";
-import {
-  useCanRedo,
-  useCanUndo,
-  useRedo,
-  useUndo,
-} from "../../store/selectors";
+import useHistory from "../../hooks/history/use-history";
 
 export const UndoRedo = () => {
-  const canUndo = useCanUndo();
-  const canRedo = useCanRedo();
-
-  const undo = useUndo();
-  const redo = useRedo();
+  const { canRedo, canUndo, undo, redo } = useHistory();
 
   return (
     <div className="flex items-center overflow-hidden rounded-xl border border-neutral-300 bg-white shadow-sm">

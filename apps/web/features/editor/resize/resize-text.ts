@@ -1,16 +1,15 @@
-import { RefObject } from "react";
 import { TOLERANCE } from "../constants/canvas";
 import { SelectedShapeBounds, TextShape } from "../types/types";
 import getTextDimensions from "../utils/get-text-dimensions";
 
 export default function resizeTextShape({
-  canvasRef,
+  ctx,
   shape,
   rect,
   initialBounds,
   initialFontSize,
 }: {
-  canvasRef: RefObject<HTMLCanvasElement | null>;
+  ctx: CanvasRenderingContext2D;
   shape: TextShape;
   rect: {
     x: number;
@@ -38,12 +37,12 @@ export default function resizeTextShape({
 
   updatedShape.fontSize = Math.max(1, initialFontSize * scale);
 
-  const dimensions = getTextDimensions(
-    canvasRef,
-    updatedShape.text,
-    updatedShape.fontSize,
-    updatedShape.fontFamily,
-  );
+  const dimensions = getTextDimensions({
+    ctx,
+    text: updatedShape.text,
+    fontSize: updatedShape.fontSize,
+    fontFamily: updatedShape.fontFamily,
+  });
 
   if (dimensions) {
     updatedShape.width = dimensions.width;

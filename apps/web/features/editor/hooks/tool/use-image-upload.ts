@@ -3,25 +3,25 @@ import { IMAGE_GAP, MAX_IMAGE_SIZE } from "../../constants/image";
 import { loadImageInfos } from "../../utils/image-loader";
 import { createImageShape } from "../../shapes/create-image-shape";
 import * as store from "../../store/selectors";
-import useViewportHelpers from "../viewport/use-viewport";
+import useViewportHelpers from "../viewport/use-viewport-helpers";
+import { usePointerState } from "../pointer/use-pointer-state";
+import { getBoundingBox } from "../../geometry/bounding-box";
+import { useCanvasRenderer } from "../../renderer/use-renderer";
 
 export default function useImageUpload(
-  canvasRef: RefObject<HTMLCanvasElement | null>,
+  sceneCanvasRef: RefObject<HTMLCanvasElement | null>,
+  overlayCanvasRef: RefObject<HTMLCanvasElement | null>,
   imageInputRef: RefObject<HTMLInputElement | null>,
+  pointerRefs: ReturnType<typeof usePointerState>,
 ) {
-  const panOffset = store.usePanOffset();
-  const scale = store.useScale();
-  const scaleOffset = store.useScaleOffset();
   const selectedTool = store.useSelectedTool();
   const setSelectedTool = store.useSetSelectedTool();
   const setShapes = store.useSetShapes();
 
-  const viewportHelpers = useViewportHelpers({
-    canvasRef,
-    panOffset,
-    scale,
-    scaleOffset,
-  });
+  const { invalidate, invalidateOverlay, invalidateScene } =
+    useCanvasRenderer();
+
+  const { clientToCanvas } = useViewportHelpers(sceneCanvasRef);
 
   const getGridSize = (count: number) => {
     const cols = Math.ceil(Math.sqrt(count));
@@ -34,7 +34,7 @@ export default function useImageUpload(
     const files = e.target.files;
     if (!files?.length) return;
 
-    const canvas = canvasRef.current;
+    const canvas = sceneCanvasRef.current;
     if (!canvas) return;
 
     const imageInfos = await loadImageInfos(files);
@@ -43,10 +43,7 @@ export default function useImageUpload(
 
     const CELL_SIZE = MAX_IMAGE_SIZE + IMAGE_GAP;
 
-    const canvasCoords = viewportHelpers.getScreenToCanvasCoordinates(
-      canvas.width / 2,
-      canvas.height / 2,
-    );
+    const canvasCoords = clientToCanvas(canvas.width / 2, canvas.height / 2);
     if (!canvasCoords) return;
     const { x: centerX, y: centerY } = canvasCoords;
 
@@ -74,7 +71,14 @@ export default function useImageUpload(
     setShapes((prev) => [...prev, ...shapes]);
     setSelectedTool("select");
 
-    e.target.value = "";
+    pointerRefs.interactionRef.current = {
+      type: "select",
+      activeShapeId: shapes[0]!.id,
+      previewShape: shapes[0]!,
+      bounds: getBoundingBox(shapes[0]!),
+    };
+
+    invalidate();
   };
 
   // Clicks image input if tool is image

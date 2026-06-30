@@ -1,3 +1,5 @@
+"use client"
+
 import { RefObject, useEffect, useRef } from "react";
 import {
   EraserPoint,
@@ -15,26 +17,25 @@ export type InteractionState =
     }
   | {
       type: "draw";
-      previewShape: Shape;
+      previewShape: Shape | null;
     }
   | {
       type: "select";
       activeShapeId: string;
-      previewShape: Shape;
-      dragOffset: Point;
+      previewShape: Shape | null;
       bounds: SelectedShapeBounds;
     }
   | {
       type: "move";
       activeShapeId: string;
-      previewShape: Shape;
+      previewShape: Shape | null;
       dragOffset: Point;
       bounds: SelectedShapeBounds;
     }
   | {
       type: "resize";
       activeShapeId: string;
-      previewShape: Shape;
+      previewShape: Shape | null;
       handle: ResizeHandleType;
       bounds: SelectedShapeBounds;
       initialBounds: SelectedShapeBounds;
@@ -48,7 +49,7 @@ export type InteractionState =
   | {
       type: "rotate";
       activeShapeId: string;
-      previewShape: Shape;
+      previewShape: Shape | null;
       bounds: SelectedShapeBounds;
       startAngle: number;
       rotationCenter: Point;
@@ -72,19 +73,19 @@ export function resetInteraction(interactionRef: RefObject<InteractionState>) {
 export function usePointerState() {
   const selectedTool = useSelectedTool();
   const isPointerDownRef = useRef(false);
-  const startPointRef = useRef<Point | null>(null);
+  const drawingStartRef = useRef<Point | null>(null);
   const drawingPointsRef = useRef<PointTuple[]>([]);
   const isPanningRef = useRef(false);
   const panStartMouseRef = useRef<Point | null>(null);
   const panStartOffsetRef = useRef<Point | null>(null);
   const pointerDownTimeRef = useRef<number | null>(null);
-  const eraserPointsRef = useRef<EraserPoint[]>([]);
+  const eraserTrailRef = useRef<EraserPoint[]>([]);
   const interactionRef = useRef<InteractionState>(createEmptyInteraction());
 
   useEffect(() => {
     isPointerDownRef.current = false;
 
-    startPointRef.current = null;
+    drawingStartRef.current = null;
 
     drawingPointsRef.current = [];
 
@@ -94,7 +95,7 @@ export function usePointerState() {
 
     pointerDownTimeRef.current = null;
 
-    eraserPointsRef.current = [];
+    eraserTrailRef.current = [];
 
     resetInteraction(interactionRef);
   }, [selectedTool]);
@@ -102,7 +103,7 @@ export function usePointerState() {
   return {
     // Pointer
     isPointerDownRef,
-    startPointRef,
+    drawingStartRef,
 
     // Drawing
     drawingPointsRef,
@@ -116,7 +117,7 @@ export function usePointerState() {
     pointerDownTimeRef,
 
     // Eraser
-    eraserPointsRef,
+    eraserTrailRef,
 
     // Interaction
     interactionRef,

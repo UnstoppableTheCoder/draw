@@ -1,7 +1,8 @@
 import { PointerEvent, RefObject } from "react";
 import { usePointerState } from "./use-pointer-state";
 import * as store from "../../store/selectors";
-import useViewportHelpers from "../viewport/use-viewport";
+import useViewportHelpers from "../viewport/use-viewport-helpers";
+import useCanvasCursor from "../canvas/use-canvas-cursor";
 
 export default function usePointer(
   overlayCanvasRef: RefObject<HTMLCanvasElement | null>,
@@ -9,9 +10,8 @@ export default function usePointer(
 ) {
   const panOffset = store.usePanOffset();
 
-  const viewportHelpers = useViewportHelpers({
-    canvasRef: overlayCanvasRef,
-  });
+  const { clientToCanvas } = useViewportHelpers(overlayCanvasRef);
+  const canvasCursor = useCanvasCursor({ overlayCanvasRef, pointerRefs });
 
   // Sets the required initial states
   function initializePointerState(event: PointerEvent<HTMLCanvasElement>) {
@@ -19,12 +19,9 @@ export default function usePointer(
     canvas.setPointerCapture(event.pointerId);
     pointerRefs.isPointerDownRef.current = true;
 
-    const point = viewportHelpers.getScreenToCanvasCoordinates(
-      event.clientX,
-      event.clientY,
-    );
+    const point = clientToCanvas(event.clientX, event.clientY);
 
-    pointerRefs.startPointRef.current = point;
+    pointerRefs.drawingStartRef.current = point;
     return point;
   }
 
@@ -44,12 +41,13 @@ export default function usePointer(
     if (event.button !== 1) return false;
 
     initializePanState(event);
+    canvasCursor.updateCursor();
     return true;
   }
 
   // Get Canvas Point
   function getCurrentCanvasPoint(e: React.PointerEvent<HTMLCanvasElement>) {
-    return viewportHelpers.getScreenToCanvasCoordinates(e.clientX, e.clientY);
+    return clientToCanvas(e.clientX, e.clientY);
   }
 
   // Resets the required pointer states - pointerUp
