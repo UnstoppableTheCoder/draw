@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
 
 import { ImageShape } from "../types/types";
-import { ImageInfo } from "../utils/image-loader";
+import { ImageInfo } from "../image/image-loader";
 
 type Props = {
   image: ImageInfo;

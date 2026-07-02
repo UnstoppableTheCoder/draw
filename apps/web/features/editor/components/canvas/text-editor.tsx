@@ -1,5 +1,5 @@
 import { ChangeEvent, KeyboardEvent, RefObject } from "react";
-import * as store from "../../store/selectors";
+import * as store from "../../store/editor/selectors";
 import useViewportHelpers from "../../hooks/viewport/use-viewport-helpers";
 
 type TextEditorProps = {
@@ -14,7 +14,6 @@ export default function TextEditor({
   onKeyDown,
 }: TextEditorProps) {
   const scale = store.useScale();
-
   const textEditingState = store.useTextEditingState();
   const setTextEditingState = store.useSetTextEditingState();
   const lineHeightMultiplier = store.useLineHeightMultiplier();

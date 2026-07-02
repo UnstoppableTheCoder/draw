@@ -1,6 +1,6 @@
 import { PointerEvent, RefObject } from "react";
 import { usePointerState } from "./use-pointer-state";
-import * as store from "../../store/selectors";
+import * as store from "../../store/editor/selectors";
 import useViewportHelpers from "../viewport/use-viewport-helpers";
 import useCanvasCursor from "../canvas/use-canvas-cursor";
 

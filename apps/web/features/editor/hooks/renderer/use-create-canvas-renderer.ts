@@ -3,14 +3,17 @@
 import { RefObject, useCallback, useEffect, useRef } from "react";
 import { usePointerState } from "../pointer/use-pointer-state";
 import useViewportHelpers from "../viewport/use-viewport-helpers";
-import { SelectedShapeBounds, Shape } from "../../types/types";
-import drawLineSelection from "../../draw/draw-line-selection";
-import drawSelectionBounds from "../../draw/draw-selection-bounds";
-import { useEditorStore } from "../../store/editor-store";
-import { clearCanvas } from "../../draw/clear-canvas";
+import { SelectedBounds, Shape } from "../../types/types";
+import drawSelectionBounds from "../../draw/selection/bounds";
 import { renderShapes } from "../../draw/render-shapes";
-import drawEraserBackground from "../../draw/draw-eraser-background";
-import { getBoundingBox } from "../../geometry/bounding-box";
+import drawLineSelection from "../../draw/selection/line-selection";
+import drawEraserBackground from "../../draw/eraser/background";
+import { clearCanvas } from "../../draw/clear-canvas";
+import { getGroupBounds } from "../interactions/use-shape-selection";
+import drawMarqueeSelection from "../../draw/selection/marquee-selection";
+import { normalizeRect } from "../../geometry/normalize-rect";
+import { getBoundingBox } from "../../geometry/bounding-box/get-bounding-box";
+import { useEditorStore } from "../../store/editor/editor-store";
 
 export default function useCreateCanvasRenderer({
   sceneCanvasRef,
@@ -27,24 +30,38 @@ export default function useCreateCanvasRenderer({
 
   const viewportHelpers = useViewportHelpers();
 
-  const renderSelection = useCallback(
+  const renderShapeSelection = useCallback(
     (
       ctx: CanvasRenderingContext2D,
       shape: Shape,
-      bounds: SelectedShapeBounds,
+      bounds: SelectedBounds,
       scale: number,
+      selectionType: "child" | "group",
     ) => {
       if (shape.type === "arrow" || shape.type === "line") {
-        drawLineSelection(ctx, scale, shape);
+        drawLineSelection(ctx, scale, shape, selectionType);
       } else {
-        drawSelectionBounds(ctx, scale, bounds);
+        drawSelectionBounds(ctx, scale, bounds, selectionType);
       }
+    },
+    [],
+  );
+
+  const renderGroupSelection = useCallback(
+    (
+      ctx: CanvasRenderingContext2D,
+      bounds: SelectedBounds,
+      scale: number,
+      selectionType: "child" | "group" = "child",
+    ) => {
+      drawSelectionBounds(ctx, scale, bounds, selectionType);
     },
     [],
   );
 
   const renderScene = useCallback(() => {
     if (!sceneCanvasRef) return;
+
     const ctx = sceneCanvasRef.current?.getContext("2d");
     if (!ctx) return;
 
@@ -58,32 +75,20 @@ export default function useCreateCanvasRenderer({
     ctx.save();
 
     viewportHelpers.applyViewportTransform(ctx);
-    console.log("scene: ===> ");
-    console.log({
-      scale,
-      panOffset,
-      scaleOffset,
-    });
 
-    let skipShapeId: string | undefined;
-
-    switch (interaction.type) {
-      case "move":
-      case "resize":
-      case "rotate":
-        skipShapeId = interaction.activeShapeId;
-        break;
-
-      default:
-        skipShapeId = textEditingState?.id;
-    }
-
-    console.log("scene shapes rendering");
+    const skipShapeIds =
+      interaction.type === "move" ||
+      interaction.type === "resize" ||
+      interaction.type === "rotate"
+        ? interaction.previewShapes.map((shape) => shape.id)
+        : textEditingState && textEditingState.id
+          ? [textEditingState.id]
+          : [];
 
     renderShapes({
       ctx,
       shapes,
-      skipShapeId,
+      skipShapeIds,
     });
 
     ctx.restore();
@@ -91,69 +96,101 @@ export default function useCreateCanvasRenderer({
 
   const renderOverlay = useCallback(() => {
     if (!overlayCanvasRef) return;
+
     const ctx = overlayCanvasRef.current?.getContext("2d");
     if (!ctx) return;
 
     const interaction = pointerRefs.interactionRef.current;
-
-    const { selectedShape, scale, panOffset, scaleOffset } =
+    const { shapes, selectedShapeIds, scale, panOffset, scaleOffset } =
       useEditorStore.getState();
 
     clearCanvas(ctx);
 
     ctx.save();
-    viewportHelpers.applyViewportTransform(ctx);
-    console.log("overlay: ===> ");
-    console.log({
-      scale,
-      panOffset,
-      scaleOffset,
-    });
 
+    viewportHelpers.applyViewportTransform(ctx);
+
+    // Marquee Selection Box
+    const marqueeSelect =
+      interaction.type === "selection-box" ? interaction : null;
+
+    if (marqueeSelect) {
+      const { startPoint, endPoint } = marqueeSelect;
+
+      const marqueeSelection = {
+        type: "selection-box" as const,
+        ...normalizeRect(startPoint, endPoint),
+      };
+
+      if (marqueeSelection) {
+        drawMarqueeSelection(ctx, marqueeSelection, scale);
+      }
+    }
+
+    // Render Preview Shapes
     const isTransformInteraction =
       interaction.type === "move" ||
       interaction.type === "resize" ||
       interaction.type === "rotate";
 
-    const previewShape =
-      interaction.type === "draw" || isTransformInteraction
+    // Preview Shapes
+    const previewShapes =
+      interaction.type === "draw"
         ? interaction.previewShape
-        : null;
+          ? [interaction.previewShape]
+          : []
+        : isTransformInteraction
+          ? interaction.previewShapes
+          : [];
 
-    if (previewShape) {
-      console.log("overlay shapes rendering");
+    if (previewShapes.length > 0) {
       renderShapes({
         ctx,
-        shapes: [previewShape],
+        shapes: previewShapes,
       });
     }
 
+    // Eraser Trail
     if (pointerRefs.eraserTrailRef.current.length > 0) {
       drawEraserBackground({
         ctx,
         eraserPoints: pointerRefs.eraserTrailRef.current,
-        panOffset,
         scale,
-        scaleOffset,
       });
     }
 
-    const selectionShape = isTransformInteraction
-      ? previewShape
-      : selectedShape;
+    // Selection
+    const selectionShapes = isTransformInteraction
+      ? interaction.previewShapes
+      : shapes.filter((shape) => selectedShapeIds.includes(shape.id));
 
-    const selectionBounds = isTransformInteraction
-      ? interaction.bounds
-      : selectionShape
-        ? getBoundingBox(selectionShape)
-        : null;
+    if (selectionShapes.length === 1) {
+      const shape = selectionShapes[0];
+      if (!shape) return;
 
-    if (selectionShape && selectionBounds) {
-      renderSelection(ctx, selectionShape, selectionBounds, scale);
+      renderShapeSelection(ctx, shape, getBoundingBox(shape), scale, "group");
+    } else if (selectionShapes.length > 1) {
+      const bounds = isTransformInteraction
+        ? interaction.groupBounds
+        : getGroupBounds(selectionShapes);
+
+      selectionShapes.forEach((shape) => {
+        renderShapeSelection(ctx, shape, getBoundingBox(shape), scale, "child");
+      });
+
+      if (bounds) {
+        renderGroupSelection(ctx, bounds, scale, "group");
+      }
     }
 
     ctx.restore();
-  }, [overlayCanvasRef, pointerRefs, renderSelection, viewportHelpers]);
+  }, [
+    overlayCanvasRef,
+    pointerRefs,
+    renderShapeSelection,
+    renderGroupSelection,
+    viewportHelpers,
+  ]);
 
   const flushRender = useCallback(() => {
     frameIdRef.current = null;

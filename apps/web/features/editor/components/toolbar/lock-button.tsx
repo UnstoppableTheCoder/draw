@@ -1,6 +1,6 @@
 "use client";
 
-import { useIsLocked, useSetIsLocked } from "../../store/selectors";
+import { useIsLocked, useSetIsLocked } from "../../store/editor/selectors";
 import Hint from "../hint";
 import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";

@@ -3,17 +3,20 @@
 import { Minus } from "lucide-react";
 import { PropertiesPanelItemWrapper } from "../properties-panel-item-wrapper";
 import { PropertyItem } from "../property-item";
-import { useSelectedTool } from "@/features/editor/store/selectors";
+import { useSelectedTool } from "@/features/editor/store/editor/selectors";
+import { useState } from "react";
+
+type StrokeWidth = "thin" | "bold" | "extrabold";
 
 export const StrokeWidthPicker = () => {
+  const [strokeWidth, setStrokeWidth] = useState<StrokeWidth>("thin");
+
   const selectedTool = useSelectedTool();
 
   // Rendering Stroke Width Picker Conditionally
   if (selectedTool === "text") {
     return;
   }
-
-  const strokeWidth: any = "thin";
 
   const strokeWidths = [
     {

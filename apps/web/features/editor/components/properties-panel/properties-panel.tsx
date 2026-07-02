@@ -1,6 +1,6 @@
 "use client";
 
-import { useSelectedTool } from "../../store/selectors";
+import { useSelectedShapeIds, useSelectedTool } from "../../store/editor/selectors";
 import BackgroundColorPicker from "./color-picker/background-color-picker";
 import StrokeColorPicker from "./color-picker/stroke-color-picker";
 import { FontTools } from "./font-tools/font-tools";
@@ -9,12 +9,14 @@ import { StrokeWidthPicker } from "./stroke-width-picker/stroke-width-picker";
 
 export const PropertiesPanel = () => {
   const selectedTool = useSelectedTool();
+  const selectedShapeIds = useSelectedShapeIds();
 
   // Render Properties Panel Conditionally
   if (
-    selectedTool === "select" ||
-    selectedTool === "pan" ||
-    selectedTool === "eraser"
+    (selectedTool === "select" ||
+      selectedTool === "pan" ||
+      selectedTool === "eraser") &&
+    selectedShapeIds.length === 0
   ) {
     return;
   }

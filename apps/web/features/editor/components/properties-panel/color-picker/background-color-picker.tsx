@@ -1,6 +1,6 @@
 import React from "react";
 import ColorPicker from "./color-picker";
-import { useSelectedTool } from "@/features/editor/store/selectors";
+import { useSelectedTool } from "@/features/editor/store/editor/selectors";
 
 const BackgroundColorPicker = () => {
   const selectedTool = useSelectedTool();

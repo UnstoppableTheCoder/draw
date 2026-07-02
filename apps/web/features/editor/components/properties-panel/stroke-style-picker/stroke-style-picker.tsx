@@ -3,7 +3,7 @@
 import { Minus } from "lucide-react";
 import { PropertyItem } from "../property-item";
 import { PropertiesPanelItemWrapper } from "../properties-panel-item-wrapper";
-import { useSelectedTool } from "@/features/editor/store/selectors";
+import { useSelectedTool } from "@/features/editor/store/editor/selectors";
 
 export const StrokeStylePicker = () => {
   const selectedTool = useSelectedTool();
@@ -13,6 +13,7 @@ export const StrokeStylePicker = () => {
     return;
   }
 
+  // Create state for it
   const strokeStyle: any = "solid";
 
   const styles = [

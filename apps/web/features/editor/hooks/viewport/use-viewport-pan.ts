@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from "react";
 import { usePointerState } from "../pointer/use-pointer-state";
-import { useCanvasRenderer } from "../../renderer/use-renderer";
-import { useSetPanOffset } from "../../store/selectors";
+import { useSetPanOffset } from "../../store/editor/selectors";
+import { useCanvasRenderer } from "../../context/use-renderer";
 
 export default function usePan(
   pointerRefs: ReturnType<typeof usePointerState>,

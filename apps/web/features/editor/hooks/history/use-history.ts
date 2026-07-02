@@ -1,11 +1,11 @@
 import { useCallback } from "react";
-import { useCanvasRenderer } from "../../renderer/use-renderer";
 import {
   useCanRedo,
   useCanUndo,
   useRedo,
   useUndo,
-} from "../../store/selectors";
+} from "../../store/editor/selectors";
+import { useCanvasRenderer } from "../../context/use-renderer";
 
 export default function useHistory() {
   const canUndo = useCanUndo();

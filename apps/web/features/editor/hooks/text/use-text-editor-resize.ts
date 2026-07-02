@@ -1,5 +1,5 @@
 import { RefObject, useEffect } from "react";
-import * as store from "../../store/selectors";
+import * as store from "../../store/editor/selectors";
 import { FontSizePicker } from "../../components/properties-panel/font-tools/font-size-picker/font-size-picker";
 
 export default function useTextEditorResize(

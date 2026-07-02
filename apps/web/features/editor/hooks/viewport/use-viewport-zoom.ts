@@ -1,9 +1,9 @@
 import { RefObject, useCallback, useEffect } from "react";
 import { MAX_SCALE, MIN_SCALE } from "../../constants/canvas";
-import * as store from "../../store/selectors";
+import * as store from "../../store/editor/selectors";
 import { Point } from "../../types/types";
 import useViewportHelpers from "./use-viewport-helpers";
-import { useCanvasRenderer } from "../../renderer/use-renderer";
+import { useCanvasRenderer } from "../../context/use-renderer";
 
 const ZOOM_STEP = 0.1;
 

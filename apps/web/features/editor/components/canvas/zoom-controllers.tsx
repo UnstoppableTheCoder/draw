@@ -2,7 +2,7 @@ import { Minus, Plus } from "lucide-react";
 import { Button } from "../ui/button";
 import { RefObject } from "react";
 
-import * as store from "../../store/selectors";
+import * as store from "../../store/editor/selectors";
 import useViewportZoom from "../../hooks/viewport/use-viewport-zoom";
 
 export default function ZoomControllers({

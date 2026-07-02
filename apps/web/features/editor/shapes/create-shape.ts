@@ -10,7 +10,7 @@ import {
   RectangleShape,
   Shape,
 } from "../types/types";
-import { normalizeRect } from "../utils/normalize-rect";
+import { normalizeRect } from "../geometry/normalize-rect";
 import { v4 as uuidv4 } from "uuid";
 
 // Rectangle

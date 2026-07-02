@@ -7,9 +7,7 @@ import Hint from "../hint";
 import { Button } from "../ui/button";
 import {
   useSelectedTool,
-  useSetSelectedShape,
-  useSetSelectedTool,
-} from "../../store/selectors";
+} from "../../store/editor/selectors";
 import useToolActions from "../../hooks/tool/use-tool-actions";
 
 type ToolbarButtonProp = {

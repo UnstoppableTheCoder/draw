@@ -1,15 +1,20 @@
-"use client"
+"use client";
 
 import { RefObject, useEffect, useRef } from "react";
 import {
   EraserPoint,
   Point,
   PointTuple,
-  SelectedShapeBounds,
+  SelectedBounds,
   Shape,
 } from "../../types/types";
 import { ResizeHandleType } from "../../types/resize-handle";
-import { useSelectedTool } from "../../store/selectors";
+import { useSelectedTool } from "../../store/editor/selectors";
+
+type InteractionSelection = {
+  previewShapes: Shape[];
+  groupBounds: SelectedBounds;
+};
 
 export type InteractionState =
   | {
@@ -19,41 +24,35 @@ export type InteractionState =
       type: "draw";
       previewShape: Shape | null;
     }
-  | {
+  | ({
       type: "select";
-      activeShapeId: string;
-      previewShape: Shape | null;
-      bounds: SelectedShapeBounds;
-    }
-  | {
+    } & InteractionSelection)
+  | ({
       type: "move";
-      activeShapeId: string;
-      previewShape: Shape | null;
-      dragOffset: Point;
-      bounds: SelectedShapeBounds;
-    }
-  | {
+      dragOffsets: Record<string, Point>;
+    } & InteractionSelection)
+  | ({
       type: "resize";
-      activeShapeId: string;
-      previewShape: Shape | null;
       handle: ResizeHandleType;
-      bounds: SelectedShapeBounds;
-      initialBounds: SelectedShapeBounds;
-      initialFontSize?: number;
-      freeDrawPoints?: PointTuple[];
-      lineResizeState?: {
-        start: Point;
-        end: Point;
-      };
-    }
-  | {
+      initialShapes: Shape[];
+      initialGroupBounds: SelectedBounds;
+
+      // Used only for specific shape types
+      initialFontSizes?: Record<string, number>;
+      freeDrawPoints?: Record<string, PointTuple[]>;
+      lineResizeStates?: Record<
+        string,
+        {
+          start: Point;
+          end: Point;
+        }
+      >;
+    } & InteractionSelection)
+  | ({
       type: "rotate";
-      activeShapeId: string;
-      previewShape: Shape | null;
-      bounds: SelectedShapeBounds;
       startAngle: number;
       rotationCenter: Point;
-    }
+    } & InteractionSelection)
   | {
       type: "selection-box";
       startPoint: Point;
@@ -72,21 +71,35 @@ export function resetInteraction(interactionRef: RefObject<InteractionState>) {
 
 export function usePointerState() {
   const selectedTool = useSelectedTool();
+
+  // Pointer
   const isPointerDownRef = useRef(false);
+
+  // Drawing
   const drawingStartRef = useRef<Point | null>(null);
   const drawingPointsRef = useRef<PointTuple[]>([]);
+
+  // Panning
   const isPanningRef = useRef(false);
   const panStartMouseRef = useRef<Point | null>(null);
   const panStartOffsetRef = useRef<Point | null>(null);
+
+  // Text
   const pointerDownTimeRef = useRef<number | null>(null);
+
+  // Eraser
   const eraserTrailRef = useRef<EraserPoint[]>([]);
+
+  // Current interaction
   const interactionRef = useRef<InteractionState>(createEmptyInteraction());
+
+  // Dragging
+  const isDraggingRef = useRef<boolean>(false);
 
   useEffect(() => {
     isPointerDownRef.current = false;
 
     drawingStartRef.current = null;
-
     drawingPointsRef.current = [];
 
     isPanningRef.current = false;
@@ -98,14 +111,16 @@ export function usePointerState() {
     eraserTrailRef.current = [];
 
     resetInteraction(interactionRef);
+
+    isDraggingRef.current = false;
   }, [selectedTool]);
 
   return {
     // Pointer
     isPointerDownRef,
-    drawingStartRef,
 
     // Drawing
+    drawingStartRef,
     drawingPointsRef,
 
     // Panning
@@ -121,5 +136,8 @@ export function usePointerState() {
 
     // Interaction
     interactionRef,
+
+    // Dragging
+    isDraggingRef
   };
 }

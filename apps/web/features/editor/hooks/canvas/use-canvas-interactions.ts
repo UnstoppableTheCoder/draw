@@ -1,17 +1,17 @@
 import { PointerEvent, RefObject } from "react";
-import * as store from "../../store/selectors";
+import * as store from "../../store/editor/selectors";
 import { usePointerState } from "../pointer/use-pointer-state";
 import useCanvasCursor from "./use-canvas-cursor";
 import { Point } from "../../types/types";
 import usePan from "../viewport/use-viewport-pan";
 import usePointer from "../pointer/use-pointer-helpers";
-import useShapeResize from "../drawing/use-shape-resize";
-import useShapeDrawing from "../drawing/use-shape-drawing";
-import useSelectionActions from "../drawing/use-shape-selection";
-import useShapeMove from "../drawing/use-shape-move";
 import useTextEditing from "../text/use-text-editing";
-import useShapeEraser from "../drawing/use-shape-eraser";
-import { useCanvasRenderer } from "../../renderer/use-renderer";
+import useShapeDrawing from "../interactions/use-shape-drawing";
+import useSelectionActions from "../interactions/use-shape-selection";
+import useShapeEraser from "../interactions/use-shape-eraser";
+import useShapeMove from "../interactions/use-shape-move";
+import useShapeResize from "../interactions/use-shape-resize";
+import { useCanvasRenderer } from "../../context/use-renderer";
 
 const STICKY_TOOLS = new Set(["pan", "freedraw", "eraser"]);
 
@@ -26,12 +26,13 @@ export default function useCanvasInteractions({
   pointerRefs: ReturnType<typeof usePointerState>;
   textareaRef: RefObject<HTMLTextAreaElement | null>;
 }) {
-  const selectedShape = store.useSelectedShape();
-  const setSelectedShape = store.useSetSelectedShape();
   const selectedTool = store.useSelectedTool();
   const setTextEditingState = store.useSetTextEditingState();
   const setSelectedTool = store.useSetSelectedTool();
   const isLocked = store.useIsLocked();
+  const selectedShapeIds = store.useSelectedShapeIds();
+  const setSelectedShapeIds = store.useSetSelectedShapeIds();
+  const shapes = store.useShapes();
 
   const drawing = useShapeDrawing({
     sceneCanvasRef,
@@ -71,12 +72,16 @@ export default function useCanvasInteractions({
 
       case "select":
         // Handles Select and Resize on Pointer Down
-        selection.onPointerDownSelection(startPoint);
+        selection.onPointerDownSelection(startPoint, event.shiftKey);
         break;
 
       case "text":
         text.onPointerDownText(startPoint);
         break;
+
+      case "eraser":
+        eraser.onPointerMoveErase(startPoint);
+        return;
 
       default:
         pointerRefs.interactionRef.current = {
@@ -127,6 +132,11 @@ export default function useCanvasInteractions({
     pointerRefs.pointerDownTimeRef.current = null;
 
     if (!pointerDownTime) return;
+
+    const selectedShape = shapes.find((shape) =>
+      selectedShapeIds.includes(shape.id),
+    );
+
     if (!selectedShape || selectedShape.type !== "text") return;
 
     const interaction = pointerRefs.interactionRef.current;
@@ -139,7 +149,7 @@ export default function useCanvasInteractions({
     if (duration > 250) return;
 
     setTextEditingState({ ...selectedShape });
-    setSelectedShape(null);
+    setSelectedShapeIds([]);
   }
 
   function handleToolReset() {
@@ -167,7 +177,9 @@ export default function useCanvasInteractions({
   }
 
   function handlePointerMove(event: React.PointerEvent<HTMLCanvasElement>) {
-    canvasCursor.updateCursor();
+    if (selectedTool !== "select") {
+      canvasCursor.updateCursor();
+    }
 
     // Middle mouse pan can happen regardless of selected tool
     if (pointerRefs.isPanningRef.current) {
@@ -199,6 +211,10 @@ export default function useCanvasInteractions({
         resize.onPointerUp();
         break;
 
+      case "selection-box":
+        selection.onPointerUpSelection(event.shiftKey);
+        break;
+
       // case "rotate":
       //   rotate.onPointerUp();
       //   break;
@@ -209,8 +225,6 @@ export default function useCanvasInteractions({
     pointerHelpers.resetPointerState();
     pointerRefs.eraserTrailRef.current = [];
     canvasCursor.updateCursor();
-
-    pointerRefs.interactionRef.current.type = "select";
 
     invalidate();
   }

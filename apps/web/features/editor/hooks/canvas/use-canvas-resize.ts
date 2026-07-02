@@ -1,5 +1,5 @@
 import { RefObject, useEffect } from "react";
-import { useCanvasRenderer } from "../../renderer/use-renderer";
+import { useCanvasRenderer } from "../../context/use-renderer";
 
 export default function useCanvasResize(
   sceneCanvasRef: RefObject<HTMLCanvasElement | null>,

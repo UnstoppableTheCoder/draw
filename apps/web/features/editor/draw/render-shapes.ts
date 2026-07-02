@@ -1,22 +1,27 @@
 import { Shape } from "../types/types";
-import { drawArrow } from "./draw-arrow";
-import { drawDiamond } from "./draw-diamond";
-import { drawEllipse } from "./draw-ellipse";
-import { drawFreeDraw } from "./draw-freedraw";
-import { drawImage } from "./draw-image";
-import { drawLine } from "./draw-line";
-import { drawRectangle } from "./draw-rectangle";
-import { drawText } from "./draw-text";
+import { drawArrow } from "./shapes/arrow";
+import { drawDiamond } from "./shapes/diamond";
+import { drawEllipse } from "./shapes/ellipse";
+import { drawFreeDraw } from "./shapes/freedraw";
+import { drawImage } from "./shapes/image";
+import { drawLine } from "./shapes/line";
+import { drawRectangle } from "./shapes/rectangle";
+import { drawText } from "./shapes/text";
 
 type Props = {
   ctx: CanvasRenderingContext2D;
   shapes: Shape[];
-  skipShapeId?: string;
+  skipShapeIds?: string[] | undefined;
 };
 
-export const renderShapes = ({ ctx, shapes, skipShapeId }: Props) => {
+
+
+export const renderShapes = ({ ctx, shapes, skipShapeIds }: Props) => {
+  const skippedIds =
+    skipShapeIds && skipShapeIds.length > 0 ? new Set(skipShapeIds) : null;
+
   for (const shape of shapes) {
-    if (shape.id === skipShapeId) continue;
+    if (skippedIds?.has(shape.id)) continue;
 
     switch (shape.type) {
       case "rectangle":

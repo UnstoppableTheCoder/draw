@@ -1,6 +1,6 @@
 import { RefObject, useCallback } from "react";
 import { Point } from "../../types/types";
-import { useEditorStore } from "../../store/editor-store";
+import { useEditorStore } from "../../store/editor/editor-store";
 
 export default function useViewportHelpers(
   canvasRef?: RefObject<HTMLCanvasElement | null>,

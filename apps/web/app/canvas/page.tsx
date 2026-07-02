@@ -3,8 +3,8 @@
 import Canvas from "@/features/editor/components/canvas/canvas";
 import { PropertiesPanel } from "@/features/editor/components/properties-panel/properties-panel";
 import Toolbar from "@/features/editor/components/toolbar/toolbar";
+import RendererProvider from "@/features/editor/context/renderer-provider";
 import { usePointerState } from "@/features/editor/hooks/pointer/use-pointer-state";
-import RendererProvider from "@/features/editor/renderer/renderer-provider";
 import React, { useMemo, useRef } from "react";
 
 const CanvasWrapper = () => {

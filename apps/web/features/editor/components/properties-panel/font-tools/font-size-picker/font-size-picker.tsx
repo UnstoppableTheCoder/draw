@@ -3,7 +3,7 @@
 import { PropertyItem } from "../../property-item";
 
 export const FontSizePicker = () => {
-  const fontSize: any = 18;
+  const fontSize: number = 18;
 
   const styles = [
     {

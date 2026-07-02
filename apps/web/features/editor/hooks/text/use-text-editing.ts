@@ -1,7 +1,7 @@
 import { KeyboardEvent, PointerEvent, RefObject } from "react";
 import { v4 as uuidv4 } from "uuid";
 import getTextDimensions from "../../utils/get-text-dimensions";
-import * as store from "../../store/selectors";
+import * as store from "../../store/editor/selectors";
 import useViewportHelpers from "../viewport/use-viewport-helpers";
 import { Point, Shape } from "../../types/types";
 

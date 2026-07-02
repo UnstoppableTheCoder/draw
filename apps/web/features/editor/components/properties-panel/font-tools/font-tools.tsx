@@ -1,4 +1,4 @@
-import { useSelectedTool } from "@/features/editor/store/selectors";
+import { useSelectedTool } from "@/features/editor/store/editor/selectors";
 import { PropertiesPanelItemWrapper } from "../properties-panel-item-wrapper";
 import { FontFamilyPicker } from "./font-family-picker/font-family-picker";
 import { FontSizePicker } from "./font-size-picker/font-size-picker";

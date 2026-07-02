@@ -7,11 +7,12 @@ import ZoomControllers from "./zoom-controllers";
 import useTextEditing from "../../hooks/text/use-text-editing";
 import useTextEditorResize from "../../hooks/text/use-text-editor-resize";
 import useCanvasInteractions from "../../hooks/canvas/use-canvas-interactions";
-import useImageUpload from "../../hooks/tool/use-image-upload";
+import useImageUpload from "../../hooks/use-image-upload";
 import { UndoRedo } from "./undo-redo";
 import { usePointerState } from "../../hooks/pointer/use-pointer-state";
+import { CanvasContextMenu } from "../context-menu/context-menu";
 
-type Props = {
+type CanvasProps = {
   editorRefs: {
     sceneCanvasRef: RefObject<HTMLCanvasElement | null>;
     overlayCanvasRef: RefObject<HTMLCanvasElement | null>;
@@ -19,25 +20,22 @@ type Props = {
   };
 };
 
-const Canvas = ({
-  editorRefs: { sceneCanvasRef, overlayCanvasRef, pointerRefs },
-}: Props) => {
+const Canvas = ({ editorRefs }: CanvasProps) => {
+  const { sceneCanvasRef, overlayCanvasRef } = editorRefs;
+
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const imageInputRef = useRef<HTMLInputElement | null>(null);
 
   const canvasInteractions = useCanvasInteractions({
-    sceneCanvasRef,
-    overlayCanvasRef,
-    pointerRefs,
+    ...editorRefs,
     textareaRef,
   });
   const textEditing = useTextEditing(sceneCanvasRef, textareaRef);
-  const { handleImageInputChange } = useImageUpload(
-    sceneCanvasRef,
-    overlayCanvasRef,
+  const { handleImageInputChange } = useImageUpload({
+    ...editorRefs,
     imageInputRef,
-    pointerRefs,
-  );
+  });
+
   useTextEditorResize(sceneCanvasRef, textareaRef); // Not in use - Instead used -> field-sizing-content in TextEditor
   useCanvasResize(sceneCanvasRef, overlayCanvasRef);
 
@@ -84,6 +82,8 @@ const Canvas = ({
         <ZoomControllers sceneCanvasRef={sceneCanvasRef} />
         <UndoRedo />
       </div>
+
+      {/* <CanvasContextMenu /> */}
     </div>
   );
 };

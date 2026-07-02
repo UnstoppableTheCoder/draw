@@ -163,7 +163,7 @@ export interface TextEditingState extends Omit<
   fontFamily?: string;
 }
 
-export type SelectedShapeBounds = {
+export type SelectedBounds = {
   minX: number;
   maxX: number;
   minY: number;
