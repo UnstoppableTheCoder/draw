@@ -2,28 +2,36 @@ import React from "react";
 import { ColorItem } from "./color-item";
 import { PropertiesPanelItemWrapper } from "../properties-panel-item-wrapper";
 import { Separator } from "../../ui/separator";
+import { COLOR_PALETTE } from "@/features/editor/constants/colors";
 
-const ColorPicker = ({ label, value, onChange }: any) => {
-  const colors = {
-    stroke: ["#1e1e1e", "#e03131", "#2f9e44", "#1971c2", "#f08c00"],
-    background: ["#ebebeb", "#ffc9c9", "#b2f2bb", "#a5d8ff", "#ffec99"],
-  };
+type ColorPickerProps = {
+  title: "Stroke" | "Background";
+  type: "stroke" | "background";
+  value: string;
+  onChange: (color: string) => void;
+};
+
+const ColorPicker = ({ title, type, value, onChange }: ColorPickerProps) => {
+  const theme = "dark";
+
+  const colors = Object.values(COLOR_PALETTE);
 
   return (
-    <PropertiesPanelItemWrapper title={label}>
+    <PropertiesPanelItemWrapper title={title}>
       <div className="flex items-center justify-evenly py-1">
         {/* Color selection */}
 
-        {/* @ts-ignore */}
-        {colors[label.toLowerCase()].map((color, index) => (
-          <ColorItem
-            key={index}
-            color={color}
-            onClick={onChange}
-            size="sm"
-            active={false}
-          />
-        ))}
+        {colors.map((color, index) => {
+          return (
+            <ColorItem
+              key={index}
+              color={color["dark"][type]}
+              onClick={() => onChange(color["dark"][type])}
+              size="sm"
+              active={false}
+            />
+          );
+        })}
 
         <Separator orientation="vertical" />
 

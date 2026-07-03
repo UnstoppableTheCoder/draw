@@ -1,56 +1,65 @@
 import { create } from "zustand";
 import { Arrowhead, FillStyle, StrokeStyle } from "../../types/types";
 import { ShapePropertiesStore } from "./properties-types";
+import { devtools } from "zustand/middleware";
 
-export const useShapePropertiesStore = create<ShapePropertiesStore>((set) => ({
-  strokeColor: "#ffffff",
-  backgroundColor: "transparent",
+export const useShapePropertiesStore = create<ShapePropertiesStore>()(
+  devtools(
+    (set) => ({
+      strokeColor: "#ffffff",
+      backgroundColor: "transparent",
 
-  fillStyle: "solid",
+      fillStyle: "solid",
 
-  strokeWidth: 2,
-  strokeStyle: "solid",
+      strokeWidth: 2,
+      strokeStyle: "solid",
 
-  roughness: 1,
-  opacity: 100,
+      roughness: 1,
+      opacity: 100,
 
-  roundness: null,
+      roundness: null,
 
-  fontFamily: "Virgil",
-  fontSize: 20,
+      fontFamily: "Virgil",
+      fontSize: 20,
 
-  textAlign: "left",
-  verticalAlign: "top",
+      textAlign: "left",
+      verticalAlign: "top",
 
-  startArrowhead: null,
-  endArrowhead: "arrow",
+      startArrowhead: null,
+      endArrowhead: "arrow",
 
-  setStrokeColor: (strokeColor: string) => set({ strokeColor }),
+      setStrokeColor: (strokeColor: string) => set({ strokeColor }),
 
-  setBackgroundColor: (backgroundColor: string) => set({ backgroundColor }),
+      setBackgroundColor: (backgroundColor: string) => set({ backgroundColor }),
 
-  setFillStyle: (fillStyle: FillStyle) => set({ fillStyle }),
+      setFillStyle: (fillStyle: FillStyle) => set({ fillStyle }),
 
-  setStrokeWidth: (strokeWidth: number) => set({ strokeWidth }),
+      setStrokeWidth: (strokeWidth: number) => set({ strokeWidth }),
 
-  setStrokeStyle: (strokeStyle: StrokeStyle) => set({ strokeStyle }),
+      setStrokeStyle: (strokeStyle: StrokeStyle) => set({ strokeStyle }),
 
-  setRoughness: (roughness: number) => set({ roughness }),
+      setRoughness: (roughness: number) => set({ roughness }),
 
-  setOpacity: (opacity: number) => set({ opacity }),
+      setOpacity: (opacity: number) => set({ opacity }),
 
-  setRoundness: (roundness: number | null) => set({ roundness }),
+      setRoundness: (roundness: number | null) => set({ roundness }),
 
-  setFontFamily: (fontFamily: string) => set({ fontFamily }),
+      setFontFamily: (fontFamily: string) => set({ fontFamily }),
 
-  setFontSize: (fontSize: number) => set({ fontSize }),
+      setFontSize: (fontSize: number) => set({ fontSize }),
 
-  setTextAlign: (textAlign: "left" | "center" | "right") => set({ textAlign }),
+      setTextAlign: (textAlign: "left" | "center" | "right") =>
+        set({ textAlign }),
 
-  setVerticalAlign: (verticalAlign: "top" | "middle" | "bottom") =>
-    set({ verticalAlign }),
+      setVerticalAlign: (verticalAlign: "top" | "middle" | "bottom") =>
+        set({ verticalAlign }),
 
-  setStartArrowhead: (startArrowhead: Arrowhead) => set({ startArrowhead }),
+      setStartArrowhead: (startArrowhead: Arrowhead) => set({ startArrowhead }),
 
-  setEndArrowhead: (endArrowhead: Arrowhead) => set({ endArrowhead }),
-}));
+      setEndArrowhead: (endArrowhead: Arrowhead) => set({ endArrowhead }),
+    }),
+    {
+      name: "properties-store",
+    },
+  ),
+);

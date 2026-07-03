@@ -1,6 +1,9 @@
 "use client";
 
-import { useSelectedShapeIds, useSelectedTool } from "../../store/editor/selectors";
+import {
+  useSelectedShapeIds,
+  useSelectedTool,
+} from "../../store/editor/selectors";
 import BackgroundColorPicker from "./color-picker/background-color-picker";
 import StrokeColorPicker from "./color-picker/stroke-color-picker";
 import { FontTools } from "./font-tools/font-tools";
@@ -33,6 +36,8 @@ export const PropertiesPanel = () => {
           <FontTools />
         </>
       )}
+
+      {/* Add Style components for Image */}
     </div>
   );
 };

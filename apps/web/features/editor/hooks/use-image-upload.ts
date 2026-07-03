@@ -6,7 +6,7 @@ import useViewportHelpers from "./viewport/use-viewport-helpers";
 import { loadImageInfos } from "../image/image-loader";
 import { IMAGE_GAP, MAX_IMAGE_SIZE } from "../constants/image";
 import { createImageShape } from "../shapes/create-image-shape";
-import { getGroupBounds } from "./interactions/use-shape-selection";
+import { getGroupBounds } from "./interactions/use-selection-actions";
 
 export default function useImageUpload({
   sceneCanvasRef,

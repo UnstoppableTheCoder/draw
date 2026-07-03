@@ -3,7 +3,7 @@ import { usePointerState } from "../pointer/use-pointer-state";
 import { usePushHistory, useSetShapes } from "../../store/editor/selectors";
 import { RefObject } from "react";
 import { useCanvasRenderer } from "../../context/use-renderer";
-import { getGroupBounds } from "./use-shape-selection";
+import { getGroupBounds } from "./use-selection-actions";
 
 export default function useShapeMove(
   sceneCanvasRef: RefObject<HTMLCanvasElement | null>,

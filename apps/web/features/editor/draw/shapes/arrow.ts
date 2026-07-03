@@ -11,7 +11,7 @@ export const drawArrow = (ctx: CanvasRenderingContext2D, shape: ArrowShape) => {
   if (points.length < 2) return;
 
   ctx.lineWidth = 2;
-  ctx.strokeStyle = "white";
+  ctx.strokeStyle = shape.strokeColor ?? "white";
 
   ctx.beginPath();
 

@@ -17,6 +17,7 @@ export default function usePointer(
   function initializePointerState(event: PointerEvent<HTMLCanvasElement>) {
     const canvas = event.currentTarget;
     canvas.setPointerCapture(event.pointerId);
+    
     pointerRefs.isPointerDownRef.current = true;
 
     const point = clientToCanvas(event.clientX, event.clientY);

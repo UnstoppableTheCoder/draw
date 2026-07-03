@@ -79,30 +79,58 @@ export const createShape = ({
   startPoint,
   endPoint,
   points,
+  strokeColor,
+  backgroundColor,
 }: {
   tool: ToolType;
   startPoint: Point;
   endPoint: Point;
   points: PointTuple[];
+  strokeColor?: string;
+  backgroundColor?: string;
 }): Shape | null => {
   switch (tool) {
     case "rectangle":
-      return createRectangleShape(startPoint, endPoint);
+      return {
+        ...createRectangleShape(startPoint, endPoint),
+        strokeColor,
+        backgroundColor,
+      };
 
     case "diamond":
-      return createDiamondShape(startPoint, endPoint);
+      return {
+        ...createDiamondShape(startPoint, endPoint),
+        strokeColor,
+        backgroundColor,
+      };
 
     case "ellipse":
-      return createEllipseShape(startPoint, endPoint);
+      return {
+        ...createEllipseShape(startPoint, endPoint),
+        strokeColor,
+        backgroundColor,
+      };
 
     case "arrow":
-      return createArrowShape(startPoint, points);
+      return {
+        ...createArrowShape(startPoint, points),
+        strokeColor,
+        backgroundColor,
+      };
 
     case "line":
-      return createLineShape(startPoint, points);
+      return {
+        ...createLineShape(startPoint, points),
+        strokeColor,
+        backgroundColor,
+      };
 
     case "freedraw":
-      return createFreeDrawShape(startPoint, points);
+      return {
+        ...createFreeDrawShape(startPoint, points),
+        strokeColor,
+        backgroundColor,
+      };
 
     default:
       return null;

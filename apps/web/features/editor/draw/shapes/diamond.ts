@@ -8,7 +8,8 @@ export const drawDiamond = (
   const { x, y, width, height } = shape;
 
   ctx.lineWidth = 2;
-  ctx.strokeStyle = "white";
+  ctx.strokeStyle = shape.strokeColor ?? "white";
+  ctx.fillStyle = shape.backgroundColor ?? "white";
 
   const centerX = x + width / 2;
   const centerY = y + height / 2;
@@ -26,4 +27,5 @@ export const drawDiamond = (
 
   ctx.closePath();
   ctx.stroke();
+  ctx.fill();
 };

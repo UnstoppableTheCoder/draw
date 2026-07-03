@@ -9,7 +9,7 @@ import { renderShapes } from "../../draw/render-shapes";
 import drawLineSelection from "../../draw/selection/line-selection";
 import drawEraserBackground from "../../draw/eraser/background";
 import { clearCanvas } from "../../draw/clear-canvas";
-import { getGroupBounds } from "../interactions/use-shape-selection";
+import { getGroupBounds } from "../interactions/use-selection-actions";
 import drawMarqueeSelection from "../../draw/selection/marquee-selection";
 import { normalizeRect } from "../../geometry/normalize-rect";
 import { getBoundingBox } from "../../geometry/bounding-box/get-bounding-box";

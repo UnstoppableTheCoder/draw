@@ -1,4 +1,4 @@
-import { PointerEvent, RefObject } from "react";
+import { Dispatch, PointerEvent, RefObject, SetStateAction } from "react";
 import * as store from "../../store/editor/selectors";
 import { usePointerState } from "../pointer/use-pointer-state";
 import useCanvasCursor from "./use-canvas-cursor";
@@ -7,11 +7,12 @@ import usePan from "../viewport/use-viewport-pan";
 import usePointer from "../pointer/use-pointer-helpers";
 import useTextEditing from "../text/use-text-editing";
 import useShapeDrawing from "../interactions/use-shape-drawing";
-import useSelectionActions from "../interactions/use-shape-selection";
+import useSelectionActions from "../interactions/use-selection-actions";
 import useShapeEraser from "../interactions/use-shape-eraser";
 import useShapeMove from "../interactions/use-shape-move";
 import useShapeResize from "../interactions/use-shape-resize";
 import { useCanvasRenderer } from "../../context/use-renderer";
+import { preLogSerializationClone } from "next/dist/next-devtools/userspace/app/forward-logs-utils";
 
 const STICKY_TOOLS = new Set(["pan", "freedraw", "eraser"]);
 
@@ -20,11 +21,13 @@ export default function useCanvasInteractions({
   overlayCanvasRef,
   pointerRefs,
   textareaRef,
+  closeContextMenu,
 }: {
   sceneCanvasRef: RefObject<HTMLCanvasElement | null>;
   overlayCanvasRef: RefObject<HTMLCanvasElement | null>;
   pointerRefs: ReturnType<typeof usePointerState>;
   textareaRef: RefObject<HTMLTextAreaElement | null>;
+  closeContextMenu: () => void;
 }) {
   const selectedTool = store.useSelectedTool();
   const setTextEditingState = store.useSetTextEditingState();
@@ -160,6 +163,9 @@ export default function useCanvasInteractions({
 
   // ============== DOM Pointer Events Handlers ==============
   function handlePointerDown(event: PointerEvent<HTMLCanvasElement>) {
+    if (event.button === 2) return;
+    closeContextMenu();
+
     event.preventDefault();
     text.finishEditingIfClickedOutside(event);
 
@@ -194,6 +200,9 @@ export default function useCanvasInteractions({
   }
 
   function handlePointerUp(event: PointerEvent<HTMLCanvasElement>) {
+    if (!overlayCanvasRef.current) return;
+    overlayCanvasRef.current.releasePointerCapture(event.pointerId);
+
     handleTextEditingOnPointerUp();
 
     const interaction = pointerRefs.interactionRef.current;
@@ -224,7 +233,6 @@ export default function useCanvasInteractions({
 
     pointerHelpers.resetPointerState();
     pointerRefs.eraserTrailRef.current = [];
-    canvasCursor.updateCursor();
 
     invalidate();
   }

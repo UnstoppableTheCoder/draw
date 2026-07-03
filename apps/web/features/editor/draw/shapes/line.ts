@@ -7,7 +7,7 @@ export const drawLine = (ctx: CanvasRenderingContext2D, shape: LineShape) => {
   if (points.length < 2) return;
 
   ctx.lineWidth = 2;
-  ctx.strokeStyle = "white";
+  ctx.strokeStyle = shape.strokeColor ?? "white";
 
   const first = points[0];
   if (!first) return;

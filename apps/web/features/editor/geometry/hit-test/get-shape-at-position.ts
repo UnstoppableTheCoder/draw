@@ -1,7 +1,7 @@
 import { Point } from "@/types/canvas.types";
 import { Shape } from "../../types/types";
 import { getBoundingBox } from "../bounding-box/get-bounding-box";
-import { isPointInSelectedShapeBounds } from "./is-point-in-selected-bounts";
+import { isPointInSelectedShapeBounds } from "./is-point-in-selected-bounds";
 import { getPointInShape } from "./get-point-in-shape";
 
 export const getShapeAtPosition = ({

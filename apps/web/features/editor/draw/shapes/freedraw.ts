@@ -8,7 +8,7 @@ export const drawFreeDraw = (
   const { x, y, points } = shape;
 
   ctx.lineWidth = 2;
-  ctx.strokeStyle = "white";
+  ctx.strokeStyle = shape.strokeColor ?? "white";
   ctx.lineCap = "round";
   ctx.lineJoin = "round";
 
@@ -16,7 +16,7 @@ export const drawFreeDraw = (
   if (points.length === 1) {
     ctx.beginPath();
     ctx.arc(x, y, 2, 0, Math.PI * 2);
-    ctx.fillStyle = "white";
+    ctx.fillStyle = shape.strokeColor ?? "white";
     ctx.fill();
     return;
   }

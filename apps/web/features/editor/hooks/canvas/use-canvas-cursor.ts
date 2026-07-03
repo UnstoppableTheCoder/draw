@@ -2,17 +2,13 @@ import { RefObject, useEffect } from "react";
 import { ToolType } from "@/types/toolbar.types";
 import { getCanvasCursor } from "../../utils/get-canvas-cursor";
 import { Point, Shape } from "../../types/types";
-import {
-  useScale,
-  useSelectedShapeIds,
-  useSelectedTool,
-  useShapes,
-} from "../../store/editor/selectors";
+import { useScale, useSelectedTool } from "../../store/editor/selectors";
 import { usePointerState } from "../pointer/use-pointer-state";
-import { getGroupBounds } from "../interactions/use-shape-selection";
+import { getGroupBounds } from "../interactions/use-selection-actions";
 import { getResizeHandleAtPoint } from "../../geometry/resize-handles/get-reisze-handle-at-point";
-import { isPointInSelectedShapeBounds } from "../../geometry/hit-test/is-point-in-selected-bounts";
+import { isPointInSelectedShapeBounds } from "../../geometry/hit-test/is-point-in-selected-bounds";
 import { getResizeHandleCursor } from "../../utils/get-resize-handle-cursor";
+import { useEditorStore } from "../../store/editor/editor-store";
 
 interface Props {
   overlayCanvasRef: RefObject<HTMLCanvasElement | null>;
@@ -24,8 +20,6 @@ export default function useCanvasCursor({
   pointerRefs,
 }: Props) {
   const selectedTool = useSelectedTool();
-  const selectedShapeIds = useSelectedShapeIds();
-  const shapes = useShapes();
   const scale = useScale();
 
   function getSelectionCursor(
@@ -64,6 +58,7 @@ export default function useCanvasCursor({
   }
 
   function updateHoverCursor(point: Point, hoveredShape: Shape | undefined) {
+    const { selectedShapeIds, shapes } = useEditorStore.getState();
     const canvas = overlayCanvasRef.current;
     if (!canvas) return;
 
@@ -74,6 +69,7 @@ export default function useCanvasCursor({
     );
 
     const selectionCursor = getSelectionCursor(point, selectedShapes);
+
     if (selectionCursor) {
       canvas.style.cursor = selectionCursor;
       return;

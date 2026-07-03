@@ -4,6 +4,8 @@ import getTextDimensions from "../../utils/get-text-dimensions";
 import * as store from "../../store/editor/selectors";
 import useViewportHelpers from "../viewport/use-viewport-helpers";
 import { Point, Shape } from "../../types/types";
+import { useStrokeColor } from "../../store/properties/selectors";
+import { useCanvasRenderer } from "../../context/use-renderer";
 
 export default function useTextEditing(
   canvasRef: RefObject<HTMLCanvasElement | null>,
@@ -17,6 +19,11 @@ export default function useTextEditing(
   const textEditingState = store.useTextEditingState();
   const scale = store.useScale();
   const selectedTool = store.useSelectedTool();
+
+  const { invalidate } = useCanvasRenderer();
+
+  // Style State
+  const strokeColor = useStrokeColor();
 
   const viewportHelpers = useViewportHelpers(canvasRef);
 
@@ -40,6 +47,7 @@ export default function useTextEditing(
     );
 
     finishTextEditing();
+    invalidate();
   };
 
   function finishTextEditing() {
@@ -94,7 +102,6 @@ export default function useTextEditing(
         height: height / scale,
         fontSize: fontSize / scale,
         fontFamily,
-        strokeColor: "white",
       },
     ];
   }
@@ -102,6 +109,11 @@ export default function useTextEditing(
   // Saves the text - if Escape clicked
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Escape") {
+      if (!textEditingState) return;
+
+      const textarea = textareaRef.current;
+      if (!textarea) return;
+
       saveTextShape();
     }
   };
@@ -124,6 +136,7 @@ export default function useTextEditing(
       text: "",
       fontSize,
       fontFamily,
+      strokeColor,
     });
   }
 

@@ -14,8 +14,6 @@ type Props = {
   skipShapeIds?: string[] | undefined;
 };
 
-
-
 export const renderShapes = ({ ctx, shapes, skipShapeIds }: Props) => {
   const skippedIds =
     skipShapeIds && skipShapeIds.length > 0 ? new Set(skipShapeIds) : null;

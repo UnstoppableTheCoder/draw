@@ -12,7 +12,7 @@ import {
   scalePointInGroup,
 } from "../../transform/scale-shape-in-group";
 import { useCanvasRenderer } from "../../context/use-renderer";
-import { getGroupBounds } from "./use-shape-selection";
+import { getGroupBounds } from "./use-selection-actions";
 
 function isLineEndpointHandle(
   handle: string | null,

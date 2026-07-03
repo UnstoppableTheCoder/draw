@@ -99,7 +99,6 @@ export function usePointerState() {
   useEffect(() => {
     isPointerDownRef.current = false;
 
-    drawingStartRef.current = null;
     drawingPointsRef.current = [];
 
     isPanningRef.current = false;
@@ -109,8 +108,6 @@ export function usePointerState() {
     pointerDownTimeRef.current = null;
 
     eraserTrailRef.current = [];
-
-    resetInteraction(interactionRef);
 
     isDraggingRef.current = false;
   }, [selectedTool]);
@@ -138,6 +135,6 @@ export function usePointerState() {
     interactionRef,
 
     // Dragging
-    isDraggingRef
+    isDraggingRef,
   };
 }

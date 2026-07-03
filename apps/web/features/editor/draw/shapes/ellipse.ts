@@ -7,7 +7,8 @@ export const drawEllipse = (
   const { x, y, width, height } = shape;
 
   ctx.lineWidth = 2;
-  ctx.strokeStyle = "white";
+  ctx.strokeStyle = shape.strokeColor ?? "white";
+  ctx.fillStyle = shape.backgroundColor ?? "white";
 
   const centerX = x + width / 2;
   const centerY = y + height / 2;
@@ -18,4 +19,5 @@ export const drawEllipse = (
   ctx.beginPath();
   ctx.ellipse(centerX, centerY, radiusX, radiusY, 0, 0, Math.PI * 2);
   ctx.stroke();
+  ctx.fill();
 };

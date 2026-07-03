@@ -6,9 +6,16 @@ export const drawRectangle = (
 ) => {
   const { x, y, width, height } = shape;
 
-  // Set Properties to Rectangle
-  ctx.lineWidth = 2;
-  ctx.strokeStyle = "white";
+  ctx.beginPath();
 
-  ctx.strokeRect(x, y, width, height);
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = shape.strokeColor ?? "white";
+  ctx.fillStyle = shape.backgroundColor ?? "white";
+
+  ctx.roundRect(x, y, width, height, 10);
+
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.closePath();
 };

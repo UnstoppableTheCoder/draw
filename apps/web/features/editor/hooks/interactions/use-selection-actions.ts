@@ -14,16 +14,17 @@ import { ResizeHandleType } from "../../types/resize-handle";
 import { DRAG_THRESHOLD } from "../../constants/canvas";
 import { getBoundingBox } from "../../geometry/bounding-box/get-bounding-box";
 import { getShapeAtPosition } from "../../geometry/hit-test/get-shape-at-position";
-import { isPointInSelectedShapeBounds } from "../../geometry/hit-test/is-point-in-selected-bounts";
+import { isPointInSelectedShapeBounds } from "../../geometry/hit-test/is-point-in-selected-bounds";
 import { getResizeHandleAtPoint } from "../../geometry/resize-handles/get-reisze-handle-at-point";
+import { useEditorStore } from "../../store/editor/editor-store";
 
-export function getGroupBounds(previews: Shape[]): SelectedBounds {
+export function getGroupBounds(shapes: Shape[]): SelectedBounds {
   let minX = Infinity;
   let minY = Infinity;
   let maxX = -Infinity;
   let maxY = -Infinity;
 
-  for (const shape of previews) {
+  for (const shape of shapes) {
     const bounds = getBoundingBox(shape);
 
     minX = Math.min(minX, bounds.minX);
@@ -50,10 +51,8 @@ export default function useSelectionActions({
   overlayCanvasRef: RefObject<HTMLCanvasElement | null>;
   pointerRefs: ReturnType<typeof usePointerState>;
 }) {
-  const shapes = store.useShapes();
   const scale = store.useScale();
-  const selectedShapeIds = store.useSelectedShapeIds();
-  const setSelectedShapeIds = store.useSetSelectedShapeIds();
+  const { setSelectedShapeIds } = useEditorStore.getState();
 
   const { moveShapes } = useShapeMove(
     sceneCanvasRef,
@@ -152,6 +151,8 @@ export default function useSelectionActions({
   }
 
   function updateSelectionHover(point: Point) {
+    const { selectedShapeIds, shapes } = useEditorStore.getState();
+
     const selectedShapes = shapes.filter((shape) =>
       selectedShapeIds.includes(shape.id),
     );
@@ -224,6 +225,8 @@ export default function useSelectionActions({
 
   // Main Functions
   function onPointerDownSelection(point: Point, shiftKey: boolean) {
+    const { selectedShapeIds, shapes } = useEditorStore.getState();
+
     pointerRefs.isDraggingRef.current = false;
 
     const hitShape = getShapeAtPosition({ point, shapes });
@@ -330,12 +333,13 @@ export default function useSelectionActions({
   }
 
   function onPointerMoveSelection(endPoint: Point) {
+    const { shapes } = useEditorStore.getState();
+
     const interaction = pointerRefs.interactionRef.current;
+
     const start = pointerRefs.drawingStartRef.current;
     if (!start) return;
 
-    console.log("Pointer is moving");
-    console.log(interaction);
     switch (interaction.type) {
       case "select": {
         if (!pointerRefs.isPointerDownRef.current) break;
@@ -409,5 +413,6 @@ export default function useSelectionActions({
     onPointerDownSelection,
     onPointerMoveSelection,
     onPointerUpSelection,
+    updateSelectionHover,
   };
 }

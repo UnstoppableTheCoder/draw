@@ -9,6 +9,13 @@ import {
 } from "../pointer/use-pointer-state";
 import { Point, PointTuple } from "../../types/types";
 import { useCanvasRenderer } from "../../context/use-renderer";
+import {
+  useBackgroundColor,
+  useStrokeColor,
+} from "../../store/properties/selectors";
+import useSelectionActions, { getGroupBounds } from "./use-selection-actions";
+import useCanvasCursor from "../canvas/use-canvas-cursor";
+import { nextDev } from "next/dist/cli/next-dev";
 
 type UseDrawingArgs = {
   sceneCanvasRef: RefObject<HTMLCanvasElement | null>;
@@ -29,9 +36,17 @@ export default function useShapeDrawing({
   const pushHistory = store.usePushHistory();
   const isLocked = store.useIsLocked();
 
+  const strokeColor = useStrokeColor();
+  const backgroundColor = useBackgroundColor();
+
   const { clientToCanvas } = useViewportHelpers(overlayCanvasRef);
-  const { invalidate, invalidateOverlay, invalidateScene } =
-    useCanvasRenderer();
+  const { invalidateOverlay } = useCanvasRenderer();
+  const selection = useSelectionActions({
+    sceneCanvasRef,
+    overlayCanvasRef,
+    pointerRefs,
+  });
+  const cursor = useCanvasCursor({ overlayCanvasRef, pointerRefs });
 
   // Get Canvas Point
   function getCanvasPoint(e: PointerEvent<HTMLCanvasElement>) {
@@ -46,13 +61,9 @@ export default function useShapeDrawing({
       startPoint: drawingStartRef.current,
       endPoint: end,
       points: drawingPointsRef.current,
+      strokeColor,
+      backgroundColor,
     });
-  }
-
-  function resetDrawing() {
-    drawingStartRef.current = null;
-    drawingPointsRef.current = [];
-    resetInteraction(pointerRefs.interactionRef);
   }
 
   // Sets Initial Point on Pointer Down - for Shapes With Points
@@ -109,9 +120,16 @@ export default function useShapeDrawing({
       } else {
         setSelectedShapeIds((prevIds) => [...prevIds, shape.id]);
       }
+
+      pointerRefs.interactionRef.current = {
+        type: "select",
+        previewShapes: [shape],
+        groupBounds: getGroupBounds([shape]),
+      };
     }
 
-    resetDrawing();
+    drawingPointsRef.current = [];
+    selection.updateSelectionHover(end);
   }
 
   return { onPointerDownDrawing, onPointerMoveDrawing, onPointerUpDrawing };
