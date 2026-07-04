@@ -117,9 +117,8 @@ export default function useShapeResize(
         case "text": {
           const fontSize = initialFontSizes?.[shape.id];
 
-          if (fontSize == null || !ctx) return shape;
+          if (fontSize == null || !ctx || !rect) return shape;
 
-          if (!rect) return shape;
           const shapeRect = isGroupSelection
             ? getScaledShapeRect(initialShape, initialGroupBounds, rect)
             : rect;

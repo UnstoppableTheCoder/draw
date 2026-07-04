@@ -1,6 +1,7 @@
 import { ChangeEvent, KeyboardEvent, RefObject } from "react";
 import * as store from "../../store/editor/selectors";
 import useViewportHelpers from "../../hooks/viewport/use-viewport-helpers";
+import { useLineHeightMultiplier } from "../../store/properties/selectors";
 
 type TextEditorProps = {
   canvasRef: RefObject<HTMLCanvasElement | null>;
@@ -16,7 +17,9 @@ export default function TextEditor({
   const scale = store.useScale();
   const textEditingState = store.useTextEditingState();
   const setTextEditingState = store.useSetTextEditingState();
-  const lineHeightMultiplier = store.useLineHeightMultiplier();
+
+  // Style
+  const lineHeightMultiplier = useLineHeightMultiplier();
 
   const { canvasToClient } = useViewportHelpers(canvasRef);
 

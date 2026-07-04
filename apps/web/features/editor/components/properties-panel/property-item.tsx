@@ -1,17 +1,32 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { Button } from "../ui/button";
+import { ReactNode } from "react";
 
-export const PropertyItem = ({ data, onClick }: any) => {
+type DataType = {
+  label: string;
+  value?: string;
+  icon: ReactNode;
+  active: boolean;
+};
+
+type PropertyItemProps = {
+  data: DataType;
+  onClick: (data: DataType) => void;
+};
+
+export const PropertyItem = ({ data, onClick }: PropertyItemProps) => {
   return (
-    <Button
-      className={cn(data.active ? " bg-black/20 text-black" : "", "size-8")}
-      onClick={() => onClick(data.value)}
-      variant={"secondary"}
-      size={"xs"}
+    <button
+      className={cn(
+        data.active
+          ? " bg-black/20 text-black"
+          : "hover:bg-black/20 bg-black/10",
+        "size-8 flex justify-center items-center rounded-sm  cursor-pointer",
+      )}
+      onClick={() => onClick(data)}
     >
       {data.icon}
-    </Button>
+    </button>
   );
 };

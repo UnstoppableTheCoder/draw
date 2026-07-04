@@ -3,44 +3,95 @@
 import { Minus } from "lucide-react";
 import { PropertiesPanelItemWrapper } from "../properties-panel-item-wrapper";
 import { PropertyItem } from "../property-item";
-import { useSelectedTool } from "@/features/editor/store/editor/selectors";
-import { useState } from "react";
+import {
+  useSelectedShapesIds,
+  useSelectedTool,
+  useShapes,
+  useTextEditingState,
+} from "@/features/editor/store/editor/selectors";
+import { useStrokeWidth } from "@/features/editor/store/properties/selectors";
+import { PropertiesDataType } from "../../types";
+import useShapeAppearance from "@/features/editor/hooks/appearance/use-shape-appearance";
+import getSelectedShapesTypes from "@/features/editor/shapes/get-selected-shapes-types";
+import { RefObject } from "react";
 
-type StrokeWidth = "thin" | "bold" | "extrabold";
-
-export const StrokeWidthPicker = () => {
-  const [strokeWidth, setStrokeWidth] = useState<StrokeWidth>("thin");
-
+export const StrokeWidthPicker = ({
+  sceneCanvasRef,
+}: {
+  sceneCanvasRef: RefObject<HTMLCanvasElement | null>;
+}) => {
   const selectedTool = useSelectedTool();
+  const textEditingState = useTextEditingState();
+  const globalStrokeWidth = useStrokeWidth();
+  const appearance = useShapeAppearance(sceneCanvasRef);
 
-  // Rendering Stroke Width Picker Conditionally
-  if (selectedTool === "text") {
+  const selectedShapeIds = useSelectedShapesIds();
+  const shapes = useShapes();
+
+  const selectedShapesIds = useSelectedShapesIds();
+  const selected = new Set(selectedShapesIds);
+  const selectedShapes = shapes.filter((shape) => selected.has(shape.id));
+  const selectedShapesTypes = getSelectedShapesTypes(selectedShapes);
+
+  // derive strokeWidth (single source of truth)
+  let strokeWidth = globalStrokeWidth;
+
+  if (selectedShapeIds.length === 1) {
+    const selectedShape = shapes.find(
+      (shape) => shape.id === selectedShapeIds[0],
+    );
+
+    if (selectedShape?.strokeWidth != null) {
+      strokeWidth = selectedShape.strokeWidth;
+    }
+  }
+  // Rendering Stroke Style Picker Conditionally
+  if (
+    (textEditingState && selectedTool === "select") ||
+    selectedTool === "text"
+  ) {
     return;
   }
 
-  const strokeWidths = [
+  // Applies when shapes are selected
+  if (selectedShapesIds.length !== 0 && selectedShapesTypes.has("text")) return;
+
+  const strokeWidths: PropertiesDataType[] = [
     {
-      value: "thin",
+      label: "thin",
+      value: "1",
       icon: <Minus strokeWidth={1} className="w-4 h-4" />,
-      active: strokeWidth === "thin",
     },
     {
-      value: "bold",
-      icon: <Minus strokeWidth={3} className="w-4 h-4" />,
-      active: strokeWidth === "bold",
+      label: "bold",
+      value: "2",
+      icon: <Minus strokeWidth={2} className="w-4 h-4" />,
     },
     {
-      value: "extrabold",
-      icon: <Minus strokeWidth={5} className="w-4 h-4" />,
-      active: strokeWidth === "extrabold",
+      label: "extrabold",
+      value: "4",
+      icon: <Minus strokeWidth={4} className="w-4 h-4" />,
     },
   ];
+
+  const handleStrokeWidthChange = (data: PropertiesDataType) => {
+    if (data.value != null) {
+      appearance.setStrokeWidth(Number(data.value));
+    }
+  };
 
   return (
     <PropertiesPanelItemWrapper title="Stroke Width">
       <div className="flex items-center gap-2 py-1">
         {strokeWidths.map((width) => (
-          <PropertyItem key={width.value} data={width} onClick={() => {}} />
+          <PropertyItem
+            key={width.value}
+            data={{
+              ...width,
+              active: strokeWidth === Number(width.value),
+            }}
+            onClick={handleStrokeWidthChange}
+          />
         ))}
       </div>
     </PropertiesPanelItemWrapper>

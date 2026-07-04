@@ -22,7 +22,7 @@ export default function useImageUpload({
   const selectedTool = store.useSelectedTool();
   const setSelectedTool = store.useSetSelectedTool();
   const setShapes = store.useSetShapes();
-  const setSelectedShapeIds = store.useSetSelectedShapeIds();
+  const setSelectedShapesIds = store.useSetSelectedShapesIds();
 
   const { invalidate } = useCanvasRenderer();
   const { clientToCanvas } = useViewportHelpers(sceneCanvasRef);
@@ -88,7 +88,7 @@ export default function useImageUpload({
       previewShapes: shapes,
       groupBounds: getGroupBounds(shapes),
     };
-    setSelectedShapeIds(shapes.map((shape) => shape.id));
+    setSelectedShapesIds(shapes.map((shape) => shape.id));
 
     invalidate();
   };

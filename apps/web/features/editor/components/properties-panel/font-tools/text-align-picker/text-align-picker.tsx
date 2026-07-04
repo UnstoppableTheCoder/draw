@@ -2,34 +2,43 @@
 
 import { AlignCenter, AlignLeft, AlignRight } from "lucide-react";
 import { PropertyItem } from "../../property-item";
+import { RefObject } from "react";
 
-export const TextAlignPicker = () => {
+export const TextAlignPicker = ({
+  sceneCanvasRef,
+}: {
+  sceneCanvasRef: RefObject<HTMLCanvasElement | null>;
+}) => {
   const iconStyle = "w-4 h-4";
   const textAlign: any = "left";
 
-  const styles = [
+  const textAlignStyles = [
     {
+      label: "Left",
       value: "left",
       icon: <AlignLeft className={iconStyle} />,
-      active: textAlign === "left",
     },
     {
+      label: "Center",
       value: "center",
       icon: <AlignCenter className={iconStyle} />,
-      active: textAlign === "center",
     },
 
     {
+      label: "Right",
       value: "right",
       icon: <AlignRight className={iconStyle} />,
-      active: textAlign === "right",
     },
   ];
 
   return (
     <div className="flex items-center gap-2 py-1">
-      {styles.map((style) => (
-        <PropertyItem key={style.value} data={style} onClick={() => {}} />
+      {textAlignStyles.map((align, index) => (
+        <PropertyItem
+          key={index}
+          data={{ ...align, active: align.value === textAlign }}
+          onClick={() => {}}
+        />
       ))}
     </div>
   );

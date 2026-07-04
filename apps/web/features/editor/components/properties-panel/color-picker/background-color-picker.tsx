@@ -1,19 +1,45 @@
-import React from "react";
+import React, { RefObject } from "react";
 import ColorPicker from "./color-picker";
-import { useSelectedTool } from "@/features/editor/store/editor/selectors";
 import {
-  useBackgroundColor,
-  useSetBackgroundColor,
-} from "@/features/editor/store/properties/selectors";
+  useSelectedShapesIds,
+  useSelectedTool,
+  useShapes,
+  useTextEditingState,
+} from "@/features/editor/store/editor/selectors";
+import { useBackgroundColor } from "@/features/editor/store/properties/selectors";
+import useShapeAppearance from "@/features/editor/hooks/appearance/use-shape-appearance";
+import getSelectedShapesTypes from "@/features/editor/shapes/get-selected-shapes-types";
 
-const BackgroundColorPicker = () => {
+const BackgroundColorPicker = ({
+  sceneCanvasRef,
+}: {
+  sceneCanvasRef: RefObject<HTMLCanvasElement | null>;
+}) => {
   const selectedTool = useSelectedTool();
+  const textEditingState = useTextEditingState();
 
-  const backgroundColor = useBackgroundColor();
-  const setBackgroundColor = useSetBackgroundColor();
+  let backgroundColor = useBackgroundColor();
+  const selectedShapesIds = useSelectedShapesIds();
+  const shapes = useShapes();
+  const selected = new Set(selectedShapesIds);
+  const selectedShapes = shapes.filter((shape) => selected.has(shape.id));
+  const selectedShapesTypes = getSelectedShapesTypes(selectedShapes);
+
+  const appearance = useShapeAppearance(sceneCanvasRef);
+
+  if (selectedShapesIds.length === 1) {
+    const selectedShape = shapes.find(
+      (shape) => shape.id === selectedShapesIds[0],
+    );
+
+    if (!selectedShape) return;
+
+    backgroundColor = selectedShape.backgroundColor!;
+  }
 
   // Render Background Color Picker Conditionally
   if (
+    (textEditingState && selectedTool === "select") ||
     selectedTool === "arrow" ||
     selectedTool === "text" ||
     selectedTool === "line" ||
@@ -22,8 +48,17 @@ const BackgroundColorPicker = () => {
     return;
   }
 
-  const handleBackgroundColorChange = (color: string) => {
-    setBackgroundColor(color);
+  // Applies when shapes are selected
+  if (
+    selectedShapesIds.length !== 0 &&
+    !selectedShapesTypes.has("rectangle") &&
+    !selectedShapesTypes.has("diamond") &&
+    !selectedShapesTypes.has("ellipse")
+  )
+    return;
+
+  const handleBackgroundColorChangeClick = (color: string) => {
+    appearance.setBackgroundColor(color);
   };
 
   return (
@@ -31,7 +66,7 @@ const BackgroundColorPicker = () => {
       title="Background"
       type="background"
       value={backgroundColor}
-      onChange={handleBackgroundColorChange}
+      onClick={handleBackgroundColorChangeClick}
     />
   );
 };

@@ -52,7 +52,7 @@ export default function useSelectionActions({
   pointerRefs: ReturnType<typeof usePointerState>;
 }) {
   const scale = store.useScale();
-  const { setSelectedShapeIds } = useEditorStore.getState();
+  const { setSelectedShapesIds } = useEditorStore.getState();
 
   const { moveShapes } = useShapeMove(
     sceneCanvasRef,
@@ -151,10 +151,10 @@ export default function useSelectionActions({
   }
 
   function updateSelectionHover(point: Point) {
-    const { selectedShapeIds, shapes } = useEditorStore.getState();
+    const { selectedShapesIds, shapes } = useEditorStore.getState();
 
     const selectedShapes = shapes.filter((shape) =>
-      selectedShapeIds.includes(shape.id),
+      selectedShapesIds.includes(shape.id),
     );
     const groupBounds =
       selectedShapes.length > 0 ? getGroupBounds(selectedShapes) : null;
@@ -225,14 +225,14 @@ export default function useSelectionActions({
 
   // Main Functions
   function onPointerDownSelection(point: Point, shiftKey: boolean) {
-    const { selectedShapeIds, shapes } = useEditorStore.getState();
+    const { selectedShapesIds, shapes } = useEditorStore.getState();
 
     pointerRefs.isDraggingRef.current = false;
 
     const hitShape = getShapeAtPosition({ point, shapes });
 
     const selectedShapes = shapes.filter((shape) =>
-      selectedShapeIds.includes(shape.id),
+      selectedShapesIds.includes(shape.id),
     );
 
     const selectedShape =
@@ -245,11 +245,11 @@ export default function useSelectionActions({
     if (shiftKey) {
       if (!hitShape) return;
 
-      const nextSelectedIds = selectedShapeIds.includes(hitShape.id)
-        ? selectedShapeIds.filter((id) => id !== hitShape.id)
-        : [...selectedShapeIds, hitShape.id];
+      const nextSelectedIds = selectedShapesIds.includes(hitShape.id)
+        ? selectedShapesIds.filter((id) => id !== hitShape.id)
+        : [...selectedShapesIds, hitShape.id];
 
-      setSelectedShapeIds(nextSelectedIds);
+      setSelectedShapesIds(nextSelectedIds);
 
       const previewShapes = cloneShapes(
         shapes.filter((shape) => nextSelectedIds.includes(shape.id)),
@@ -295,10 +295,10 @@ export default function useSelectionActions({
       return;
     }
 
-    const isAlreadySelected = selectedShapeIds.includes(hitShape.id);
+    const isAlreadySelected = selectedShapesIds.includes(hitShape.id);
     // Clicked an unselected shape
     if (!isAlreadySelected) {
-      setSelectedShapeIds([hitShape.id]);
+      setSelectedShapesIds([hitShape.id]);
 
       const previewShape = structuredClone(hitShape);
 
@@ -376,11 +376,11 @@ export default function useSelectionActions({
           endPoint,
         );
 
-        const selectedShapeIdsInBox = shapes
+        const selectedShapesIdsInBox = shapes
           .filter((shape) => isShapeWithinBounds(shape, selectionBoxBounds))
           .map((shape) => shape.id);
 
-        setSelectedShapeIds(selectedShapeIdsInBox);
+        setSelectedShapesIds(selectedShapesIdsInBox);
         invalidate();
         return;
 
@@ -401,7 +401,7 @@ export default function useSelectionActions({
       interaction.type === "selection-box" &&
       !pointerRefs.isDraggingRef.current
     ) {
-      setSelectedShapeIds([]);
+      setSelectedShapesIds([]);
     }
 
     pointerRefs.interactionRef.current = {

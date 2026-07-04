@@ -3,27 +3,69 @@
 import { Minus } from "lucide-react";
 import { PropertyItem } from "../property-item";
 import { PropertiesPanelItemWrapper } from "../properties-panel-item-wrapper";
-import { useSelectedTool } from "@/features/editor/store/editor/selectors";
+import {
+  useSelectedShapesIds,
+  useSelectedTool,
+  useShapes,
+  useTextEditingState,
+} from "@/features/editor/store/editor/selectors";
+import { StrokeStyle } from "@/features/editor/types/types";
+import {
+  useSetStrokeStyle,
+  useStrokeStyle,
+} from "@/features/editor/store/properties/selectors";
+import { PropertiesDataType } from "../../types";
+import useShapeAppearance from "@/features/editor/hooks/appearance/use-shape-appearance";
+import getSelectedShapesTypes from "@/features/editor/shapes/get-selected-shapes-types";
+import { RefObject } from "react";
 
-export const StrokeStylePicker = () => {
+export const StrokeStylePicker = ({
+  sceneCanvasRef,
+}: {
+  sceneCanvasRef: RefObject<HTMLCanvasElement | null>;
+}) => {
   const selectedTool = useSelectedTool();
+  const selectedShapeIds = useSelectedShapesIds();
+  const textEditingState = useTextEditingState();
+  const shapes = useShapes();
+  const globalStrokeStyle = useStrokeStyle();
+
+  const selectedShapesIds = useSelectedShapesIds();
+  const selected = new Set(selectedShapesIds);
+  const selectedShapes = shapes.filter((shape) => selected.has(shape.id));
+  const selectedShapesTypes = getSelectedShapesTypes(selectedShapes);
+
+  const appearance = useShapeAppearance(sceneCanvasRef);
+
+  let strokeStyle = globalStrokeStyle;
+  if (selectedShapeIds.length === 1) {
+    const selectedShape = shapes.find(
+      (shape) => shape.id === selectedShapeIds[0],
+    );
+
+    if (selectedShape?.strokeStyle != null) {
+      strokeStyle = selectedShape.strokeStyle;
+    }
+  }
 
   // Rendering Stroke Style Picker Conditionally
-  if (selectedTool === "freedraw" || selectedTool === "text") {
+  if (
+    (textEditingState && selectedTool === "select") ||
+    selectedTool === "text"
+  ) {
     return;
   }
 
-  // Create state for it
-  const strokeStyle: any = "solid";
+  // Applies when shapes are selected
+  if (selectedShapesIds.length !== 0 && selectedShapesTypes.has("text")) return;
 
-  const styles = [
+  const strokeStyles = [
     {
-      value: "solid",
+      label: "solid",
       icon: <Minus strokeWidth={1} className="w-4 h-4" />,
-      active: strokeStyle === "solid",
     },
     {
-      value: "dashed",
+      label: "dashed",
       icon: (
         <svg
           aria-hidden="true"
@@ -45,10 +87,9 @@ export const StrokeStylePicker = () => {
           </g>
         </svg>
       ),
-      active: strokeStyle === "dashed",
     },
     {
-      value: "dotted",
+      label: "dotted",
       icon: (
         <svg
           aria-hidden="true"
@@ -72,15 +113,22 @@ export const StrokeStylePicker = () => {
           </g>
         </svg>
       ),
-      active: strokeStyle === "dotted",
     },
   ];
+
+  const handleStrokeStyleChangeClick = (data: PropertiesDataType) => {
+    appearance.setStrokeStyle(data.label as StrokeStyle);
+  };
 
   return (
     <PropertiesPanelItemWrapper title="Stroke Style">
       <div className="flex items-center gap-2 py-1">
-        {styles.map((style) => (
-          <PropertyItem key={style.value} data={style} onClick={() => {}} />
+        {strokeStyles.map((style, index) => (
+          <PropertyItem
+            key={index}
+            data={{ ...style, active: strokeStyle === style.label }}
+            onClick={handleStrokeStyleChangeClick}
+          />
         ))}
       </div>
     </PropertiesPanelItemWrapper>

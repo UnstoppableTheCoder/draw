@@ -101,8 +101,7 @@ export default function useCreateCanvasRenderer({
     if (!ctx) return;
 
     const interaction = pointerRefs.interactionRef.current;
-    const { shapes, selectedShapeIds, scale, panOffset, scaleOffset } =
-      useEditorStore.getState();
+    const { shapes, selectedShapesIds, scale } = useEditorStore.getState();
 
     clearCanvas(ctx);
 
@@ -162,7 +161,7 @@ export default function useCreateCanvasRenderer({
     // Selection
     const selectionShapes = isTransformInteraction
       ? interaction.previewShapes
-      : shapes.filter((shape) => selectedShapeIds.includes(shape.id));
+      : shapes.filter((shape) => selectedShapesIds.includes(shape.id));
 
     if (selectionShapes.length === 1) {
       const shape = selectionShapes[0];

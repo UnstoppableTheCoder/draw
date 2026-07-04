@@ -1,4 +1,5 @@
 import { RectangleShape } from "../../types/types";
+import getStrokeStyleValue from "../../utils/get-stroke-style-value";
 
 export const drawRectangle = (
   ctx: CanvasRenderingContext2D,
@@ -8,11 +9,14 @@ export const drawRectangle = (
 
   ctx.beginPath();
 
-  ctx.lineWidth = 2;
+  const strokeValue = getStrokeStyleValue(shape.strokeStyle ?? "solid");
+  ctx.setLineDash(strokeValue);
+  ctx.lineWidth = shape.strokeWidth ?? 2;
   ctx.strokeStyle = shape.strokeColor ?? "white";
   ctx.fillStyle = shape.backgroundColor ?? "white";
+  ctx.globalAlpha = (shape.opacity ?? 100) / 100;
 
-  ctx.roundRect(x, y, width, height, 10);
+  ctx.roundRect(x, y, width, height, shape.roundness ?? 10);
 
   ctx.fill();
   ctx.stroke();

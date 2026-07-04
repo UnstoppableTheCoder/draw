@@ -25,7 +25,7 @@ const CanvasWrapper = () => {
     <div className="relative w-full h-full">
       <RendererProvider editorRefs={editorRefs}>
         <Toolbar />
-        <PropertiesPanel />
+        <PropertiesPanel sceneCanvasRef={sceneCanvasRef} />
         <Canvas editorRefs={editorRefs} />
       </RendererProvider>
     </div>

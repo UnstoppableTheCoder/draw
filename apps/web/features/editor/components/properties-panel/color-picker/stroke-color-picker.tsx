@@ -1,16 +1,38 @@
-import React from "react";
+import React, { RefObject } from "react";
 import ColorPicker from "./color-picker";
 import {
   useSetStrokeColor,
   useStrokeColor,
 } from "@/features/editor/store/properties/selectors";
+import {
+  useSelectedShapesIds,
+  useShapes,
+} from "@/features/editor/store/editor/selectors";
+import useShapeAppearance from "@/features/editor/hooks/appearance/use-shape-appearance";
 
-const StrokeColorPicker = () => {
-  const setStrokeColor = useSetStrokeColor();
-  const strokeColor = useStrokeColor();
+const StrokeColorPicker = ({
+  sceneCanvasRef,
+}: {
+  sceneCanvasRef: RefObject<HTMLCanvasElement | null>;
+}) => {
+  const selectedShapeIds = useSelectedShapesIds();
+  const shapes = useShapes();
+  const appearance = useShapeAppearance(sceneCanvasRef);
 
-  const handleStrokeColorChange = (color: string) => {
-    setStrokeColor(color);
+  let strokeColor = useStrokeColor();
+
+  if (selectedShapeIds.length === 1) {
+    const selectedShape = shapes.find(
+      (shape) => shape.id === selectedShapeIds[0],
+    );
+
+    if (!selectedShape) return;
+
+    strokeColor = selectedShape.strokeColor!;
+  }
+
+  const handleStrokeColorChangeClick = (color: string) => {
+    appearance.setStrokeColor(color);
   };
 
   return (
@@ -18,7 +40,7 @@ const StrokeColorPicker = () => {
       title="Stroke"
       type="stroke"
       value={strokeColor}
-      onChange={handleStrokeColorChange}
+      onClick={handleStrokeColorChangeClick}
     />
   );
 };

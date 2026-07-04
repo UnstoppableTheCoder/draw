@@ -58,11 +58,11 @@ export default function useCanvasCursor({
   }
 
   function updateHoverCursor(point: Point, hoveredShape: Shape | undefined) {
-    const { selectedShapeIds, shapes } = useEditorStore.getState();
+    const { selectedShapesIds, shapes } = useEditorStore.getState();
     const canvas = overlayCanvasRef.current;
     if (!canvas) return;
 
-    const selectedShapeMap = new Set(selectedShapeIds);
+    const selectedShapeMap = new Set(selectedShapesIds);
 
     const selectedShapes = shapes.filter((shape) =>
       selectedShapeMap.has(shape.id),

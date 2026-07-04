@@ -17,10 +17,11 @@ export const useShapePropertiesStore = create<ShapePropertiesStore>()(
       roughness: 1,
       opacity: 100,
 
-      roundness: null,
+      roundness: 10,
 
       fontFamily: "Virgil",
       fontSize: 20,
+      lineHeightMultiplier: 1.2,
 
       textAlign: "left",
       verticalAlign: "top",
@@ -47,6 +48,9 @@ export const useShapePropertiesStore = create<ShapePropertiesStore>()(
       setFontFamily: (fontFamily: string) => set({ fontFamily }),
 
       setFontSize: (fontSize: number) => set({ fontSize }),
+
+      setLineHeightMultiplier: (lineHeightMultiplier: number) =>
+        set({ lineHeightMultiplier }),
 
       setTextAlign: (textAlign: "left" | "center" | "right") =>
         set({ textAlign }),

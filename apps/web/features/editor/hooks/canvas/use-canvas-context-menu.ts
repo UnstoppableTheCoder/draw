@@ -1,8 +1,8 @@
 import { MouseEvent, RefObject, useRef, useState } from "react";
 import { getShapeAtPosition } from "../../geometry/hit-test/get-shape-at-position";
 import {
-  useSelectedShapeIds,
-  useSetSelectedShapeIds,
+  useSelectedShapesIds,
+  useSetSelectedShapesIds,
   useShapes,
 } from "../../store/editor/selectors";
 import { getGroupBounds } from "../interactions/use-selection-actions";
@@ -25,8 +25,8 @@ export default function useCanvasContextMenu(
   const viewport = useViewportHelpers(canvasRef);
 
   const shapes = useShapes();
-  let selectedShapeIds = useSelectedShapeIds();
-  const setSelectedShapeIds = useSetSelectedShapeIds();
+  let selectedShapesIds = useSelectedShapesIds();
+  const setSelectedShapesIds = useSetSelectedShapesIds();
 
   const [menu, setMenu] = useState<Menu>({
     open: false,
@@ -73,8 +73,8 @@ export default function useCanvasContextMenu(
     if (!point) return;
 
     let clickedInSelectedArea: boolean;
-    if (selectedShapeIds.length > 0) {
-      const selected = new Set(selectedShapeIds);
+    if (selectedShapesIds.length > 0) {
+      const selected = new Set(selectedShapesIds);
 
       const selectedShapes = shapes.filter((shape) => selected.has(shape.id));
       const groupBounds = getGroupBounds(selectedShapes);
@@ -85,7 +85,7 @@ export default function useCanvasContextMenu(
 
       if (hitShape) {
         clickedInSelectedArea = true;
-        setSelectedShapeIds([hitShape.id]);
+        setSelectedShapesIds([hitShape.id]);
       }
     }
 

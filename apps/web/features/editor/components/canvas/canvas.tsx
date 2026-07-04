@@ -13,6 +13,7 @@ import { usePointerState } from "../../hooks/pointer/use-pointer-state";
 import useCanvasContextMenu from "../../hooks/canvas/use-canvas-context-menu";
 import { CanvasContextMenu } from "./context-menu/context-menu";
 import useShapeAppearance from "../../hooks/appearance/use-shape-appearance";
+import useEditorShortcuts from "../../hooks/shortcuts/use-editor-shortcuts";
 
 type CanvasProps = {
   editorRefs: {
@@ -43,7 +44,8 @@ const Canvas = ({ editorRefs }: CanvasProps) => {
 
   useTextEditorResize(sceneCanvasRef, textareaRef); // Not in use - Instead used -> field-sizing-content in TextEditor
   useCanvasResize(sceneCanvasRef, overlayCanvasRef);
-  useShapeAppearance();
+  useShapeAppearance(overlayCanvasRef);
+  useEditorShortcuts();
 
   if (!sceneCanvasRef || !overlayCanvasRef) return;
 

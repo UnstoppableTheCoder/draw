@@ -20,10 +20,6 @@ export interface Binding {
   fixedPoint?: [number, number];
 }
 
-export interface Roundness {
-  type: number;
-}
-
 export interface CropData {
   x: number;
   y: number;
@@ -55,12 +51,12 @@ export interface BaseShape {
   fillStyle?: FillStyle;
   strokeWidth?: number;
   strokeStyle?: StrokeStyle;
-  roughness?: number; // meaning ?
+  roughness?: number;
   opacity?: number;
   groupIds?: string[];
   frameId?: string | null;
   index?: string; // z-index
-  roundness?: Roundness | null;
+  roundness?: number | null;
   seed?: number; // Random seed used by Rough.js.
   version?: number; // Increment when shape changes.
   versionNonce?: number; // Extra collision protection during syncing.

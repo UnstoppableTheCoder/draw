@@ -1,13 +1,10 @@
 import { ToolType } from "@/types/toolbar.types";
 import {
   EraserPoint,
-  InteractionMode,
   Point,
-  PointTuple,
   SelectedBounds,
   Shape,
   TextEditingState,
-  TextShape,
 } from "../../types/types";
 
 export interface EditorStore {
@@ -29,8 +26,8 @@ export interface EditorStore {
   ) => void;
 
   // Selection
-  selectedShapeIds: string[];
-  setSelectedShapeIds: (
+  selectedShapesIds: string[];
+  setSelectedShapesIds: (
     updater: string[] | ((prev: string[]) => string[]),
   ) => void;
 
@@ -62,14 +59,4 @@ export interface EditorStore {
   pushHistory: () => void;
   undo: () => void;
   redo: () => void;
-
-  // Text Style
-  fontSize: number;
-  setFontSize: (size: number) => void;
-
-  fontFamily: string;
-  setFontFamily: (family: string) => void;
-
-  lineHeightMultiplier: number;
-  setLineHeightMultiplier: (value: number) => void;
 }

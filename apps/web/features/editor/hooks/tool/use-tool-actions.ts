@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import {
-  useSetSelectedShapeIds,
+  useSetSelectedShapesIds,
   useSetSelectedTool,
 } from "../../store/editor/selectors";
 import { ToolType } from "@/types/toolbar.types";
@@ -8,18 +8,18 @@ import { useCanvasRenderer } from "../../context/use-renderer";
 
 export default function useToolActions() {
   const setSelectedTool = useSetSelectedTool();
-  const setSelectedShapeIds = useSetSelectedShapeIds();
+  const setSelectedShapesIds = useSetSelectedShapesIds();
 
   const { invalidateOverlay } = useCanvasRenderer();
 
   const selectTool = useCallback(
     (tool: ToolType) => {
-      setSelectedShapeIds([]);
+      setSelectedShapesIds([]);
       setSelectedTool(tool);
 
       invalidateOverlay();
     },
-    [setSelectedShapeIds, setSelectedTool, invalidateOverlay],
+    [setSelectedShapesIds, setSelectedTool, invalidateOverlay],
   );
 
   return { selectTool };

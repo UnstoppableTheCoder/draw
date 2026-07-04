@@ -3,19 +3,18 @@ import { createShape } from "../../shapes/create-shape";
 import { updateDrawingPoints } from "../../shapes/update-shape";
 import * as store from "../../store/editor/selectors";
 import useViewportHelpers from "../viewport/use-viewport-helpers";
-import {
-  resetInteraction,
-  usePointerState,
-} from "../pointer/use-pointer-state";
+import { usePointerState } from "../pointer/use-pointer-state";
 import { Point, PointTuple } from "../../types/types";
 import { useCanvasRenderer } from "../../context/use-renderer";
 import {
   useBackgroundColor,
+  useOpacity,
+  useRoundness,
   useStrokeColor,
+  useStrokeStyle,
+  useStrokeWidth,
 } from "../../store/properties/selectors";
 import useSelectionActions, { getGroupBounds } from "./use-selection-actions";
-import useCanvasCursor from "../canvas/use-canvas-cursor";
-import { nextDev } from "next/dist/cli/next-dev";
 
 type UseDrawingArgs = {
   sceneCanvasRef: RefObject<HTMLCanvasElement | null>;
@@ -32,12 +31,17 @@ export default function useShapeDrawing({
 
   const setShapes = store.useSetShapes();
   const selectedTool = store.useSelectedTool();
-  const setSelectedShapeIds = store.useSetSelectedShapeIds();
+  const setSelectedShapesIds = store.useSetSelectedShapesIds();
   const pushHistory = store.usePushHistory();
   const isLocked = store.useIsLocked();
 
+  // Styles
   const strokeColor = useStrokeColor();
   const backgroundColor = useBackgroundColor();
+  const strokeWidth = useStrokeWidth();
+  const strokeStyle = useStrokeStyle();
+  const roundness = useRoundness();
+  const opacity = useOpacity();
 
   const { clientToCanvas } = useViewportHelpers(overlayCanvasRef);
   const { invalidateOverlay } = useCanvasRenderer();
@@ -46,7 +50,6 @@ export default function useShapeDrawing({
     overlayCanvasRef,
     pointerRefs,
   });
-  const cursor = useCanvasCursor({ overlayCanvasRef, pointerRefs });
 
   // Get Canvas Point
   function getCanvasPoint(e: PointerEvent<HTMLCanvasElement>) {
@@ -61,8 +64,14 @@ export default function useShapeDrawing({
       startPoint: drawingStartRef.current,
       endPoint: end,
       points: drawingPointsRef.current,
-      strokeColor,
-      backgroundColor,
+      style: {
+        strokeColor,
+        backgroundColor,
+        strokeWidth,
+        strokeStyle,
+        roundness,
+        opacity,
+      },
     });
   }
 
@@ -112,13 +121,13 @@ export default function useShapeDrawing({
     const shape = createDrawingShape(end);
 
     if (shape) {
-      pushHistory();
       setShapes((prev) => [...prev, shape]);
+      pushHistory();
 
       if (selectedTool === "freedraw" || isLocked) {
-        setSelectedShapeIds([]);
+        setSelectedShapesIds([]);
       } else {
-        setSelectedShapeIds((prevIds) => [...prevIds, shape.id]);
+        setSelectedShapesIds((prevIds) => [...prevIds, shape.id]);
       }
 
       pointerRefs.interactionRef.current = {

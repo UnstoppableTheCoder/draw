@@ -4,7 +4,11 @@ import getTextDimensions from "../../utils/get-text-dimensions";
 import * as store from "../../store/editor/selectors";
 import useViewportHelpers from "../viewport/use-viewport-helpers";
 import { Point, Shape } from "../../types/types";
-import { useStrokeColor } from "../../store/properties/selectors";
+import {
+  useFontFamily,
+  useFontSize,
+  useStrokeColor,
+} from "../../store/properties/selectors";
 import { useCanvasRenderer } from "../../context/use-renderer";
 
 export default function useTextEditing(
@@ -14,16 +18,16 @@ export default function useTextEditing(
   const setSelectedTool = store.useSetSelectedTool();
   const setShapes = store.useSetShapes();
   const setTextEditingState = store.useSetTextEditingState();
-  const fontSize = store.useFontSize();
-  const fontFamily = store.useFontFamily();
   const textEditingState = store.useTextEditingState();
   const scale = store.useScale();
   const selectedTool = store.useSelectedTool();
 
-  const { invalidate } = useCanvasRenderer();
-
-  // Style State
+  // Styles
+  const fontSize = useFontSize();
+  const fontFamily = useFontFamily();
   const strokeColor = useStrokeColor();
+
+  const { invalidate } = useCanvasRenderer();
 
   const viewportHelpers = useViewportHelpers(canvasRef);
 

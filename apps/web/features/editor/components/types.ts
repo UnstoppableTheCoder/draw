@@ -1,4 +1,4 @@
-import { MouseEvent, RefObject } from "react";
+import { MouseEvent, ReactNode, RefObject } from "react";
 
 export type Menu = {
   open: boolean;
@@ -14,4 +14,12 @@ export type ContextMenuType = {
   openContextMenu: (e: MouseEvent<HTMLCanvasElement>) => void;
   closeContextMenu: () => void;
   updateContextMenu: (value: boolean) => void;
+};
+
+export type StrokeWidthType = "thin" | "medium" | "bold" | "extrabold";
+
+export type PropertiesDataType = {
+  label: string;
+  value?: string;
+  icon: ReactNode;
 };

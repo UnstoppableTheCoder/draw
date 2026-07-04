@@ -16,6 +16,7 @@ export interface ShapePropertiesStore {
 
   fontFamily: string;
   fontSize: number;
+  lineHeightMultiplier: number;
 
   textAlign: "left" | "center" | "right";
   verticalAlign: "top" | "middle" | "bottom";
@@ -38,6 +39,7 @@ export interface ShapePropertiesStore {
 
   setFontFamily: (fontFamily: string) => void;
   setFontSize: (fontSize: number) => void;
+  setLineHeightMultiplier: (lineHeightMultiplier: number) => void;
 
   setTextAlign: (textAlign: "left" | "center" | "right") => void;
 

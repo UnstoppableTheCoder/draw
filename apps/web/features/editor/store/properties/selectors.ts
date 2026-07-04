@@ -1,3 +1,4 @@
+import { setAttributesFromProps } from "next/dist/client/set-attributes-from-props";
 import { useShapePropertiesStore } from "./properties-store";
 
 // Shape Properties
@@ -31,6 +32,9 @@ export const useFontFamily = () =>
 
 export const useFontSize = () =>
   useShapePropertiesStore((state) => state.fontSize);
+
+export const useLineHeightMultiplier = () =>
+  useShapePropertiesStore((state) => state.lineHeightMultiplier);
 
 export const useTextAlign = () =>
   useShapePropertiesStore((state) => state.textAlign);
@@ -76,6 +80,9 @@ export const useSetFontFamily = () =>
 
 export const useSetFontSize = () =>
   useShapePropertiesStore((state) => state.setFontSize);
+
+export const useSetLineHeightMultiplier = () =>
+  useShapePropertiesStore((state) => state.setLineHeightMultiplier);
 
 export const useSetTextAlign = () =>
   useShapePropertiesStore((state) => state.setTextAlign);

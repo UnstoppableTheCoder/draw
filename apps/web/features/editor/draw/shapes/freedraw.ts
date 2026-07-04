@@ -1,5 +1,6 @@
 import { FreeDrawShape } from "../../types/types";
 import { getAbsolutePoint } from "../../geometry/get-absolute-point";
+import getStrokeStyleValue from "../../utils/get-stroke-style-value";
 
 export const drawFreeDraw = (
   ctx: CanvasRenderingContext2D,
@@ -7,10 +8,13 @@ export const drawFreeDraw = (
 ) => {
   const { x, y, points } = shape;
 
-  ctx.lineWidth = 2;
+  const strokeValue = getStrokeStyleValue(shape.strokeStyle ?? "solid");
+  ctx.setLineDash(strokeValue);
+  ctx.lineWidth = shape.strokeWidth ?? 2;
   ctx.strokeStyle = shape.strokeColor ?? "white";
   ctx.lineCap = "round";
   ctx.lineJoin = "round";
+ ctx.globalAlpha = (shape.opacity ?? 100) / 100;
 
   // Draw a dot
   if (points.length === 1) {

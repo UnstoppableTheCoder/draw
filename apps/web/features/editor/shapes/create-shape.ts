@@ -9,6 +9,7 @@ import {
   PointTuple,
   RectangleShape,
   Shape,
+  StrokeStyle,
 } from "../types/types";
 import { normalizeRect } from "../geometry/normalize-rect";
 import { v4 as uuidv4 } from "uuid";
@@ -79,57 +80,56 @@ export const createShape = ({
   startPoint,
   endPoint,
   points,
-  strokeColor,
-  backgroundColor,
+  style,
 }: {
   tool: ToolType;
   startPoint: Point;
   endPoint: Point;
   points: PointTuple[];
-  strokeColor?: string;
-  backgroundColor?: string;
+  style: {
+    strokeColor?: string;
+    backgroundColor?: string;
+    strokeWidth?: number;
+    strokeStyle?: StrokeStyle;
+    roundness?: number | null;
+    opacity: number;
+  };
 }): Shape | null => {
   switch (tool) {
     case "rectangle":
       return {
         ...createRectangleShape(startPoint, endPoint),
-        strokeColor,
-        backgroundColor,
+        ...style,
       };
 
     case "diamond":
       return {
         ...createDiamondShape(startPoint, endPoint),
-        strokeColor,
-        backgroundColor,
+        ...style,
       };
 
     case "ellipse":
       return {
         ...createEllipseShape(startPoint, endPoint),
-        strokeColor,
-        backgroundColor,
+        ...style,
       };
 
     case "arrow":
       return {
         ...createArrowShape(startPoint, points),
-        strokeColor,
-        backgroundColor,
+        ...style,
       };
 
     case "line":
       return {
         ...createLineShape(startPoint, points),
-        strokeColor,
-        backgroundColor,
+        ...style,
       };
 
     case "freedraw":
       return {
         ...createFreeDrawShape(startPoint, points),
-        strokeColor,
-        backgroundColor,
+        ...style,
       };
 
     default:

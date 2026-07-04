@@ -2,32 +2,41 @@
 
 import { CaseUpper, Code, Pencil } from "lucide-react";
 import { PropertyItem } from "../../property-item";
+import { RefObject } from "react";
 
-export const FontFamilyPicker = () => {
+export const FontFamilyPicker = ({
+  sceneCanvasRef,
+}: {
+  sceneCanvasRef: RefObject<HTMLCanvasElement | null>;
+}) => {
   const fontFamily: any = "Arial";
 
-  const styles = [
+  const fontFamilies = [
     {
+      label: "Arial",
       value: "Arial",
       icon: <Pencil className="w-4 h-4" />,
-      active: fontFamily === "Arial",
     },
     {
+      label: "Helvetica",
       value: "Helvetica",
       icon: <CaseUpper className="w-4 h-4" />,
-      active: fontFamily === "Helvetica",
     },
     {
+      label: "Sans-Serif",
       value: "sans-serif",
       icon: <Code className="w-4 h-4" />,
-      active: fontFamily === "sans-serif",
     },
   ];
 
   return (
     <div className="flex items-center gap-2 py-1">
-      {styles.map((style) => (
-        <PropertyItem key={style.value} data={style} onClick={() => {}} />
+      {fontFamilies.map((family) => (
+        <PropertyItem
+          key={family.value}
+          data={{ ...family, active: family.value === fontFamily }}
+          onClick={() => {}}
+        />
       ))}
     </div>
   );

@@ -2,7 +2,15 @@ import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 
 import { EditorStore } from "./editor-types";
-import { createEraserSlice, createHistorySlice, createSelectionSlice, createShapeSlice, createTextEditingSlice, createTextStyleSlice, createToolSlice, createViewportSlice } from "./slices";
+import {
+  createEraserSlice,
+  createHistorySlice,
+  createSelectionSlice,
+  createShapeSlice,
+  createTextEditingSlice,
+  createToolSlice,
+  createViewportSlice,
+} from "./slices";
 
 export const useEditorStore = create<EditorStore>()(
   devtools(
@@ -14,7 +22,6 @@ export const useEditorStore = create<EditorStore>()(
       ...createTextEditingSlice(...args),
       ...createViewportSlice(...args),
       ...createHistorySlice(...args),
-      ...createTextStyleSlice(...args),
     }),
     {
       name: "editor-store",

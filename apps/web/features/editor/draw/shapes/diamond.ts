@@ -1,4 +1,5 @@
 import { DiamondShape } from "../../types/types";
+import getStrokeStyleValue from "../../utils/get-stroke-style-value";
 
 // Draw a Diamond
 export const drawDiamond = (
@@ -7,9 +8,12 @@ export const drawDiamond = (
 ) => {
   const { x, y, width, height } = shape;
 
-  ctx.lineWidth = 2;
+  const strokeValue = getStrokeStyleValue(shape.strokeStyle ?? "solid");
+  ctx.setLineDash(strokeValue);
+  ctx.lineWidth = shape.strokeWidth ?? 2;
   ctx.strokeStyle = shape.strokeColor ?? "white";
   ctx.fillStyle = shape.backgroundColor ?? "white";
+  ctx.globalAlpha = (shape.opacity ?? 100) / 100;
 
   const centerX = x + width / 2;
   const centerY = y + height / 2;

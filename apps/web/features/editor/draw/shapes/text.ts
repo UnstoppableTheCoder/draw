@@ -6,6 +6,7 @@ export const drawText = (ctx: CanvasRenderingContext2D, shape: TextShape) => {
   ctx.font = `${fontSize}px ${fontFamily}`;
   ctx.fillStyle = strokeColor || "white";
   ctx.textBaseline = "top";
+  ctx.globalAlpha = (shape.opacity ?? 100) / 100;
 
   const lineHeight = fontSize * 1.2;
 

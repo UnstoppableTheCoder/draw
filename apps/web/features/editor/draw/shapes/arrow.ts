@@ -1,4 +1,5 @@
 import { ArrowShape, SelectedBounds } from "../../types/types";
+import getStrokeStyleValue from "../../utils/get-stroke-style-value";
 
 // Canvas Coordinate System
 // (0, 0) is at the top-left corner of the canvas.
@@ -9,9 +10,12 @@ export const drawArrow = (ctx: CanvasRenderingContext2D, shape: ArrowShape) => {
   const { x, y, points } = shape;
 
   if (points.length < 2) return;
+  const strokeValue = getStrokeStyleValue(shape.strokeStyle ?? "solid");
 
-  ctx.lineWidth = 2;
+  ctx.setLineDash(strokeValue);
+  ctx.lineWidth = shape.strokeWidth ?? 2;
   ctx.strokeStyle = shape.strokeColor ?? "white";
+  ctx.globalAlpha = (shape.opacity ?? 100) / 100;
 
   ctx.beginPath();
 

@@ -7,23 +7,23 @@ export const createSelectionSlice: StateCreator<
   [],
   Pick<
     EditorStore,
-    | "selectedShapeIds"
-    | "setSelectedShapeIds"
+    | "selectedShapesIds"
+    | "setSelectedShapesIds"
     | "selectionBounds"
     | "setSelectionBounds"
   >
 > = (set) => ({
-  selectedShapeIds: [],
-  setSelectedShapeIds: (updater) =>
+  selectedShapesIds: [],
+  setSelectedShapesIds: (updater) =>
     set(
       (state) => ({
-        selectedShapeIds:
+        selectedShapesIds:
           typeof updater === "function"
-            ? updater(state.selectedShapeIds)
+            ? updater(state.selectedShapesIds)
             : updater,
       }),
       false,
-      "selection/setSelectedShapeIds",
+      "selection/setSelectedShapesIds",
     ),
 
   selectionBounds: null,

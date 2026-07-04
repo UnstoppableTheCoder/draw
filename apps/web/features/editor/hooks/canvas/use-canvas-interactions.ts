@@ -33,8 +33,8 @@ export default function useCanvasInteractions({
   const setTextEditingState = store.useSetTextEditingState();
   const setSelectedTool = store.useSetSelectedTool();
   const isLocked = store.useIsLocked();
-  const selectedShapeIds = store.useSelectedShapeIds();
-  const setSelectedShapeIds = store.useSetSelectedShapeIds();
+  const selectedShapesIds = store.useSelectedShapesIds();
+  const setSelectedShapesIds = store.useSetSelectedShapesIds();
   const shapes = store.useShapes();
 
   const drawing = useShapeDrawing({
@@ -137,7 +137,7 @@ export default function useCanvasInteractions({
     if (!pointerDownTime) return;
 
     const selectedShape = shapes.find((shape) =>
-      selectedShapeIds.includes(shape.id),
+      selectedShapesIds.includes(shape.id),
     );
 
     if (!selectedShape || selectedShape.type !== "text") return;
@@ -152,7 +152,7 @@ export default function useCanvasInteractions({
     if (duration > 250) return;
 
     setTextEditingState({ ...selectedShape });
-    setSelectedShapeIds([]);
+    setSelectedShapesIds([]);
   }
 
   function handleToolReset() {

@@ -1,10 +1,10 @@
 import { useEditorStore } from "../editor-store";
 
-export const useSelectedShapeIds = () =>
-  useEditorStore((state) => state.selectedShapeIds);
+export const useSelectedShapesIds = () =>
+  useEditorStore((state) => state.selectedShapesIds);
 
-export const useSetSelectedShapeIds = () =>
-  useEditorStore((state) => state.setSelectedShapeIds);
+export const useSetSelectedShapesIds = () =>
+  useEditorStore((state) => state.setSelectedShapesIds);
 
 export const useSelectionBounds = () =>
   useEditorStore((state) => state.selectionBounds);
