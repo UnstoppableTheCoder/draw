@@ -8,6 +8,7 @@ export const drawDiamond = (
 ) => {
   const { x, y, width, height } = shape;
 
+  ctx.save();
   const strokeValue = getStrokeStyleValue(shape.strokeStyle ?? "solid");
   ctx.setLineDash(strokeValue);
   ctx.lineWidth = shape.strokeWidth ?? 2;
@@ -32,4 +33,5 @@ export const drawDiamond = (
   ctx.closePath();
   ctx.stroke();
   ctx.fill();
+  ctx.restore();
 };

@@ -26,7 +26,7 @@ export const getResizeRect = ({
     case "top":
       start = {
         x: minX,
-        y: currentPoint.y,
+        y: currentPoint.y + TOLERANCE,
       };
 
       end = {
@@ -43,13 +43,13 @@ export const getResizeRect = ({
 
       end = {
         x: maxX,
-        y: currentPoint.y,
+        y: currentPoint.y - TOLERANCE,
       };
       break;
 
     case "left":
       start = {
-        x: currentPoint.x,
+        x: currentPoint.x + TOLERANCE,
         y: minY,
       };
 
@@ -66,13 +66,13 @@ export const getResizeRect = ({
       };
 
       end = {
-        x: currentPoint.x,
+        x: currentPoint.x - TOLERANCE,
         y: maxY,
       };
       break;
 
     case "top-left":
-      start = currentPoint;
+      start = { x: currentPoint.x + TOLERANCE, y: currentPoint.y + TOLERANCE };
 
       end = {
         x: maxX,
@@ -83,24 +83,24 @@ export const getResizeRect = ({
     case "top-right":
       start = {
         x: minX,
-        y: currentPoint.y,
+        y: currentPoint.y + TOLERANCE,
       };
 
       end = {
-        x: currentPoint.x,
+        x: currentPoint.x - TOLERANCE,
         y: maxY,
       };
       break;
 
     case "bottom-left":
       start = {
-        x: currentPoint.x,
+        x: currentPoint.x + TOLERANCE,
         y: minY,
       };
 
       end = {
         x: maxX,
-        y: currentPoint.y,
+        y: currentPoint.y - TOLERANCE,
       };
       break;
 
@@ -110,7 +110,7 @@ export const getResizeRect = ({
         y: minY,
       };
 
-      end = currentPoint;
+      end = { x: currentPoint.x - TOLERANCE, y: currentPoint.y - TOLERANCE };
       break;
 
     default:
@@ -120,3 +120,4 @@ export const getResizeRect = ({
   const rect = normalizeRect(start, end);
   return rect;
 };
+  

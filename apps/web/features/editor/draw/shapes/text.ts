@@ -1,3 +1,4 @@
+import { useShapePropertiesStore } from "../../store/properties/properties-store";
 import { TextShape } from "../../types/types";
 
 export const drawText = (ctx: CanvasRenderingContext2D, shape: TextShape) => {
@@ -11,6 +12,7 @@ export const drawText = (ctx: CanvasRenderingContext2D, shape: TextShape) => {
     strokeColor,
     textAlign = "left",
   } = shape;
+  const { lineHeightMultiplier } = useShapePropertiesStore.getState();
 
   ctx.save();
 
@@ -27,7 +29,7 @@ export const drawText = (ctx: CanvasRenderingContext2D, shape: TextShape) => {
         ? x + width!
         : x;
 
-  const lineHeight = fontSize * 1.2;
+  const lineHeight = fontSize * (lineHeightMultiplier ?? 1.25);
 
   text.split("\n").forEach((line, index) => {
     ctx.fillText(line, drawX, y + index * lineHeight);

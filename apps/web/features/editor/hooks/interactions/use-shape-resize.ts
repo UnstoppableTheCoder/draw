@@ -1,12 +1,18 @@
-import { Point } from "../../types/types";
+import { Point, PointTuple } from "../../types/types";
 import { usePointerState } from "../pointer/use-pointer-state";
 import { RefObject } from "react";
-import { usePushHistory, useSetShapes } from "../../store/editor/selectors";
+import {
+  usePushHistory,
+  useSelectedShapesIds,
+  useSetShapes,
+  useShapes,
+} from "../../store/editor/selectors";
 import { getResizeRect } from "../../transform/get-resize-rect";
 import { resizeFreeDrawShape } from "../../transform/resize-freedraw";
 import resizeTextShape from "../../transform/resize-text";
 import { resizeLineShape } from "../../transform/resize-line";
 import {
+  getGroupScale,
   getScaledShapeRect,
   getShapeBounds,
   scalePointInGroup,
@@ -26,6 +32,10 @@ export default function useShapeResize(
 ) {
   const pushHistory = usePushHistory();
   const setShapes = useSetShapes();
+  const shapes = useShapes();
+  const selectedShapesIds = useSelectedShapesIds();
+  const selected = new Set(selectedShapesIds);
+  const selectedShapes = shapes.filter((shape) => selected.has(shape.id));
 
   const { invalidateOverlay, invalidateScene } = useCanvasRenderer();
 
@@ -59,6 +69,10 @@ export default function useShapeResize(
 
     const ctx = overlayCanvasRef.current?.getContext("2d");
 
+    const isTextSelected = selectedShapes.some(
+      (shape) => shape.type === "text",
+    );
+
     const updatedShapes = previewShapes.map((shape) => {
       const initialShape = initialShapeMap.get(shape.id);
       if (!initialShape) return shape;
@@ -78,17 +92,22 @@ export default function useShapeResize(
             });
           }
 
-          if (!rect) return shape;
+          if (!rect || !isGroupSelection) return shape;
+          const groupScale = getGroupScale(initialGroupBounds, rect);
+          const groupHeightScaledRatio = groupScale.scaleY;
+
           const start = scalePointInGroup(
             lineState.start,
             initialGroupBounds,
             rect,
+            isTextSelected ? groupHeightScaledRatio : undefined,
           );
 
           const end = scalePointInGroup(
             lineState.end,
             initialGroupBounds,
             rect,
+            isTextSelected ? groupHeightScaledRatio : undefined,
           );
 
           return {
@@ -98,29 +117,41 @@ export default function useShapeResize(
             points: [
               [0, 0],
               [end.x - start.x, end.y - start.y],
-            ] as const,
-          } as typeof shape;
+            ] as PointTuple[],
+          };
         }
 
         case "freedraw": {
           const points = freeDrawPoints?.[shape.id];
           if (!points || !rect) return shape;
 
+          const groupScale = getGroupScale(initialGroupBounds, rect);
+          const groupHeightScaledRatio = groupScale.scaleY;
+
           return resizeFreeDrawShape({
             shape,
             rect,
             initialGroupBounds,
             freeDrawPoints: points,
+            scale: isTextSelected ? groupHeightScaledRatio : undefined,
           });
         }
 
         case "text": {
           const fontSize = initialFontSizes?.[shape.id];
 
-          if (fontSize == null || !ctx || !rect) return shape;
+          if (!fontSize || !ctx || !rect) return shape;
+
+          const groupScale = getGroupScale(initialGroupBounds, rect);
+          const groupHeightScaledRatio = groupScale.scaleY;
 
           const shapeRect = isGroupSelection
-            ? getScaledShapeRect(initialShape, initialGroupBounds, rect)
+            ? getScaledShapeRect(
+                initialShape,
+                initialGroupBounds,
+                rect,
+                isTextSelected ? groupHeightScaledRatio : undefined,
+              )
             : rect;
 
           return resizeTextShape({
@@ -131,13 +162,23 @@ export default function useShapeResize(
               ? getShapeBounds(initialShape)
               : initialGroupBounds,
             initialFontSize: fontSize,
+            scale: isTextSelected ? groupHeightScaledRatio : undefined,
           });
         }
 
         default:
           if (!rect) return shape;
+
+          const groupScale = getGroupScale(initialGroupBounds, rect);
+          const groupHeightScaledRatio = groupScale.scaleY;
+
           const shapeRect = isGroupSelection
-            ? getScaledShapeRect(initialShape, initialGroupBounds, rect)
+            ? getScaledShapeRect(
+                initialShape,
+                initialGroupBounds,
+                rect,
+                isTextSelected ? groupHeightScaledRatio : undefined,
+              )
             : rect;
 
           return {

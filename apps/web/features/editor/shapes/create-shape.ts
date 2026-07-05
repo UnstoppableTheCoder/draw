@@ -94,7 +94,6 @@ export const createShape = ({
     strokeStyle?: StrokeStyle;
     roundness?: number | null;
     opacity?: number;
-    textAlign?: TextAlign;
   };
 }): Shape | null => {
   switch (tool) {

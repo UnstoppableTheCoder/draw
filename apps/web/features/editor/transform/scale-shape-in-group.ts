@@ -12,7 +12,7 @@ export function getAdjustedGroupBounds(bounds: SelectedBounds) {
 
 export function getGroupScale(
   initialGroupBounds: SelectedBounds,
-  rect: { width: number; height: number },
+  rect: { x: number; y: number; width: number; height: number },
 ) {
   // Removes the tolerance
   const { maxX, minX, maxY, minY } = getAdjustedGroupBounds(initialGroupBounds);
@@ -20,10 +20,13 @@ export function getGroupScale(
   const oldWidth = maxX - minX;
   const oldHeight = maxY - minY;
 
+  const newWidth = rect.width;
+  const newHeight = rect.height;
+
   return {
     group: { maxX, minX, maxY, minY },
-    scaleX: oldWidth === 0 ? 1 : rect.width / oldWidth,
-    scaleY: oldHeight === 0 ? 1 : rect.height / oldHeight,
+    scaleX: oldWidth === 0 ? 1 : newWidth / oldWidth,
+    scaleY: oldHeight === 0 ? 1 : newHeight / oldHeight,
   };
 }
 
@@ -31,12 +34,13 @@ export function scalePointInGroup(
   point: Point,
   initialGroupBounds: SelectedBounds,
   rect: { x: number; y: number; width: number; height: number },
+  scale?: number,
 ) {
   const { group, scaleX, scaleY } = getGroupScale(initialGroupBounds, rect);
 
   return {
-    x: rect.x + (point.x - group.minX) * scaleX,
-    y: rect.y + (point.y - group.minY) * scaleY,
+    x: rect.x + (point.x - group.minX) * (scale ?? scaleX),
+    y: rect.y + (point.y - group.minY) * (scale ?? scaleY),
   };
 }
 
@@ -44,6 +48,7 @@ export function getScaledShapeRect(
   initialShape: Shape,
   initialGroupBounds: SelectedBounds,
   rect: { x: number; y: number; width: number; height: number },
+  scale?: number,
 ) {
   const { group, scaleX, scaleY } = getGroupScale(initialGroupBounds, rect);
 
@@ -51,10 +56,10 @@ export function getScaledShapeRect(
   const height = initialShape.height ?? 0;
 
   return {
-    x: rect.x + (initialShape.x - group.minX) * scaleX,
-    y: rect.y + (initialShape.y - group.minY) * scaleY,
-    width: width * scaleX,
-    height: height * scaleY,
+    x: rect.x + (initialShape.x - group.minX) * (scale ?? scaleX),
+    y: rect.y + (initialShape.y - group.minY) * (scale ?? scaleY),
+    width: width * (scale ?? scaleX),
+    height: height * (scale ?? scaleY),
   };
 }
 

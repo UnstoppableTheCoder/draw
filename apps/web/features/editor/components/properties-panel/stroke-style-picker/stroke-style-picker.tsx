@@ -57,7 +57,7 @@ export const StrokeStylePicker = ({
   }
 
   // Applies when shapes are selected
-  if (selectedShapesIds.length !== 0 && selectedShapesTypes.has("text")) return;
+  if (selectedShapesIds.length === 1 && selectedShapesTypes.has("text")) return;
 
   const strokeStyles = [
     {

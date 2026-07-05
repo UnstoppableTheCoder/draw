@@ -6,6 +6,7 @@ export function resizeFreeDrawShape({
   rect,
   initialGroupBounds,
   freeDrawPoints,
+  scale,
 }: {
   shape: FreeDrawShape;
   rect: {
@@ -16,6 +17,7 @@ export function resizeFreeDrawShape({
   };
   initialGroupBounds: SelectedBounds;
   freeDrawPoints: PointTuple[];
+  scale?: number;
 }) {
   // Absolute Points
   let scaledPoints: PointTuple[] = freeDrawPoints.map((point) => {
@@ -25,6 +27,7 @@ export function resizeFreeDrawShape({
       { x: px, y: py },
       initialGroupBounds,
       rect,
+      scale,
     );
 
     return [scaledPoint.x, scaledPoint.y];

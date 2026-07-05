@@ -1,5 +1,6 @@
 import {
   useSetBackgroundColor,
+  useSetFontFamily,
   useSetFontSize,
   useSetOpacity,
   useSetRoundness,
@@ -12,6 +13,7 @@ import { useCanvasRenderer } from "../../context/use-renderer";
 import { StrokeStyle, TextAlign } from "../../types/types";
 import { RefObject, useCallback } from "react";
 import {
+  usePushHistory,
   useSelectedShapesIds,
   useSetShapes,
   useSetTextEditingState,
@@ -34,8 +36,10 @@ export default function useShapeAppearance(
   const setPropertyRoundness = useSetRoundness();
   const setPropertyOpacity = useSetOpacity();
   const setPropertyTextAlign = useSetTextAlign();
+  const setPropertyFontFamily = useSetFontFamily();
 
   const { invalidate } = useCanvasRenderer();
+  const pushHistory = usePushHistory();
 
   const updateSelectedShapes = useCallback(
     (updates: any) => {
@@ -50,7 +54,8 @@ export default function useShapeAppearance(
         prevShapes.map((shape) =>
           selected.has(shape.id)
             ? shape.type === "text"
-              ? updates.hasOwnProperty("fontSize")
+              ? updates.hasOwnProperty("fontSize") ||
+                updates.hasOwnProperty("fontFamily")
                 ? {
                     ...shape,
                     ...getTextDimensions({ ctx, ...shape, ...updates }),
@@ -61,7 +66,7 @@ export default function useShapeAppearance(
             : shape,
         ),
       );
-
+      pushHistory();
       invalidate();
     },
     [selectedShapesIds, setShapes, invalidate, canvasRef, getTextDimensions],
@@ -134,6 +139,20 @@ export default function useShapeAppearance(
     updateSelectedShapes({ textAlign });
   }
 
+  function setFontFamily(fontFamily: string) {
+    setPropertyFontFamily(fontFamily);
+
+    if (textEditingState) {
+      setTextEditingState((prev) => {
+        if (!prev) return prev;
+
+        return { ...prev, fontFamily };
+      });
+    }
+
+    updateSelectedShapes({ fontFamily });
+  }
+
   return {
     setStrokeColor,
     setBackgroundColor,
@@ -143,5 +162,6 @@ export default function useShapeAppearance(
     setRoundness,
     setOpacity,
     setTextAlign,
+    setFontFamily,
   };
 }

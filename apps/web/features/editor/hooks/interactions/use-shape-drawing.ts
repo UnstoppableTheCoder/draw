@@ -8,6 +8,7 @@ import { Point, PointTuple } from "../../types/types";
 import { useCanvasRenderer } from "../../context/use-renderer";
 import {
   useBackgroundColor,
+  useFontFamily,
   useOpacity,
   useRoundness,
   useStrokeColor,
@@ -44,6 +45,7 @@ export default function useShapeDrawing({
   const roundness = useRoundness();
   const opacity = useOpacity();
   const textAlign = useTextAlign();
+  const fontFamily = useFontFamily();
 
   const { clientToCanvas } = useViewportHelpers(overlayCanvasRef);
   const { invalidateOverlay } = useCanvasRenderer();
@@ -73,7 +75,6 @@ export default function useShapeDrawing({
         strokeStyle,
         roundness,
         opacity,
-        textAlign
       },
     });
   }

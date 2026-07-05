@@ -19,7 +19,7 @@ export const useShapePropertiesStore = create<ShapePropertiesStore>()(
 
       roundness: 10,
 
-      fontFamily: "Virgil",
+      fontFamily: "Arial",
       fontSize: 20,
       lineHeightMultiplier: 1.2,
 

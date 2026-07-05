@@ -8,6 +8,7 @@ import {
   useFontFamily,
   useFontSize,
   useStrokeColor,
+  useTextAlign,
 } from "../../store/properties/selectors";
 import { useCanvasRenderer } from "../../context/use-renderer";
 
@@ -26,6 +27,7 @@ export default function useTextEditing(
   const fontSize = useFontSize();
   const fontFamily = useFontFamily();
   const strokeColor = useStrokeColor();
+  const textAlign = useTextAlign();
 
   const { invalidate } = useCanvasRenderer();
 
@@ -34,12 +36,7 @@ export default function useTextEditing(
   const saveTextShape = () => {
     if (!textEditingState) return;
 
-    const text = textEditingState.text.trim();
-
-    if (!text) {
-      finishTextEditing();
-      return;
-    }
+    const text = textEditingState.text;
 
     const ctx = canvasRef.current?.getContext("2d");
     if (!ctx) return;
@@ -124,7 +121,7 @@ export default function useTextEditing(
 
   const handleDoubleClick = (e: PointerEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
-    if (!canvas || selectedTool === "eraser") return;
+    if (!canvas || selectedTool === "eraser" || selectedTool === "pan") return;
 
     const point = viewportHelpers.clientToCanvas(e.clientX, e.clientY);
     if (!point) return;
@@ -141,6 +138,7 @@ export default function useTextEditing(
       fontSize,
       fontFamily,
       strokeColor,
+      textAlign,
     });
   }
 

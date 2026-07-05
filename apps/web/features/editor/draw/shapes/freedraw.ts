@@ -9,12 +9,14 @@ export const drawFreeDraw = (
   const { x, y, points } = shape;
 
   const strokeValue = getStrokeStyleValue(shape.strokeStyle ?? "solid");
+
+  ctx.save();
   ctx.setLineDash(strokeValue);
   ctx.lineWidth = shape.strokeWidth ?? 2;
   ctx.strokeStyle = shape.strokeColor ?? "white";
   ctx.lineCap = "round";
   ctx.lineJoin = "round";
- ctx.globalAlpha = (shape.opacity ?? 100) / 100;
+  ctx.globalAlpha = (shape.opacity ?? 100) / 100;
 
   // Draw a dot
   if (points.length === 1) {
@@ -43,4 +45,5 @@ export const drawFreeDraw = (
   }
 
   ctx.stroke();
+  ctx.restore();
 };

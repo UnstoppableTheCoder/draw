@@ -7,6 +7,7 @@ export const drawEllipse = (
 ) => {
   const { x, y, width, height } = shape;
 
+  ctx.save();
   const strokeValue = getStrokeStyleValue(shape.strokeStyle ?? "solid");
   ctx.setLineDash(strokeValue);
   ctx.lineWidth = shape.strokeWidth ?? 2;
@@ -24,4 +25,5 @@ export const drawEllipse = (
   ctx.ellipse(centerX, centerY, radiusX, radiusY, 0, 0, Math.PI * 2);
   ctx.stroke();
   ctx.fill();
+  ctx.restore();
 };

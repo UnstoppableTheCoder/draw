@@ -7,6 +7,7 @@ export const drawRectangle = (
 ) => {
   const { x, y, width, height } = shape;
 
+  ctx.save();
   ctx.beginPath();
 
   const strokeValue = getStrokeStyleValue(shape.strokeStyle ?? "solid");
@@ -22,4 +23,5 @@ export const drawRectangle = (
   ctx.stroke();
 
   ctx.closePath();
+  ctx.restore();
 };

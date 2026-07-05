@@ -46,16 +46,17 @@ export const PropertiesPanel = ({
   return (
     <div className="w-[202px] select-none h-fit z-50 bg-white cursor-default rounded-md shadow-spread p-3 space-y-4 absolute top-28 left-5">
       {/* Rendering Style Pickers Conditionally */}
-      {selectedTool !== "image" && !selectedShapesTypes.has("image") && (
-        <>
-          <StrokeColorPicker sceneCanvasRef={sceneCanvasRef} />
-          <BackgroundColorPicker sceneCanvasRef={sceneCanvasRef} />
-          <StrokeWidthPicker sceneCanvasRef={sceneCanvasRef} />
-          <StrokeStylePicker sceneCanvasRef={sceneCanvasRef} />
-          <EdgePicker sceneCanvasRef={sceneCanvasRef} />
-          <FontTools sceneCanvasRef={sceneCanvasRef} />
-        </>
-      )}
+      {selectedTool !== "image" &&
+        (selectedShapes.length !== 1 || !selectedShapesTypes.has("image")) && (
+          <>
+            <StrokeColorPicker sceneCanvasRef={sceneCanvasRef} />
+            <BackgroundColorPicker sceneCanvasRef={sceneCanvasRef} />
+            <StrokeWidthPicker sceneCanvasRef={sceneCanvasRef} />
+            <StrokeStylePicker sceneCanvasRef={sceneCanvasRef} />
+            <EdgePicker sceneCanvasRef={sceneCanvasRef} />
+            <FontTools sceneCanvasRef={sceneCanvasRef} />
+          </>
+        )}
 
       <OpacityPicker sceneCanvasRef={sceneCanvasRef} />
       <LayerPicker />

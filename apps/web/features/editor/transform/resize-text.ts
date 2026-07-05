@@ -8,6 +8,7 @@ export default function resizeTextShape({
   rect,
   initialBounds,
   initialFontSize,
+  scale,
 }: {
   ctx: CanvasRenderingContext2D;
   shape: TextShape;
@@ -19,6 +20,7 @@ export default function resizeTextShape({
   };
   initialBounds: SelectedBounds;
   initialFontSize: number;
+  scale?: number;
 }) {
   const updatedShape = { ...shape, ...rect };
 
@@ -31,11 +33,14 @@ export default function resizeTextShape({
   maxY = maxY - TOLERANCE;
 
   const oldHeight = maxY - minY;
+  const oldWidth = maxY - minY;
   const newHeight = rect.height;
+  const newWidth = rect.width;
 
-  const scale = oldHeight === 0 ? 1 : newHeight / oldHeight;
+  const scaleX = oldWidth === 0 ? 1 : newWidth / oldWidth;
+  const scaleY = oldHeight === 0 ? 1 : newHeight / oldHeight;
 
-  updatedShape.fontSize = Math.max(1, initialFontSize * scale);
+  updatedShape.fontSize = Math.max(1, initialFontSize * (scale ?? scaleY));
 
   const dimensions = getTextDimensions({
     ctx,

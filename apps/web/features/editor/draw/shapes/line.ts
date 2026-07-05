@@ -18,6 +18,7 @@ export const drawLine = (ctx: CanvasRenderingContext2D, shape: LineShape) => {
 
   const absoluteFirst = getAbsolutePoint(x, y, first);
 
+  ctx.save();
   ctx.beginPath();
 
   ctx.moveTo(absoluteFirst.x, absoluteFirst.y);
@@ -31,4 +32,5 @@ export const drawLine = (ctx: CanvasRenderingContext2D, shape: LineShape) => {
   }
 
   ctx.stroke();
+  ctx.restore();
 };

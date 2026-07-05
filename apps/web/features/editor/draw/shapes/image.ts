@@ -24,6 +24,8 @@ export const drawImage = (ctx: CanvasRenderingContext2D, shape: ImageShape) => {
     imageCache.set(shape.imageUrl, img);
   }
 
+  ctx.save();
   ctx.globalAlpha = (shape.opacity ?? 100) / 100;
   ctx.drawImage(img, shape.x, shape.y, shape.width, shape.height);
+  ctx.restore();
 };

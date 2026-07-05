@@ -158,6 +158,9 @@ export default function useCreateCanvasRenderer({
       });
     }
 
+    // It makes sure that style is not applied to Selection Box
+    // ctx.restore();
+
     // Selection
     const selectionShapes = isTransformInteraction
       ? interaction.previewShapes

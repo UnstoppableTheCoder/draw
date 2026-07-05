@@ -12,12 +12,12 @@ export const drawArrow = (ctx: CanvasRenderingContext2D, shape: ArrowShape) => {
   if (points.length < 2) return;
   const strokeValue = getStrokeStyleValue(shape.strokeStyle ?? "solid");
 
+  ctx.save();
+  ctx.beginPath();
   ctx.setLineDash(strokeValue);
   ctx.lineWidth = shape.strokeWidth ?? 2;
   ctx.strokeStyle = shape.strokeColor ?? "white";
   ctx.globalAlpha = (shape.opacity ?? 100) / 100;
-
-  ctx.beginPath();
 
   const first = points[0];
   if (!first) return;
@@ -86,4 +86,5 @@ export const drawArrow = (ctx: CanvasRenderingContext2D, shape: ArrowShape) => {
   ctx.lineTo(wing2X, wing2Y);
 
   ctx.stroke();
+  ctx.restore();
 };

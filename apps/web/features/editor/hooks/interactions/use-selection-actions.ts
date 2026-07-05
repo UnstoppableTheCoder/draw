@@ -11,12 +11,13 @@ import {
 import useCanvasCursor from "../canvas/use-canvas-cursor";
 import { useCanvasRenderer } from "../../context/use-renderer";
 import { ResizeHandleType } from "../../types/resize-handle";
-import { DRAG_THRESHOLD } from "../../constants/canvas";
+import { DRAG_THRESHOLD, TOLERANCE } from "../../constants/canvas";
 import { getBoundingBox } from "../../geometry/bounding-box/get-bounding-box";
 import { getShapeAtPosition } from "../../geometry/hit-test/get-shape-at-position";
 import { isPointInSelectedShapeBounds } from "../../geometry/hit-test/is-point-in-selected-bounds";
 import { getResizeHandleAtPoint } from "../../geometry/resize-handles/get-reisze-handle-at-point";
 import { useEditorStore } from "../../store/editor/editor-store";
+import { pointInSegment } from "../../geometry/hit-test/algorithms/point-in-segment";
 
 export function getGroupBounds(shapes: Shape[]): SelectedBounds {
   let minX = Infinity;
@@ -328,7 +329,9 @@ export default function useSelectionActions({
   }
 
   function onPointerMoveSelection(endPoint: Point) {
-    const { shapes } = useEditorStore.getState();
+    const { shapes, selectedShapesIds } = useEditorStore.getState();
+    const selected = new Set(selectedShapesIds);
+    const selectedShapes = shapes.filter((shape) => selected.has(shape.id));
 
     const interaction = pointerRefs.interactionRef.current;
 
@@ -385,6 +388,23 @@ export default function useSelectionActions({
     }
 
     if (pointerRefs.isPointerDownRef.current) return;
+
+    if (selectedShapes.length === 1) {
+      const selectedShape = selectedShapes[0];
+      if (selectedShape?.type === "arrow" || selectedShape?.type === "line") {
+        if (pointInSegment(endPoint, selectedShape, TOLERANCE)) {
+          updateHoverCursor(endPoint, undefined);
+          return;
+        }
+
+        if (
+          isPointInSelectedShapeBounds(endPoint, getGroupBounds(selectedShapes))
+        ) {
+          console.log("on bounds");
+          return;
+        }
+      }
+    }
 
     updateSelectionHover(endPoint);
   }
