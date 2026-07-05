@@ -1,4 +1,3 @@
-import { TOLERANCE } from "../constants/canvas";
 import { FreeDrawShape, PointTuple, SelectedBounds } from "../types/types";
 import { scalePointInGroup } from "./scale-shape-in-group";
 

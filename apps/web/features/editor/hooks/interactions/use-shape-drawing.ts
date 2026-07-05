@@ -13,6 +13,7 @@ import {
   useStrokeColor,
   useStrokeStyle,
   useStrokeWidth,
+  useTextAlign,
 } from "../../store/properties/selectors";
 import useSelectionActions, { getGroupBounds } from "./use-selection-actions";
 
@@ -42,6 +43,7 @@ export default function useShapeDrawing({
   const strokeStyle = useStrokeStyle();
   const roundness = useRoundness();
   const opacity = useOpacity();
+  const textAlign = useTextAlign();
 
   const { clientToCanvas } = useViewportHelpers(overlayCanvasRef);
   const { invalidateOverlay } = useCanvasRenderer();
@@ -71,6 +73,7 @@ export default function useShapeDrawing({
         strokeStyle,
         roundness,
         opacity,
+        textAlign
       },
     });
   }

@@ -10,6 +10,7 @@ import {
   RectangleShape,
   Shape,
   StrokeStyle,
+  TextAlign,
 } from "../types/types";
 import { normalizeRect } from "../geometry/normalize-rect";
 import { v4 as uuidv4 } from "uuid";
@@ -92,7 +93,8 @@ export const createShape = ({
     strokeWidth?: number;
     strokeStyle?: StrokeStyle;
     roundness?: number | null;
-    opacity: number;
+    opacity?: number;
+    textAlign?: TextAlign;
   };
 }): Shape | null => {
   switch (tool) {

@@ -51,6 +51,7 @@ export default function TextEditor({
     fontFamily: textEditingState.fontFamily ?? "Arial",
     color: textEditingState.strokeColor ?? "white",
     lineHeight: lineHeightMultiplier,
+    textAlign: textEditingState.textAlign,
   };
 
   return (

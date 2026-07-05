@@ -6,9 +6,10 @@ import {
   useSetStrokeColor,
   useSetStrokeStyle,
   useSetStrokeWidth,
+  useSetTextAlign,
 } from "../../store/properties/selectors";
 import { useCanvasRenderer } from "../../context/use-renderer";
-import { StrokeStyle } from "../../types/types";
+import { StrokeStyle, TextAlign } from "../../types/types";
 import { RefObject, useCallback } from "react";
 import {
   useSelectedShapesIds,
@@ -32,6 +33,7 @@ export default function useShapeAppearance(
   const setPropertyFontSize = useSetFontSize();
   const setPropertyRoundness = useSetRoundness();
   const setPropertyOpacity = useSetOpacity();
+  const setPropertyTextAlign = useSetTextAlign();
 
   const { invalidate } = useCanvasRenderer();
 
@@ -67,7 +69,6 @@ export default function useShapeAppearance(
 
   function setStrokeColor(strokeColor: string) {
     setPropertyStrokeColor(strokeColor);
-    updateSelectedShapes({ strokeColor });
 
     if (textEditingState) {
       setTextEditingState((prev) => {
@@ -76,6 +77,8 @@ export default function useShapeAppearance(
         return { ...prev, strokeColor };
       });
     }
+
+    updateSelectedShapes({ strokeColor });
   }
 
   function setBackgroundColor(backgroundColor: string) {
@@ -95,7 +98,6 @@ export default function useShapeAppearance(
 
   function setFontSize(fontSize: number) {
     setPropertyFontSize(fontSize);
-    updateSelectedShapes({ fontSize });
 
     if (textEditingState) {
       setTextEditingState((prev) => {
@@ -104,6 +106,8 @@ export default function useShapeAppearance(
         return { ...prev, fontSize };
       });
     }
+
+    updateSelectedShapes({ fontSize });
   }
 
   function setRoundness(roundness: number) {
@@ -116,6 +120,20 @@ export default function useShapeAppearance(
     updateSelectedShapes({ opacity });
   }
 
+  function setTextAlign(textAlign: TextAlign) {
+    setPropertyTextAlign(textAlign);
+
+    if (textEditingState) {
+      setTextEditingState((prev) => {
+        if (!prev) return prev;
+
+        return { ...prev, textAlign };
+      });
+    }
+
+    updateSelectedShapes({ textAlign });
+  }
+
   return {
     setStrokeColor,
     setBackgroundColor,
@@ -124,5 +142,6 @@ export default function useShapeAppearance(
     setFontSize,
     setRoundness,
     setOpacity,
+    setTextAlign,
   };
 }

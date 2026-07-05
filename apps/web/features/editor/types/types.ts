@@ -9,6 +9,8 @@ export type StrokeStyle = "solid" | "dashed" | "dotted";
 export type FillStyle = "solid" | "hachure" | "cross-hatch" | "dots" | "zigzag";
 export type Arrowhead = "arrow" | "triangle" | "bar" | "dot" | null;
 
+export type TextAlign = "left" | "center" | "right";
+
 export interface BoundElement {
   id: string;
   type: string;
@@ -119,7 +121,7 @@ export interface TextShape extends BaseShape {
   height?: number;
   fontSize: number;
   fontFamily: string; // know more
-  textAlign?: "left" | "center" | "right";
+  textAlign?: TextAlign;
   verticalAlign?: "top" | "middle" | "bottom";
   containerId?: string | null; // Shape containing text.
   originalText?: string; // Before processing/wrapping.

@@ -34,12 +34,7 @@ export function getGroupBounds(shapes: Shape[]): SelectedBounds {
     maxY = Math.max(maxY, bounds.maxY);
   }
 
-  return {
-    minX,
-    minY,
-    maxX,
-    maxY,
-  };
+  return { minX, minY, maxX, maxY };
 }
 
 export default function useSelectionActions({
@@ -259,6 +254,23 @@ export default function useSelectionActions({
       return;
     }
 
+    // Clicked inside the current selection
+    const previewShapes = cloneShapes(selectedShapes);
+    const groupBounds = getGroupBounds(previewShapes);
+    if (!groupBounds) return;
+
+    const resizeHandle = getResizeHandleAtPoint({
+      point,
+      shapes: previewShapes,
+      bounds: groupBounds,
+      scale,
+    });
+
+    if (resizeHandle) {
+      startResizeInteraction(previewShapes, groupBounds, resizeHandle);
+      return;
+    }
+
     // Clicked on empty space
     if (!hitShape) {
       const groupBounds =
@@ -309,23 +321,6 @@ export default function useSelectionActions({
       };
 
       invalidate();
-      return;
-    }
-
-    // Clicked inside the current selection
-    const previewShapes = cloneShapes(selectedShapes);
-    const groupBounds = getGroupBounds(previewShapes);
-    if (!groupBounds) return;
-
-    const resizeHandle = getResizeHandleAtPoint({
-      point,
-      shapes: previewShapes,
-      bounds: groupBounds,
-      scale,
-    });
-
-    if (resizeHandle) {
-      startResizeInteraction(previewShapes, groupBounds, resizeHandle);
       return;
     }
 
