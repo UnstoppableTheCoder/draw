@@ -1,30 +1,8 @@
 import { useEffect } from "react";
-import {
-  useSelectedShapesIds,
-  useSetSelectedShapesIds,
-  useSetShapes,
-} from "../../store/editor/selectors";
-import { useEditorStore } from "../../store/editor/editor-store";
-import { useCanvasRenderer } from "../../context/use-renderer";
+import useShapeDelete from "../actions/use-delete-shapes";
 
 export default function useEditorShortcuts() {
-  const setSelectedShapesIds = useSetSelectedShapesIds();
-  const setShapes = useSetShapes();
-
-  const { invalidate } = useCanvasRenderer();
-
-  const deleteShapes = () => {
-    const { selectedShapesIds } = useEditorStore.getState();
-    const selected = new Set(selectedShapesIds);
-
-    if (selectedShapesIds.length === 0) return;
-
-    setShapes((prevShapes) =>
-      prevShapes.filter((shape) => !selected.has(shape.id)),
-    );
-    setSelectedShapesIds([]);
-    invalidate();
-  };
+  const { deleteShapes } = useShapeDelete();
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {

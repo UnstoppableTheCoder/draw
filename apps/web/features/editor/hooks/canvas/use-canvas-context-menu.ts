@@ -8,6 +8,7 @@ import {
 import { getGroupBounds } from "../interactions/use-selection-actions";
 import { isPointInSelectedShapeBounds } from "../../geometry/hit-test/is-point-in-selected-bounds";
 import useViewportHelpers from "../viewport/use-viewport-helpers";
+import { useCanvasRenderer } from "../../context/use-renderer";
 
 type Menu = {
   open: boolean;
@@ -23,6 +24,7 @@ export default function useCanvasContextMenu(
   const canvasContextRef = useRef<HTMLDivElement | null>(null);
 
   const viewport = useViewportHelpers(canvasRef);
+  const { invalidate } = useCanvasRenderer();
 
   const shapes = useShapes();
   let selectedShapesIds = useSelectedShapesIds();
@@ -67,6 +69,7 @@ export default function useCanvasContextMenu(
 
   const openContextMenu = (e: MouseEvent<HTMLCanvasElement>) => {
     e.preventDefault();
+
     if (!selectedShapeContextRef.current || !canvasContextRef.current) return;
 
     const point = viewport.clientToCanvas(e.clientX, e.clientY);
@@ -86,6 +89,7 @@ export default function useCanvasContextMenu(
       if (hitShape) {
         clickedInSelectedArea = true;
         setSelectedShapesIds([hitShape.id]);
+        invalidate();
       }
     }
 

@@ -2,6 +2,9 @@ import { MouseEvent, RefObject } from "react";
 import MenuButton from "./menu-button";
 import { ContextMenuType, Menu } from "../../types";
 import { Separator } from "../../ui/separator";
+import useDeleteShapes from "@/features/editor/hooks/actions/use-delete-shapes";
+import useDuplicateShapes from "@/features/editor/hooks/actions/use-duplicate-shapes";
+import useShapeOrder from "@/features/editor/hooks/order/use-shape-order";
 
 export default function selectedShapeContext({
   contextMenu: {
@@ -12,6 +15,40 @@ export default function selectedShapeContext({
 }: {
   contextMenu: ContextMenuType;
 }) {
+  const { deleteShapes } = useDeleteShapes();
+  const { duplicateShapes } = useDuplicateShapes();
+  const order = useShapeOrder();
+
+  const handleDuplicateClick = () => {
+    duplicateShapes();
+    closeContextMenu();
+  };
+
+  const handleDeleteClick = () => {
+    deleteShapes();
+    closeContextMenu();
+  };
+
+  const handleSendBackwardClick = () => {
+    order.sendBackward();
+    closeContextMenu();
+  };
+
+  const handleBringForwardClick = () => {
+    order.bringForward();
+    closeContextMenu();
+  };
+
+  const handleSendToBackClick = () => {
+    order.sendToBack();
+    closeContextMenu();
+  };
+
+  const handleBringToFrontClick = () => {
+    order.bringToFront();
+    closeContextMenu();
+  };
+
   return (
     <div
       className="fixed z-50 min-w-50 rounded-md border bg-popover p-1 text-popover-foreground shadow-md"
@@ -47,6 +84,21 @@ export default function selectedShapeContext({
 
       <Separator />
 
+      <MenuButton shortcut="Ctrl+[" onClick={handleSendBackwardClick}>
+        Send backward
+      </MenuButton>
+      <MenuButton shortcut="Ctrl+]" onClick={handleBringForwardClick}>
+        Bring forward
+      </MenuButton>
+      <MenuButton shortcut="Ctrl+Shift+[" onClick={handleSendToBackClick}>
+        Send to back
+      </MenuButton>
+      <MenuButton shortcut="Ctrl+Shift+]" onClick={handleBringToFrontClick}>
+        Bring to front
+      </MenuButton>
+
+      <Separator />
+
       <MenuButton shortcut="Shift+H">Flip horizontal</MenuButton>
       <MenuButton shortcut="Shift+V">Flip vertical</MenuButton>
 
@@ -56,12 +108,14 @@ export default function selectedShapeContext({
       <MenuButton>Copy link to object</MenuButton>
 
       <Separator />
-      <MenuButton shortcut="Ctrl+D">Duplicate</MenuButton>
+      <MenuButton shortcut="Ctrl+D" onClick={handleDuplicateClick}>
+        Duplicate
+      </MenuButton>
       <MenuButton shortcut="Ctrl+Shift+L">Lock</MenuButton>
 
       <Separator />
 
-      <MenuButton destructive shortcut="⌫ | Delete">
+      <MenuButton destructive shortcut="⌫ | Delete" onClick={handleDeleteClick}>
         Delete
       </MenuButton>
     </div>
