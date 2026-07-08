@@ -4,7 +4,7 @@ import { updateDrawingPoints } from "../../shapes/update-shape";
 import * as store from "../../store/editor/selectors";
 import useViewportHelpers from "../viewport/use-viewport-helpers";
 import { usePointerState } from "../pointer/use-pointer-state";
-import { Point, PointTuple } from "../../types/types";
+import { FrameShape, Point, PointTuple, Shape } from "../../types/types";
 import { useCanvasRenderer } from "../../context/use-renderer";
 import {
   useBackgroundColor,
@@ -16,8 +16,14 @@ import {
   useStrokeWidth,
   useTextAlign,
 } from "../../store/properties/selectors";
-import useSelectionActions, { getGroupBounds } from "./use-selection-actions";
+import useSelectionActions, {
+  checkIsInsideFrame,
+  getGroupBounds,
+} from "./use-selection-actions";
 import { getGroupedShapes } from "../../transform/get-grouped-shapes";
+import { getBoundingBox } from "../../geometry/bounding-box/get-bounding-box";
+import { getShapeAtPosition } from "../../geometry/hit-test/get-shape-at-position";
+import { getFrameAtPosition } from "../../geometry/hit-test/get-frame-at-position";
 
 type UseDrawingArgs = {
   sceneCanvasRef: RefObject<HTMLCanvasElement | null>;
@@ -33,10 +39,15 @@ export default function useShapeDrawing({
   const { drawingStartRef, drawingPointsRef } = pointerRefs;
 
   const setShapes = store.useSetShapes();
+  const shapes = store.useShapes();
+  const scale = store.useScale();
   const selectedTool = store.useSelectedTool();
+  const selectedShapesIds = store.useSelectedShapesIds();
   const setSelectedShapesIds = store.useSetSelectedShapesIds();
   const pushHistory = store.usePushHistory();
   const isLocked = store.useIsLocked();
+  const setHoveredFrameId = store.useSetHoveredFrameId();
+  const hoveredFrameId = store.useHoveredFrameId();
 
   // Styles
   const strokeColor = useStrokeColor();
@@ -49,7 +60,7 @@ export default function useShapeDrawing({
   const fontFamily = useFontFamily();
 
   const { clientToCanvas } = useViewportHelpers(overlayCanvasRef);
-  const { invalidateOverlay } = useCanvasRenderer();
+  const { invalidateOverlay, invalidateScene } = useCanvasRenderer();
   const selection = useSelectionActions({
     sceneCanvasRef,
     overlayCanvasRef,
@@ -78,6 +89,19 @@ export default function useShapeDrawing({
         opacity,
       },
     });
+  }
+
+  function handleShapeDrawingOverFrame(start: Point) {
+    const hoveredFrame = getFrameAtPosition({
+      point: start,
+      shapes,
+      scale,
+    });
+
+    if (hoveredFrame) {
+      invalidateScene();
+    }
+    setHoveredFrameId(hoveredFrame?.id ?? null);
   }
 
   // Sets Initial Point on Pointer Down - for Shapes With Points
@@ -112,6 +136,10 @@ export default function useShapeDrawing({
     if (!shape) return;
 
     interaction.previewShape = shape;
+
+    // UI of the frame
+    handleShapeDrawingOverFrame(start);
+
     invalidateOverlay();
   }
 
@@ -123,7 +151,13 @@ export default function useShapeDrawing({
     const end = getCanvasPoint(e);
     if (!end) return;
 
-    const shape = createDrawingShape(end);
+    const createdShape = createDrawingShape(end);
+    if (!createdShape) return;
+
+    const shape: Shape = {
+      ...createdShape,
+      frameId: hoveredFrameId,
+    };
 
     if (shape) {
       setShapes((prev) => [...prev, shape]);
@@ -136,15 +170,18 @@ export default function useShapeDrawing({
       }
 
       pointerRefs.interactionRef.current = {
+        ...interaction,
         type: "select",
         previewShapes: [shape],
-        groupedShapes: getGroupedShapes([shape]),
-        groupBounds: getGroupBounds([shape]),
+        initialPositions: {},
+        dragStart: end,
+        selectedShapesIds: new Set(selectedShapesIds),
       };
     }
 
     drawingPointsRef.current = [];
     selection.updateSelectionHover(end);
+    setHoveredFrameId(null);
   }
 
   return { onPointerDownDrawing, onPointerMoveDrawing, onPointerUpDrawing };

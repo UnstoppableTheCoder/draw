@@ -3,12 +3,16 @@ import { getAbsolutePoint } from "../../get-absolute-point";
 import { distanceToSegment } from "./distance-to-segment";
 import { TOLERANCE } from "@/features/editor/constants/canvas";
 import { PointsShape } from "../../types";
+import { scalePointInGroup } from "@/features/editor/transform/scale-shape-in-group";
 
 export function pointInSegment(
   point: Point,
   shape: PointsShape,
+  scale: number,
   tolerance?: number,
 ): PointsShape | null {
+  const scaledTolerance = (tolerance ?? TOLERANCE) / scale;
+
   for (let i = 0; i < shape.points.length - 1; i++) {
     // firstPoint, secondPoint -> Relative Distance Point from Start (x, y)
     const firstPoint = shape.points[i];
@@ -21,7 +25,7 @@ export function pointInSegment(
 
     const distance = distanceToSegment(point, startPoint, endPoint);
 
-    if (distance <= (tolerance ?? TOLERANCE)) {
+    if (distance <= scaledTolerance) {
       return shape;
     }
   }

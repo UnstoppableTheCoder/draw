@@ -5,3 +5,4 @@ export * from "./selection-slice";
 export * from "./text-editing-slice";
 export * from "./viewport-slice";
 export * from "./history-slice";
+export * from "./frame-slice";

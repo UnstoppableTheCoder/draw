@@ -1,6 +1,12 @@
 import { RefObject } from "react";
 import * as store from "../../store/editor/selectors";
-import { Point, PointTuple, SelectedBounds, Shape } from "../../types/types";
+import {
+  FrameShape,
+  Point,
+  PointTuple,
+  SelectedBounds,
+  Shape,
+} from "../../types/types";
 import { getAbsolutePoint } from "../../geometry/get-absolute-point";
 import useShapeMove from "./use-shape-move";
 import useShapeResize from "./use-shape-resize";
@@ -18,8 +24,6 @@ import { isPointInSelectedShapeBounds } from "../../geometry/hit-test/is-point-i
 import { getResizeHandleAtPoint } from "../../geometry/resize-handles/get-reisze-handle-at-point";
 import { useEditorStore } from "../../store/editor/editor-store";
 import { pointInSegment } from "../../geometry/hit-test/algorithms/point-in-segment";
-import { Group } from "../../store/editor/editor-types";
-import { getGroupedShapes } from "../../transform/get-grouped-shapes";
 
 export function getGroupBounds(shapes: Shape[]): SelectedBounds {
   let minX = Infinity;
@@ -40,6 +44,25 @@ export function getGroupBounds(shapes: Shape[]): SelectedBounds {
   return { minX, minY, maxX, maxY };
 }
 
+export function checkIsInsideFrame(
+  frameBounds: SelectedBounds,
+  shapesBounds: SelectedBounds,
+) {
+  const { minX, minY, maxX, maxY } = frameBounds;
+
+  const isInside =
+    shapesBounds.minX >= minX &&
+    shapesBounds.minY >= minY &&
+    shapesBounds.maxX <= maxX &&
+    shapesBounds.maxY <= maxY;
+
+  return isInside;
+}
+
+export function getFrameChildren(frameId: string, shapes: Shape[]) {
+  return shapes.filter((shape) => shape.frameId === frameId);
+}
+
 export default function useSelectionActions({
   sceneCanvasRef,
   overlayCanvasRef,
@@ -54,8 +77,7 @@ export default function useSelectionActions({
   const shapes = store.useShapes();
   const selectedShapesIds = store.useSelectedShapesIds();
   const setShapes = store.useSetShapes();
-  const setIsInsideFrame = store.useSetIsInsideFrame();
-  const setParentFrameId = store.useSetParentFrameId();
+  const setHoveredFrameId = store.useSetHoveredFrameId();
 
   const { moveShapes } = useShapeMove(
     sceneCanvasRef,
@@ -117,35 +139,26 @@ export default function useSelectionActions({
     return data;
   }
 
-  function startSelectInteraction(previewShapes: Shape[]) {
-    const groupBounds = getGroupBounds(previewShapes);
-    if (!groupBounds) return false;
-
-    pointerRefs.interactionRef.current = {
-      type: "select",
-      previewShapes,
-      groupedShapes: getGroupedShapes(previewShapes),
-      groupBounds,
-    };
-
-    invalidate();
-    return;
-  }
-
   function startResizeInteraction(
     previewShapes: Shape[],
+    selectedShapesIds: Set<string>,
     groupBounds: SelectedBounds,
     handle: ResizeHandleType,
   ) {
+    const initialShapes = cloneShapes(previewShapes);
+
     pointerRefs.interactionRef.current = {
       type: "resize",
-      previewShapes,
-      groupedShapes: getGroupedShapes(previewShapes),
       handle,
-      groupBounds,
+
+      previewShapes,
+      selectedShapesIds,
+
       initialGroupBounds: groupBounds,
-      initialShapes: cloneShapes(previewShapes),
-      ...createResizeInteractionData(previewShapes),
+
+      initialShapes,
+
+      ...createResizeInteractionData(initialShapes),
     };
 
     invalidate();
@@ -172,6 +185,7 @@ export default function useSelectionActions({
     const hoveredShape = getShapeAtPosition({
       point,
       shapes,
+      scale,
     });
 
     if (hoveredShape) {
@@ -182,53 +196,69 @@ export default function useSelectionActions({
     updateCursor();
   }
 
-  function beginMoveInteraction(
-    interaction: Extract<InteractionState, { type: "select" }>,
-    point: Point,
+  function initializeSelectionInteraction(
+    pointer: Point,
+    selectedShapeIds: string[],
   ) {
-    const selectedShapesDragOffsets: Record<string, Point> = {};
-    const framedShapesDragOffsets: Record<string, Point> = {};
-    let framedPreviewShapes: Shape[] = [];
+    const previewShapes: Shape[] = []; // shapes + frames + children shapes
+    const initialPositions: Record<string, Point> = {};
 
-    // Calculate Drag Offsets
-    interaction.previewShapes.forEach((previewShape) => {
-      // Calculate the dragOffsets for the selectedShapes
-      selectedShapesDragOffsets[previewShape.id] = {
-        x: point.x - previewShape.x,
-        y: point.y - previewShape.y,
+    const selectedIds = new Set(selectedShapeIds);
+    const addedShapeIds = new Set<string>();
+
+    const shapeMap = new Map(shapes.map((shape) => [shape.id, shape]));
+
+    function addShape(shape: Shape) {
+      if (addedShapeIds.has(shape.id)) return;
+
+      addedShapeIds.add(shape.id);
+
+      const previewShape = structuredClone(shape);
+
+      previewShapes.push(previewShape);
+
+      initialPositions[previewShape.id] = {
+        x: previewShape.x,
+        y: previewShape.y,
       };
 
-      // Calculate the dragOffsets for the framedShapes
-      if (previewShape.type === "frame") {
-        if (previewShape.childIds.length === 0) return;
+      // Recursively include all descendants if this is a frame.
+      if (shape.type !== "frame") return;
 
-        const framedShapesIds = new Set(previewShape.childIds);
-        const framedShapes = shapes.filter((shape) =>
-          framedShapesIds.has(shape.id),
-        );
+      const children = getFrameChildren(shape.id, shapes);
 
-        for (const framedShape of framedShapes) {
-          framedShapesDragOffsets[framedShape.id] = {
-            x: point.x - framedShape.x,
-            y: point.y - framedShape.y,
-          };
-        }
-
-        framedPreviewShapes = framedShapes;
+      for (const child of children) {
+        addShape(child);
       }
-    });
+    }
+
+    // Add every selected shape.
+    for (const selectedId of selectedIds) {
+      const selectedShape = shapeMap.get(selectedId);
+      if (!selectedShape) continue;
+
+      addShape(selectedShape);
+    }
+
+    // Bounds should only consider the explicitly selected shapes.
+    const selectedPreviewShapes = previewShapes.filter((shape) =>
+      selectedIds.has(shape.id),
+    );
+
+    const groupBounds = getGroupBounds(selectedPreviewShapes);
+    if (!groupBounds) return;
 
     pointerRefs.interactionRef.current = {
-      type: "move",
-      previewShapes: interaction.previewShapes,
-      groupedShapes: getGroupedShapes(interaction.previewShapes),
-      selectedShapesDragOffsets,
-      framedShapesDragOffsets,
-      framedPreviewShapes,
-      groupBounds: interaction.groupBounds,
+      type: "select",
+      dragStart: pointer,
+
+      previewShapes,
+      selectedShapesIds: selectedIds,
+
+      initialPositions,
     };
 
-    moveShapes(point);
+    invalidate();
   }
 
   function getSelectionBoxBounds(
@@ -254,54 +284,41 @@ export default function useSelectionActions({
     );
   }
 
-  function checkIsInsideFrame(
-    frameBounds: SelectedBounds,
-    shapesBounds: SelectedBounds,
-  ) {
-    const { minX, minY, maxX, maxY } = frameBounds;
+  function handleShapesMoveOverFrame() {
+    const interaction = pointerRefs.interactionRef.current;
+    if (interaction.type !== "move") return;
 
-    const isInside =
-      shapesBounds.minX >= minX ||
-      shapesBounds.minY >= minY ||
-      shapesBounds.maxX <= maxX ||
-      shapesBounds.maxY <= maxY;
+    const selectedPreviewShapes = interaction.previewShapes.filter((shape) =>
+      interaction.selectedShapesIds.has(shape.id),
+    );
 
-    return isInside;
-  }
-
-  function handleShapesMoveOverFrame(endPoint: Point) {
-    const selected = new Set(selectedShapesIds);
-    const selectedShapes = shapes.filter((shape) => selected.has(shape.id));
-
-    const hoveredShape = getShapeAtPosition({ point: endPoint, shapes });
-
-    const selectedShapesGroupBounds = getGroupBounds(selectedShapes);
-
-    // Never runs when hovering over its own position
-    if (hoveredShape && !selected.has(hoveredShape.id)) {
-      const frameBounds = getBoundingBox(hoveredShape);
-
-      const isInsideFrame = checkIsInsideFrame(
-        frameBounds,
-        selectedShapesGroupBounds,
-      );
-
-      setParentFrameId(hoveredShape.id);
-      setIsInsideFrame(isInsideFrame);
+    const selectedBounds = getGroupBounds(selectedPreviewShapes);
+    if (!selectedBounds) {
+      setHoveredFrameId(null);
       return;
     }
 
-    setParentFrameId(null);
-    setIsInsideFrame(false);
+    const frames = structuredClone(
+      shapes.filter((shape): shape is FrameShape => shape.type === "frame"),
+    );
+
+    const hoveredFrame = frames.reverse().find((frame) => {
+      // Don't allow a selected frame to contain itself
+      if (interaction.selectedShapesIds.has(frame.id)) {
+        return false;
+      }
+
+      return checkIsInsideFrame(getBoundingBox(frame), selectedBounds);
+    });
+
+    setHoveredFrameId(hoveredFrame?.id ?? null);
   }
 
   // Main Functions
   function onPointerDownSelection(point: Point, shiftKey: boolean) {
-    // const { selectedShapesIds, shapes } = useEditorStore.getState();
-
     pointerRefs.isDraggingRef.current = false;
 
-    const hitShape = getShapeAtPosition({ point, shapes });
+    const hitShape = getShapeAtPosition({ point, shapes, scale });
 
     const selectedShapes = shapes.filter((shape) =>
       selectedShapesIds.includes(shape.id),
@@ -324,30 +341,33 @@ export default function useSelectionActions({
 
       setSelectedShapesIds(nextSelectedIds);
 
-      const previewShapes = cloneShapes(
-        shapes.filter((shape) => nextSelectedIds.includes(shape.id)),
-      );
-
-      startSelectInteraction(previewShapes);
+      initializeSelectionInteraction(point, nextSelectedIds);
       return;
     }
 
     // Clicked inside the current selection
-    const previewShapes = cloneShapes(selectedShapes);
-    const groupBounds = getGroupBounds(previewShapes);
-    if (!groupBounds) return;
+    if (selectedShapes.length > 0) {
+      const previewShapes = cloneShapes(selectedShapes);
+      const groupBounds = getGroupBounds(previewShapes);
 
-    // Resize Handle to start resizing
-    const resizeHandle = getResizeHandleAtPoint({
-      point,
-      shapes: previewShapes,
-      bounds: groupBounds,
-      scale,
-    });
+      if (groupBounds) {
+        const resizeHandle = getResizeHandleAtPoint({
+          point,
+          shapes: previewShapes,
+          bounds: groupBounds,
+          scale,
+        });
 
-    if (resizeHandle) {
-      startResizeInteraction(previewShapes, groupBounds, resizeHandle);
-      return;
+        if (resizeHandle) {
+          startResizeInteraction(
+            previewShapes,
+            new Set(selectedShapesIds),
+            groupBounds,
+            resizeHandle,
+          );
+          return;
+        }
+      }
     }
 
     // Clicked on empty space
@@ -367,11 +387,16 @@ export default function useSelectionActions({
         });
 
         if (resizeHandle) {
-          startResizeInteraction(previewShapes, groupBounds, resizeHandle);
+          startResizeInteraction(
+            previewShapes,
+            new Set(selectedShapesIds),
+            groupBounds,
+            resizeHandle,
+          );
           return;
         }
 
-        startSelectInteraction(previewShapes);
+        initializeSelectionInteraction(point, selectedShapesIds);
         return;
       }
 
@@ -391,7 +416,7 @@ export default function useSelectionActions({
     if (!isAlreadySelected) {
       setSelectedShapesIds([hitShape.id]);
 
-      const previewHitShape = structuredClone(hitShape);
+      const previewHitShape = hitShape;
 
       const groupId = previewHitShape.groupId;
 
@@ -401,47 +426,21 @@ export default function useSelectionActions({
           (shape) => shape.groupId === groupId,
         );
 
-        pointerRefs.interactionRef.current = {
-          type: "select",
-          previewShapes: groupedPreviewShapes,
-          groupedShapes: getGroupedShapes(groupedPreviewShapes),
-          groupBounds: getGroupBounds(groupedPreviewShapes),
-        };
+        const nextSelectedIds = groupedPreviewShapes.map((shape) => shape.id);
 
-        setSelectedShapesIds(groupedPreviewShapes.map((shape) => shape.id));
-
-        invalidate();
+        setSelectedShapesIds(nextSelectedIds);
+        initializeSelectionInteraction(point, nextSelectedIds);
         return;
       }
 
-      pointerRefs.interactionRef.current = {
-        type: "select",
-        previewShapes: [previewHitShape],
-        groupedShapes: getGroupedShapes([previewHitShape]),
-        groupBounds: getBoundingBox(previewHitShape),
-      };
+      const nextSelectedIds = [previewHitShape.id];
 
-      setShapes((prevShapes) =>
-        prevShapes.map((shape) =>
-          shape.type === "frame"
-            ? {
-                ...shape,
-                childIds: shape.childIds.filter(
-                  (id) => id !== previewHitShape.id,
-                ),
-              }
-            : shape.id === previewHitShape.id
-              ? { ...shape, frameId: null }
-              : shape,
-        ),
-      );
-      setSelectedShapesIds([previewHitShape.id]);
-
-      invalidate();
+      setSelectedShapesIds(nextSelectedIds);
+      initializeSelectionInteraction(point, nextSelectedIds);
       return;
     }
 
-    startSelectInteraction(previewShapes);
+    initializeSelectionInteraction(point, selectedShapesIds);
   }
 
   function onPointerMoveSelection(endPoint: Point) {
@@ -463,17 +462,30 @@ export default function useSelectionActions({
 
         const isDragging =
           Math.abs(dx) >= DRAG_THRESHOLD || Math.abs(dy) >= DRAG_THRESHOLD;
+
         if (!isDragging) break;
 
         pointerRefs.isDraggingRef.current = true;
 
-        beginMoveInteraction(interaction, endPoint);
+        pointerRefs.interactionRef.current = {
+          ...interaction,
+          type: "move",
+
+          // Only preview changes
+          previewShapes: interaction.previewShapes.map((shape) =>
+            interaction.selectedShapesIds.has(shape.id) &&
+            shape.type !== "frame"
+              ? { ...shape, frameId: null }
+              : shape,
+          ),
+        };
+
+        moveShapes(endPoint);
         return;
       }
-
       case "move":
         moveShapes(endPoint);
-        handleShapesMoveOverFrame(endPoint);
+        handleShapesMoveOverFrame();
         return;
 
       case "resize":
@@ -502,8 +514,6 @@ export default function useSelectionActions({
         pointerRefs.interactionRef.current = {
           ...pointerRefs.interactionRef.current,
           previewShapes: selectedShapesInBox,
-          groupedShapes: getGroupedShapes(selectedShapesInBox),
-          groupBounds: getGroupBounds(selectedShapesInBox),
         };
 
         setSelectedShapesIds(selectedShapesIdsInBox);

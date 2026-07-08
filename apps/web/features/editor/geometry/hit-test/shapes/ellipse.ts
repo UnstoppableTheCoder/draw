@@ -5,8 +5,11 @@ import { Point } from "@/types/canvas.types";
 export const pointInEllipse = (
   point: Point,
   shape: EllipseShape,
+  scale: number,
   tolerance?: number,
 ): EllipseShape | null => {
+  const scaledTolerance = (tolerance ?? TOLERANCE) / scale;
+
   const radiusX = shape.width / 2;
   const radiusY = shape.height / 2;
 
@@ -20,8 +23,8 @@ export const pointInEllipse = (
   // Equation of an Ellipse -> (x - cx)^2 / a^2 + (y - cy)^2 / b^2 <= 1
   // (x, y) -> point, (cx, cy) -> center, (a, b) -> radius (rx, ry)
   const inside =
-    (dx * dx) / (radiusX + (tolerance ?? TOLERANCE)) ** 2 +
-      (dy * dy) / (radiusY + (tolerance ?? TOLERANCE)) ** 2 <=
+    (dx * dx) / (radiusX + scaledTolerance) ** 2 +
+      (dy * dy) / (radiusY + scaledTolerance) ** 2 <=
     1;
 
   return inside ? shape : null;

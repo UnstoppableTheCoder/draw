@@ -1,6 +1,6 @@
 "use client";
 
-import { RefObject, useCallback, useEffect, useRef } from "react";
+import { RefObject, useCallback, useEffect, useMemo, useRef } from "react";
 import { usePointerState } from "../pointer/use-pointer-state";
 import useViewportHelpers from "../viewport/use-viewport-helpers";
 import { SelectedBounds, Shape } from "../../types/types";
@@ -15,7 +15,6 @@ import { normalizeRect } from "../../geometry/normalize-rect";
 import { getBoundingBox } from "../../geometry/bounding-box/get-bounding-box";
 import { useEditorStore } from "../../store/editor/editor-store";
 import drawGroupedShapeSelection from "../../draw/selection/grouped-shapes-selection";
-import { signalFromNodeResponse } from "next/dist/server/web/spec-extension/adapters/next-request";
 
 export default function useCreateCanvasRenderer({
   sceneCanvasRef,
@@ -31,6 +30,23 @@ export default function useCreateCanvasRenderer({
   const overlayDirtyRef = useRef(false);
 
   const viewportHelpers = useViewportHelpers();
+
+  // Grouped Shapes
+  const getGroupedShapes = (previewShapes: Shape[]) => {
+    const map = new Map<string, Shape[]>();
+
+    for (const shape of previewShapes) {
+      if (!shape.groupId) continue;
+
+      if (!map.has(shape.groupId)) {
+        map.set(shape.groupId, []);
+      }
+
+      map.get(shape.groupId)!.push(shape);
+    }
+
+    return map;
+  };
 
   const renderShapeSelection = useCallback(
     (
@@ -69,7 +85,7 @@ export default function useCreateCanvasRenderer({
     const ctx = sceneCanvasRef.current?.getContext("2d");
     if (!ctx) return;
 
-    const { shapes, textEditingState, scale, panOffset, scaleOffset } =
+    const { shapes, textEditingState, scale, hoveredFrameId } =
       useEditorStore.getState();
 
     const interaction = pointerRefs.interactionRef.current;
@@ -86,46 +102,17 @@ export default function useCreateCanvasRenderer({
       interaction.type === "rotate";
 
     const skipShapeIds = isTransformInteraction
-      ? (() => {
-          const selectedFrames = interaction.previewShapes.filter(
-            (shape) => shape.type === "frame",
-          );
-
-          const selectedFramesIds = new Set(
-            selectedFrames.map((shapes) => shapes.id),
-          );
-
-          const skippedIds: string[] = [];
-
-          interaction.previewShapes.forEach((shape) =>
-            skippedIds.push(shape.id),
-          );
-
-          if (interaction.type === "move") {
-            interaction.framedPreviewShapes.forEach((framedShape) => {
-              if (!framedShape.frameId) return;
-
-              const isSelectedFrameShape = selectedFramesIds.has(
-                framedShape.frameId,
-              );
-
-              if (isSelectedFrameShape) {
-                skippedIds.push(framedShape.id);
-              }
-            });
-          }
-
-          return skippedIds;
-        })()
-      : textEditingState && textEditingState.id
-        ? [textEditingState.id]
-        : [];
+      ? new Set(interaction.previewShapes.map((shape) => shape.id))
+      : textEditingState?.id
+        ? new Set([textEditingState.id])
+        : new Set<string>();
 
     renderShapes({
       ctx,
       shapes,
       scale,
       skipShapeIds,
+      hoveredFrameId,
     });
 
     ctx.restore();
@@ -180,17 +167,11 @@ export default function useCreateCanvasRenderer({
           : [];
 
     if (previewShapes.length > 0) {
-      // Renders the selected preview shapes
       renderShapes({
         ctx,
         shapes: previewShapes,
         scale,
       });
-
-      // Renders the framed preview shapes
-      if (interaction.type === "move") {
-        renderShapes({ ctx, shapes: interaction.framedPreviewShapes, scale });
-      }
     }
 
     // Eraser Trail
@@ -201,29 +182,24 @@ export default function useCreateCanvasRenderer({
         scale,
       });
     }
-
     // Group Selection
     if (
       isTransformInteraction ||
       interaction.type === "select" ||
       interaction.type === "selection-box"
     ) {
-      if (interaction.groupedShapes) {
-        for (const shapes of Object.values(interaction.groupedShapes)) {
-          const groupBounds = getGroupBounds(shapes);
+      const previewShapes = interaction.previewShapes;
+      if (!previewShapes) return;
 
-          if (!interaction.previewShapes) return;
+      const groupedShapes = getGroupedShapes(previewShapes);
 
-          const containsOnlyGroupedShapes = interaction.previewShapes.every(
-            (shape) => shape.groupId,
-          );
+      for (const groupShapes of groupedShapes.values()) {
+        const groupBounds = getGroupBounds(groupShapes);
+        if (!groupBounds) continue;
 
-          if (
-            !containsOnlyGroupedShapes ||
-            Object.values(interaction.groupedShapes).length > 1
-          ) {
-            drawGroupedShapeSelection(ctx, groupBounds, scale);
-          }
+        // Draw when other shapes are also selected along with the group
+        if (groupShapes.length !== selectedShapesIds.length) {
+          drawGroupedShapeSelection(ctx, groupBounds, scale);
         }
       }
     }
@@ -249,13 +225,11 @@ export default function useCreateCanvasRenderer({
         "solid",
       );
     } else if (selectionShapes.length > 1) {
-      const bounds = isTransformInteraction
-        ? interaction.groupBounds
-        : getGroupBounds(selectionShapes);
+      const bounds = getGroupBounds(selectionShapes);
 
       selectionShapes.forEach((shape) => {
-        // if shape belongs to a group return
-        if (shape.groupId) return;
+        // if shape belongs to a group or frame -> return
+        if (shape.groupId || shape.frameId) return;
 
         renderShapeSelection(
           ctx,

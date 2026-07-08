@@ -11,10 +11,14 @@ import {
 import { ResizeHandleType } from "../../types/resize-handle";
 import { useSelectedTool } from "../../store/editor/selectors";
 
-type InteractionSelection = {
-  previewShapes: Shape[];
-  groupedShapes: Record<string, Shape[]>;
-  groupBounds: SelectedBounds;
+type InteractionPreview = {
+  previewShapes: Shape[]; // it has both - frame or shape & children shapes
+  selectedShapesIds: Set<string>; // only has the frames or shapes - not children shapes
+};
+
+type InteractionMoveBase = InteractionPreview & {
+  dragStart: Point;
+  initialPositions: Record<string, Point>;
 };
 
 export type InteractionState =
@@ -27,13 +31,10 @@ export type InteractionState =
     }
   | ({
       type: "select";
-    } & InteractionSelection)
+    } & InteractionMoveBase)
   | ({
       type: "move";
-      selectedShapesDragOffsets: Record<string, Point>;
-      framedShapesDragOffsets: Record<string, Point>;
-      framedPreviewShapes: Shape[]
-    } & InteractionSelection)
+    } & InteractionMoveBase)
   | ({
       type: "resize";
       handle: ResizeHandleType;
@@ -50,17 +51,17 @@ export type InteractionState =
           end: Point;
         }
       >;
-    } & InteractionSelection)
+    } & InteractionPreview)
   | ({
       type: "rotate";
       startAngle: number;
       rotationCenter: Point;
-    } & InteractionSelection)
+    } & InteractionPreview)
   | ({
       type: "selection-box";
       startPoint: Point;
       endPoint: Point;
-    } & Partial<InteractionSelection>);
+    } & Partial<InteractionPreview>);
 
 export function createEmptyInteraction(): InteractionState {
   return {

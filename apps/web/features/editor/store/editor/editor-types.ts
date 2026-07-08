@@ -74,11 +74,8 @@ export interface EditorStore {
   redo: () => void;
 
   // Frame
-  parentFrameId: string | null;
-  setParentFrameId: (
+  hoveredFrameId: string | null;
+  setHoveredFrameId: (
     updater: string | null | ((prev: string | null) => string | null),
   ) => void;
-
-  isInsideFrame: boolean;
-  setIsInsideFrame: (updater: boolean | ((prev: boolean) => boolean)) => void;
 }

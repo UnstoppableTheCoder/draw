@@ -5,6 +5,7 @@ import useDeleteShapes from "@/features/editor/hooks/actions/use-delete-shapes";
 import useDuplicateShapes from "@/features/editor/hooks/actions/use-duplicate-shapes";
 import useShapeOrder from "@/features/editor/hooks/order/use-shape-order";
 import {
+  useScale,
   useSelectedShapesIds,
   useSetFrames,
   useSetSelectedGroupsIds,
@@ -18,6 +19,8 @@ import { getGroupBounds } from "@/features/editor/geometry/bounding-box/get-grou
 import { normalizeRect } from "@/features/editor/geometry/normalize-rect";
 import { RefObject } from "react";
 import getTextDimensions from "@/features/editor/utils/get-text-dimensions";
+import { FrameShape } from "@/features/editor/types/types";
+import { TOLERANCE } from "@/features/editor/constants/canvas";
 
 export default function selectedShapeContext({
   contextMenu: {
@@ -34,7 +37,7 @@ export default function selectedShapeContext({
   const setShapes = useSetShapes();
   const shapes = useShapes();
   const selectedShapesIds = useSelectedShapesIds();
-  const setFrames = useSetFrames();
+  const scale = useScale();
 
   const selected = new Set(selectedShapesIds);
   const { invalidate } = useCanvasRenderer();
@@ -92,19 +95,23 @@ export default function selectedShapeContext({
   const handleUngroupSelection = () => {};
 
   const handleWrapSelectionInFrame = () => {
-    const frameId = uuidv4();
-    
     const ctx = overlayCanvasRef.current?.getContext("2d");
     if (!ctx) return;
+    const scaledTolerance = 5 * TOLERANCE;
+
+    const selected = new Set(selectedShapesIds);
 
     const selectedShapes = shapes.filter((shape) => selected.has(shape.id));
-    const { minX, minY, maxX, maxY } = getGroupBounds(selectedShapes);
+    const bounds = getGroupBounds(selectedShapes);
 
-    // todo: later create a function for this
-    const startPoint = { x: minX, y: minY };
-    const endPoint = { x: maxX, y: maxY };
+    if (!bounds) return;
 
-    const rect = normalizeRect(startPoint, endPoint);
+    const frameId = uuidv4();
+
+    const rect = normalizeRect(
+      { x: bounds.minX - scaledTolerance, y: bounds.minY - scaledTolerance },
+      { x: bounds.maxX + scaledTolerance, y: bounds.maxY + scaledTolerance },
+    );
 
     const frameName = {
       name: "Frame Name",
@@ -112,30 +119,30 @@ export default function selectedShapeContext({
       fontFamily: "Virgil",
     };
 
-    const frame = {
-      ...rect,
+    const frame: FrameShape = {
       id: frameId,
-      type: "frame" as const,
+      type: "frame",
+      ...rect,
       strokeWidth: 2,
       text: {
         ...frameName,
-        ...getTextDimensions({ ctx, ...frameName, text: frameName.name }),
+        ...getTextDimensions({
+          ctx,
+          text: frameName.name,
+          fontSize: frameName.fontSize,
+          fontFamily: frameName.fontFamily,
+        }),
       },
-      childIds: selectedShapesIds,
     };
 
-    setFrames((prevFrames) => [...prevFrames, frame]);
-
     setShapes((prevShapes) => {
-      const unselectedShapes = prevShapes.filter(
-        (shape) => !selected.has(shape.id),
-      );
+      const selectedShapes = prevShapes
+        .filter((shape) => selected.has(shape.id))
+        .map((shape) => (shape.frameId ? shape : { ...shape, frameId }));
 
-      return [
-        ...unselectedShapes,
-        frame,
-        ...selectedShapes.map((shape) => ({ ...shape, frameId })),
-      ];
+      const otherShapes = prevShapes.filter((shape) => !selected.has(shape.id));
+
+      return [...otherShapes, frame, ...selectedShapes];
     });
 
     invalidate();

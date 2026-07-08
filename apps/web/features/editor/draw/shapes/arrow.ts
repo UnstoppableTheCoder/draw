@@ -1,4 +1,4 @@
-import { ArrowShape, SelectedBounds } from "../../types/types";
+import { ArrowShape } from "../../types/types";
 import getStrokeStyleValue from "../../utils/get-stroke-style-value";
 
 // Canvas Coordinate System

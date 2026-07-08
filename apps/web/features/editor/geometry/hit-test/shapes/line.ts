@@ -6,7 +6,8 @@ import { pointInSegment } from "../algorithms/point-in-segment";
 export const pointInLine = (
   point: Point,
   shape: LineShape,
+  scale: number,
   tolerance?: number,
 ): PointsShape | null => {
-  return pointInSegment(point, shape, tolerance);
+  return pointInSegment(point, shape, scale, tolerance);
 };

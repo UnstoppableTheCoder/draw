@@ -20,6 +20,8 @@ import {
 import { useCanvasRenderer } from "../../context/use-renderer";
 import { getGroupBounds } from "./use-selection-actions";
 import { getGroupedShapes } from "../../transform/get-grouped-shapes";
+import { current } from "@reduxjs/toolkit";
+import { getCurrentAppRouterState } from "next/dist/client/components/app-router-instance";
 
 function isLineEndpointHandle(
   handle: string | null,
@@ -192,8 +194,6 @@ export default function useShapeResize(
     pointerRefs.interactionRef.current = {
       ...interaction,
       previewShapes: updatedShapes,
-      groupedShapes: getGroupedShapes(updatedShapes),
-      groupBounds: getGroupBounds(updatedShapes)!,
     };
 
     invalidateOverlay();
@@ -213,10 +213,12 @@ export default function useShapeResize(
     setShapes((prev) => prev.map((shape) => previewMap.get(shape.id) ?? shape));
 
     pointerRefs.interactionRef.current = {
+      ...pointerRefs.interactionRef.current,
       type: "select",
       previewShapes: interaction.previewShapes,
-      groupedShapes: getGroupedShapes(interaction.previewShapes),
-      groupBounds: interaction.groupBounds,
+      selectedShapesIds: new Set(selectedShapesIds),
+      initialPositions: {},
+      dragStart: { x: 0, y: 0 },
     };
 
     invalidateScene();

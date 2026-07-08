@@ -5,6 +5,7 @@ import { usePointerState } from "../pointer/use-pointer-state";
 import { Point } from "@/types/canvas.types";
 import { useCanvasRenderer } from "../../context/use-renderer";
 import { getPointInShape } from "../../geometry/hit-test/get-point-in-shape";
+import { scalePointInGroup } from "../../transform/scale-shape-in-group";
 
 const ERASER_TRAIL_DURATION = 100;
 export default function useShapeEraser({
@@ -18,6 +19,7 @@ export default function useShapeEraser({
 }) {
   const shapes = store.useShapes();
   const setShapes = store.useSetShapes();
+  const scale = store.useScale();
 
   const { invalidate, invalidateOverlay, invalidateScene } =
     useCanvasRenderer();
@@ -41,7 +43,7 @@ export default function useShapeEraser({
     const hitIds = new Set<string>();
 
     for (const shape of shapes) {
-      const hit = getPointInShape(point, shape, ERASER_TOLERANCE);
+      const hit = getPointInShape(point, shape, scale, ERASER_TOLERANCE);
 
       if (hit?.id) {
         hitIds.add(hit.id);

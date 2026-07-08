@@ -13,35 +13,36 @@ import { pointInFrame } from "./shapes/frame";
 export const getPointInShape = (
   startPoint: Point,
   shape: Shape,
+  scale: number,
   tolerance?: number,
 ): Shape | null => {
   switch (shape.type) {
     case "rectangle":
-      return pointInRectangle(startPoint, shape, tolerance);
+      return pointInRectangle(startPoint, shape, scale, tolerance);
 
     case "diamond":
-      return pointInDiamond(startPoint, shape, tolerance);
+      return pointInDiamond(startPoint, shape, scale, tolerance);
 
     case "ellipse":
-      return pointInEllipse(startPoint, shape, tolerance);
+      return pointInEllipse(startPoint, shape, scale, tolerance);
 
     case "arrow":
-      return pointInArrow(startPoint, shape, tolerance);
+      return pointInArrow(startPoint, shape, scale, tolerance);
 
     case "line":
-      return pointInLine(startPoint, shape, tolerance);
+      return pointInLine(startPoint, shape, scale, tolerance);
 
     case "freedraw":
-      return pointInFreeDraw(startPoint, shape, tolerance);
+      return pointInFreeDraw(startPoint, shape, scale, tolerance);
 
     case "text":
-      return pointInText(startPoint, shape, tolerance);
+      return pointInText(startPoint, shape, scale, tolerance);
 
     case "image":
-      return pointInImage(startPoint, shape, tolerance);
+      return pointInImage(startPoint, shape, scale, tolerance);
 
     case "frame":
-      return pointInFrame(startPoint, shape, tolerance);
+      return pointInFrame(startPoint, shape, scale, tolerance);
 
     default:
       return null;

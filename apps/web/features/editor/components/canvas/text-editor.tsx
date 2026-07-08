@@ -46,8 +46,9 @@ export default function TextEditor({
     left: point.x - 1,
     top: point.y - 4,
     fontSize:
-      (textEditingState.fontSize ? textEditingState.fontSize * scale : 20) +
-      "px",
+      (textEditingState.fontSize && textEditingState.id
+        ? textEditingState.fontSize * scale
+        : (textEditingState.fontSize ?? 20)) + "px",
     fontFamily: textEditingState.fontFamily ?? "Arial",
     color: textEditingState.strokeColor ?? "white",
     lineHeight: lineHeightMultiplier,
@@ -62,7 +63,7 @@ export default function TextEditor({
       value={textEditingState.text}
       onChange={handleChange}
       onKeyDown={onKeyDown}
-      className="fixed field-sizing-content resize-none border-none outline-none bg-transparent overflow-hidden"
+      className="fixed field-sizing-content resize-none border-none outline-none bg-transparent overflow-hidden p-0 m-0"
       style={{ ...style, zIndex: 2 }}
     />
   );

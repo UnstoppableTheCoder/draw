@@ -13,15 +13,19 @@ type Props = {
   ctx: CanvasRenderingContext2D;
   shapes: Shape[];
   scale: number;
-  skipShapeIds?: string[] | undefined;
+  skipShapeIds?: Set<string>;
+  hoveredFrameId?: string | null;
 };
 
-export const renderShapes = ({ ctx, shapes, scale, skipShapeIds }: Props) => {
-  const skippedIds =
-    skipShapeIds && skipShapeIds.length > 0 ? new Set(skipShapeIds) : null;
-
+export const renderShapes = ({
+  ctx,
+  shapes,
+  scale,
+  skipShapeIds,
+  hoveredFrameId,
+}: Props) => {
   for (const shape of shapes) {
-    if (skippedIds?.has(shape.id)) continue;
+    if (skipShapeIds?.has(shape.id)) continue;
 
     switch (shape.type) {
       case "rectangle":
@@ -57,7 +61,7 @@ export const renderShapes = ({ ctx, shapes, scale, skipShapeIds }: Props) => {
         break;
 
       case "frame":
-        drawFrame(ctx, shape, scale);
+        drawFrame(ctx, shape, scale, hoveredFrameId === shape.id);
         break;
     }
   }

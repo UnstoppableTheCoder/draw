@@ -1,37 +1,37 @@
 import { TOLERANCE } from "../../constants/canvas";
-import { useEditorStore } from "../../store/editor/editor-store";
 import { FrameShape } from "../../types/types";
 
 export const drawFrame = (
   ctx: CanvasRenderingContext2D,
   shape: FrameShape,
   scale: number,
+  hovered: boolean,
 ) => {
   const { x, y, width, height, text } = shape;
-  const { isInsideFrame } = useEditorStore.getState();
+
+  const borderColor = hovered ? "#6965DB" : "#7d7d7d";
 
   ctx.save();
-  ctx.beginPath();
 
+  // Frame
+  ctx.beginPath();
   ctx.lineWidth = (shape.strokeWidth ?? 2) / scale;
-  ctx.strokeStyle = isInsideFrame ? "#6965DB" : "#7d7d7d";
+  ctx.strokeStyle = borderColor;
 
   ctx.roundRect(x, y, width, height, shape.roundness ?? 10);
+
   ctx.stroke();
 
-  ctx.closePath();
-  ctx.restore();
-
-  ctx.save();
-  ctx.font = `${text.fontSize}px ${text.fontFamily}`;
+  // Frame title
+  ctx.font = `${text.fontSize / scale}px ${text.fontFamily}`;
   ctx.fillStyle = "#7d7d7d";
   ctx.textBaseline = "bottom";
-  ctx.fillText(text.name, x, y - TOLERANCE);
 
+  ctx.fillText(text.name, x, y - TOLERANCE / scale);
+
+  // Debug bounds (remove later)
   ctx.strokeStyle = "#7d7d7d";
-  // Text Rectangle box -> todo:  Remove it later
-  ctx.strokeRect(x, y, text.width, -text.height - TOLERANCE);
-  ctx.stroke();
+  ctx.strokeRect(x, y, text.width / scale, -text.height / scale - TOLERANCE / scale);
 
   ctx.restore();
 };

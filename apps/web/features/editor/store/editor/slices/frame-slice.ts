@@ -5,34 +5,18 @@ export const createFrameSlice: StateCreator<
   EditorStore,
   [["zustand/devtools", never]],
   [],
-  Pick<
-    EditorStore,
-    "parentFrameId" | "setParentFrameId" | "isInsideFrame" | "setIsInsideFrame"
-  >
+  Pick<EditorStore, "hoveredFrameId" | "setHoveredFrameId">
 > = (set) => ({
-  parentFrameId: null,
-  setParentFrameId: (updater) =>
+  hoveredFrameId: null,
+  setHoveredFrameId: (updater) =>
     set(
       (state) => ({
-        parentFrameId:
+        hoveredFrameId:
           typeof updater === "function"
-            ? updater(state.parentFrameId)
+            ? updater(state.hoveredFrameId)
             : updater,
       }),
       false,
       "frame/setParentFrameId",
-    ),
-
-  isInsideFrame: false,
-  setIsInsideFrame: (updater) =>
-    set(
-      (state) => ({
-        isInsideFrame:
-          typeof updater === "function"
-            ? updater(state.isInsideFrame)
-            : updater,
-      }),
-      false,
-      "frame/setIsInsideFrame",
     ),
 });

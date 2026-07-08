@@ -150,7 +150,6 @@ export interface FrameShape extends Omit<BaseShape, "type"> {
     fontSize: number;
     fontFamily: string;
   };
-  childIds: string[];
 }
 
 export type Shape =

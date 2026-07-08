@@ -4,8 +4,11 @@ import { DiamondShape, Point } from "@/features/editor/types/types";
 export const pointInDiamond = (
   point: Point,
   shape: DiamondShape,
+  scale: number,
   tolerance?: number,
 ): DiamondShape | null => {
+  const scaledTolerance = (tolerance ?? TOLERANCE) / scale;
+
   const centerX = shape.x + shape.width / 2;
   const centerY = shape.y + shape.height / 2;
 
@@ -17,8 +20,7 @@ export const pointInDiamond = (
 
   // Formula
   const inside =
-    dx / (halfWidth + (tolerance ?? TOLERANCE)) +
-      dy / (halfHeight + (tolerance ?? TOLERANCE)) <=
+    dx / (halfWidth + scaledTolerance) + dy / (halfHeight + scaledTolerance) <=
     1;
 
   return inside ? shape : null;

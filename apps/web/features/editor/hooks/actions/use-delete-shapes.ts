@@ -20,6 +20,7 @@ export default function useDeleteShapes() {
       prevShapes.filter((shape) => !selected.has(shape.id)),
     );
     setSelectedShapesIds([]);
+    
     invalidate();
   };
 
