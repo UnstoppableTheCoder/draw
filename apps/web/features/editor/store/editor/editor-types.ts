@@ -7,6 +7,10 @@ import {
   TextEditingState,
 } from "../../types/types";
 
+export type Group = {
+  [groupId: string]: string[];
+};
+
 export interface EditorStore {
   // Tool
   selectedTool: ToolType;
@@ -34,6 +38,15 @@ export interface EditorStore {
   selectionBounds: SelectedBounds | null;
   setSelectionBounds: (bounds: SelectedBounds | null) => void;
 
+  selectedGroupsIds: string[];
+  setSelectedGroupsIds: (
+    updater: string[] | ((prev: string[]) => string[]),
+  ) => void;
+
+  // Add the types
+  frames: any[];
+  setFrames: (updater: any[] | ((prev: any[]) => any[])) => void;
+
   // Text Editing
   textEditingState: TextEditingState | null;
   setTextEditingState: (
@@ -59,4 +72,13 @@ export interface EditorStore {
   pushHistory: () => void;
   undo: () => void;
   redo: () => void;
+
+  // Frame
+  parentFrameId: string | null;
+  setParentFrameId: (
+    updater: string | null | ((prev: string | null) => string | null),
+  ) => void;
+
+  isInsideFrame: boolean;
+  setIsInsideFrame: (updater: boolean | ((prev: boolean) => boolean)) => void;
 }

@@ -8,9 +8,12 @@ export default function canvasContext({
     menu: { open, x, y, clickedInSelectedArea },
     closeContextMenu,
     canvasContextRef,
+    overlayCanvasRef,
   },
 }: {
-  contextMenu: ContextMenuType;
+  contextMenu: ContextMenuType & {
+    overlayCanvasRef: RefObject<HTMLCanvasElement | null>;
+  };
 }) {
   return (
     <div

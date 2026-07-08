@@ -29,7 +29,9 @@ export const PropertiesPanel = ({
 
   const shapes = useShapes();
   const selected = new Set(selectedShapesIds);
+
   const selectedShapes = shapes.filter((shape) => selected.has(shape.id));
+
   const selectedShapesTypes = getSelectedShapesTypes(selectedShapes);
 
   // Render Properties Panel Conditionally

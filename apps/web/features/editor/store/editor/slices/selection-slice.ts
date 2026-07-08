@@ -11,6 +11,10 @@ export const createSelectionSlice: StateCreator<
     | "setSelectedShapesIds"
     | "selectionBounds"
     | "setSelectionBounds"
+    | "selectedGroupsIds"
+    | "setSelectedGroupsIds"
+    | "frames"
+    | "setFrames"
   >
 > = (set) => ({
   selectedShapesIds: [],
@@ -34,5 +38,30 @@ export const createSelectionSlice: StateCreator<
       },
       false,
       "selection/setSelectionBounds",
+    ),
+
+  // #################### Not Being Used #######################
+  selectedGroupsIds: [],
+  setSelectedGroupsIds: (updater) =>
+    set(
+      (state) => ({
+        selectedGroupsIds:
+          typeof updater === "function"
+            ? updater(state.selectedGroupsIds)
+            : updater,
+      }),
+      false,
+      "selection/setSelectedGroupsIds",
+    ),
+
+  // #################### Not Being Used #######################
+  frames: [],
+  setFrames: (updater) =>
+    set(
+      (state) => ({
+        frames: typeof updater === "function" ? updater(state.frames) : updater,
+      }),
+      false,
+      "selection/setFramesIds",
     ),
 });

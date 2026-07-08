@@ -5,6 +5,7 @@ export default function drawSelectionBounds(
   scale: number,
   bounds: SelectedBounds,
   selectionType: "child" | "group" = "child",
+  lineStyle?: "solid" | "dashed",
 ) {
   const { minX, minY, maxX, maxY } = bounds;
 
@@ -35,12 +36,17 @@ export default function drawSelectionBounds(
   ctx.save();
 
   // Selection border
+  if (lineStyle === "dashed") {
+    ctx.setLineDash([5, 5]);
+  }
+
   ctx.strokeStyle = "#6965DB";
   ctx.lineWidth = 1 / scale;
 
-  // Selection Box
+  // Shape Selection Box
   ctx.strokeRect(minX, minY, width, height);
 
+  // Group Selection Box
   if (selectionType === "group") {
     // Line connecting top-center handle to rotation handle
     ctx.beginPath();

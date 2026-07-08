@@ -13,6 +13,7 @@ import { useSelectedTool } from "../../store/editor/selectors";
 
 type InteractionSelection = {
   previewShapes: Shape[];
+  groupedShapes: Record<string, Shape[]>;
   groupBounds: SelectedBounds;
 };
 
@@ -29,7 +30,9 @@ export type InteractionState =
     } & InteractionSelection)
   | ({
       type: "move";
-      dragOffsets: Record<string, Point>;
+      selectedShapesDragOffsets: Record<string, Point>;
+      framedShapesDragOffsets: Record<string, Point>;
+      framedPreviewShapes: Shape[]
     } & InteractionSelection)
   | ({
       type: "resize";
@@ -53,11 +56,11 @@ export type InteractionState =
       startAngle: number;
       rotationCenter: Point;
     } & InteractionSelection)
-  | {
+  | ({
       type: "selection-box";
       startPoint: Point;
       endPoint: Point;
-    };
+    } & Partial<InteractionSelection>);
 
 export function createEmptyInteraction(): InteractionState {
   return {

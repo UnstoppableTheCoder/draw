@@ -42,6 +42,7 @@ export function getBoundingBox(shape: Shape) {
     case "ellipse":
     case "text":
     case "image":
+    case "frame":
       updateBoundsForShapesWithoutPoints(shape);
       break;
 

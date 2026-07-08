@@ -8,6 +8,7 @@ import { pointInLine } from "./shapes/line";
 import { pointInRectangle } from "./shapes/rectangle";
 import { pointInText } from "./shapes/text";
 import { Shape } from "../../types/types";
+import { pointInFrame } from "./shapes/frame";
 
 export const getPointInShape = (
   startPoint: Point,
@@ -38,6 +39,9 @@ export const getPointInShape = (
 
     case "image":
       return pointInImage(startPoint, shape, tolerance);
+
+    case "frame":
+      return pointInFrame(startPoint, shape, tolerance);
 
     default:
       return null;

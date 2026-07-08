@@ -1,4 +1,4 @@
-import { ArrowShape, DiamondShape, EllipseShape, FreeDrawShape, ImageShape, LineShape, RectangleShape, TextShape } from "../types/types";
+import { ArrowShape, DiamondShape, EllipseShape, FrameShape, FreeDrawShape, ImageShape, LineShape, RectangleShape, TextShape } from "../types/types";
 
 export type PointsShape = ArrowShape | LineShape | FreeDrawShape;
 
@@ -9,4 +9,5 @@ export type ShapeWithoutPoints =
   | DiamondShape
   | EllipseShape
   | TextShape
-  | ImageShape;
+  | ImageShape
+  | FrameShape;

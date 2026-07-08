@@ -17,6 +17,7 @@ import {
   useTextAlign,
 } from "../../store/properties/selectors";
 import useSelectionActions, { getGroupBounds } from "./use-selection-actions";
+import { getGroupedShapes } from "../../transform/get-grouped-shapes";
 
 type UseDrawingArgs = {
   sceneCanvasRef: RefObject<HTMLCanvasElement | null>;
@@ -137,6 +138,7 @@ export default function useShapeDrawing({
       pointerRefs.interactionRef.current = {
         type: "select",
         previewShapes: [shape],
+        groupedShapes: getGroupedShapes([shape]),
         groupBounds: getGroupBounds([shape]),
       };
     }

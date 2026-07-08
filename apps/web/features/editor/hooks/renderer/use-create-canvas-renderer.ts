@@ -14,6 +14,8 @@ import drawMarqueeSelection from "../../draw/selection/marquee-selection";
 import { normalizeRect } from "../../geometry/normalize-rect";
 import { getBoundingBox } from "../../geometry/bounding-box/get-bounding-box";
 import { useEditorStore } from "../../store/editor/editor-store";
+import drawGroupedShapeSelection from "../../draw/selection/grouped-shapes-selection";
+import { signalFromNodeResponse } from "next/dist/server/web/spec-extension/adapters/next-request";
 
 export default function useCreateCanvasRenderer({
   sceneCanvasRef,
@@ -37,11 +39,12 @@ export default function useCreateCanvasRenderer({
       bounds: SelectedBounds,
       scale: number,
       selectionType: "child" | "group",
+      lineStyle: "solid" | "dashed",
     ) => {
       if (shape.type === "arrow" || shape.type === "line") {
-        drawLineSelection(ctx, scale, shape, selectionType);
+        drawLineSelection(ctx, scale, shape, selectionType, lineStyle);
       } else {
-        drawSelectionBounds(ctx, scale, bounds, selectionType);
+        drawSelectionBounds(ctx, scale, bounds, selectionType, lineStyle);
       }
     },
     [],
@@ -53,8 +56,9 @@ export default function useCreateCanvasRenderer({
       bounds: SelectedBounds,
       scale: number,
       selectionType: "child" | "group" = "child",
+      lineStyle: "solid" | "dashed",
     ) => {
-      drawSelectionBounds(ctx, scale, bounds, selectionType);
+      drawSelectionBounds(ctx, scale, bounds, selectionType, lineStyle);
     },
     [],
   );
@@ -76,18 +80,51 @@ export default function useCreateCanvasRenderer({
 
     viewportHelpers.applyViewportTransform(ctx);
 
-    const skipShapeIds =
+    const isTransformInteraction =
       interaction.type === "move" ||
       interaction.type === "resize" ||
-      interaction.type === "rotate"
-        ? interaction.previewShapes.map((shape) => shape.id)
-        : textEditingState && textEditingState.id
-          ? [textEditingState.id]
-          : [];
+      interaction.type === "rotate";
+
+    const skipShapeIds = isTransformInteraction
+      ? (() => {
+          const selectedFrames = interaction.previewShapes.filter(
+            (shape) => shape.type === "frame",
+          );
+
+          const selectedFramesIds = new Set(
+            selectedFrames.map((shapes) => shapes.id),
+          );
+
+          const skippedIds: string[] = [];
+
+          interaction.previewShapes.forEach((shape) =>
+            skippedIds.push(shape.id),
+          );
+
+          if (interaction.type === "move") {
+            interaction.framedPreviewShapes.forEach((framedShape) => {
+              if (!framedShape.frameId) return;
+
+              const isSelectedFrameShape = selectedFramesIds.has(
+                framedShape.frameId,
+              );
+
+              if (isSelectedFrameShape) {
+                skippedIds.push(framedShape.id);
+              }
+            });
+          }
+
+          return skippedIds;
+        })()
+      : textEditingState && textEditingState.id
+        ? [textEditingState.id]
+        : [];
 
     renderShapes({
       ctx,
       shapes,
+      scale,
       skipShapeIds,
     });
 
@@ -143,10 +180,17 @@ export default function useCreateCanvasRenderer({
           : [];
 
     if (previewShapes.length > 0) {
+      // Renders the selected preview shapes
       renderShapes({
         ctx,
         shapes: previewShapes,
+        scale,
       });
+
+      // Renders the framed preview shapes
+      if (interaction.type === "move") {
+        renderShapes({ ctx, shapes: interaction.framedPreviewShapes, scale });
+      }
     }
 
     // Eraser Trail
@@ -158,10 +202,33 @@ export default function useCreateCanvasRenderer({
       });
     }
 
-    // It makes sure that style is not applied to Selection Box
-    // ctx.restore();
+    // Group Selection
+    if (
+      isTransformInteraction ||
+      interaction.type === "select" ||
+      interaction.type === "selection-box"
+    ) {
+      if (interaction.groupedShapes) {
+        for (const shapes of Object.values(interaction.groupedShapes)) {
+          const groupBounds = getGroupBounds(shapes);
 
-    // Selection
+          if (!interaction.previewShapes) return;
+
+          const containsOnlyGroupedShapes = interaction.previewShapes.every(
+            (shape) => shape.groupId,
+          );
+
+          if (
+            !containsOnlyGroupedShapes ||
+            Object.values(interaction.groupedShapes).length > 1
+          ) {
+            drawGroupedShapeSelection(ctx, groupBounds, scale);
+          }
+        }
+      }
+    }
+
+    // Shape Selection
     const selectionShapes = isTransformInteraction
       ? interaction.previewShapes
       : shapes.filter((shape) => selectedShapesIds.includes(shape.id));
@@ -170,18 +237,38 @@ export default function useCreateCanvasRenderer({
       const shape = selectionShapes[0];
       if (!shape) return;
 
-      renderShapeSelection(ctx, shape, getBoundingBox(shape), scale, "group");
+      // if shape belongs to a group return
+      if (shape.groupId) return;
+
+      renderShapeSelection(
+        ctx,
+        shape,
+        getBoundingBox(shape),
+        scale,
+        "group",
+        "solid",
+      );
     } else if (selectionShapes.length > 1) {
       const bounds = isTransformInteraction
         ? interaction.groupBounds
         : getGroupBounds(selectionShapes);
 
       selectionShapes.forEach((shape) => {
-        renderShapeSelection(ctx, shape, getBoundingBox(shape), scale, "child");
+        // if shape belongs to a group return
+        if (shape.groupId) return;
+
+        renderShapeSelection(
+          ctx,
+          shape,
+          getBoundingBox(shape),
+          scale,
+          "child",
+          "solid",
+        );
       });
 
       if (bounds) {
-        renderGroupSelection(ctx, bounds, scale, "group");
+        renderGroupSelection(ctx, bounds, scale, "group", "dashed");
       }
     }
 

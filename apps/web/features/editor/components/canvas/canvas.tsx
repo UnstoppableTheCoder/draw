@@ -92,7 +92,7 @@ const Canvas = ({ editorRefs }: CanvasProps) => {
         <UndoRedo />
       </div>
 
-      <CanvasContextMenu contextMenu={contextMenu} />
+      <CanvasContextMenu contextMenu={{ ...contextMenu, overlayCanvasRef }} />
     </div>
   );
 };

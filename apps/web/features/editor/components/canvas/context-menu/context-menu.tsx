@@ -1,3 +1,4 @@
+import { RefObject } from "react";
 import { ContextMenuType } from "../../types";
 import CanvasContext from "./canvas-context";
 import SelectedShapeContext from "./selected-shape-context";
@@ -5,7 +6,9 @@ import SelectedShapeContext from "./selected-shape-context";
 export function CanvasContextMenu({
   contextMenu,
 }: {
-  contextMenu: ContextMenuType;
+  contextMenu: ContextMenuType & {
+    overlayCanvasRef: RefObject<HTMLCanvasElement | null>;
+  };
 }) {
   return (
     <>

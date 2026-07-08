@@ -6,6 +6,7 @@ export default function drawLineSelection(
   scale: number,
   selectedShape: ArrowShape | LineShape | null,
   selectionType: "child" | "group" = "child",
+  lineStyle: "solid" | "dashed",
 ) {
   if (!selectedShape) return;
   const { x, y, points } = selectedShape;
@@ -24,6 +25,10 @@ export default function drawLineSelection(
   ];
 
   ctx.save();
+
+  if (lineStyle === "dashed") {
+    ctx.setLineDash([5, 5]);
+  }
 
   ctx.strokeStyle = "#6965DB";
   ctx.fillStyle = "#FFFFFF";

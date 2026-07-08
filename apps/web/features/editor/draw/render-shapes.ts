@@ -2,6 +2,7 @@ import { Shape } from "../types/types";
 import { drawArrow } from "./shapes/arrow";
 import { drawDiamond } from "./shapes/diamond";
 import { drawEllipse } from "./shapes/ellipse";
+import { drawFrame } from "./shapes/frame";
 import { drawFreeDraw } from "./shapes/freedraw";
 import { drawImage } from "./shapes/image";
 import { drawLine } from "./shapes/line";
@@ -11,10 +12,11 @@ import { drawText } from "./shapes/text";
 type Props = {
   ctx: CanvasRenderingContext2D;
   shapes: Shape[];
+  scale: number;
   skipShapeIds?: string[] | undefined;
 };
 
-export const renderShapes = ({ ctx, shapes, skipShapeIds }: Props) => {
+export const renderShapes = ({ ctx, shapes, scale, skipShapeIds }: Props) => {
   const skippedIds =
     skipShapeIds && skipShapeIds.length > 0 ? new Set(skipShapeIds) : null;
 
@@ -52,6 +54,10 @@ export const renderShapes = ({ ctx, shapes, skipShapeIds }: Props) => {
 
       case "image":
         drawImage(ctx, shape);
+        break;
+
+      case "frame":
+        drawFrame(ctx, shape, scale);
         break;
     }
   }

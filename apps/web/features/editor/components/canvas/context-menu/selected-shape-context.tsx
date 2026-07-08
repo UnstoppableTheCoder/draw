@@ -1,23 +1,48 @@
-import { MouseEvent, RefObject } from "react";
 import MenuButton from "./menu-button";
-import { ContextMenuType, Menu } from "../../types";
+import { ContextMenuType } from "../../types";
 import { Separator } from "../../ui/separator";
 import useDeleteShapes from "@/features/editor/hooks/actions/use-delete-shapes";
 import useDuplicateShapes from "@/features/editor/hooks/actions/use-duplicate-shapes";
 import useShapeOrder from "@/features/editor/hooks/order/use-shape-order";
+import {
+  useSelectedShapesIds,
+  useSetFrames,
+  useSetSelectedGroupsIds,
+  useSetShapes,
+  useShapes,
+} from "@/features/editor/store/editor/selectors";
+import { v4 as uuidv4 } from "uuid";
+import { useCanvasRenderer } from "@/features/editor/context/use-renderer";
+import { Shapes } from "lucide-react";
+import { getGroupBounds } from "@/features/editor/geometry/bounding-box/get-group-bounds";
+import { normalizeRect } from "@/features/editor/geometry/normalize-rect";
+import { RefObject } from "react";
+import getTextDimensions from "@/features/editor/utils/get-text-dimensions";
 
 export default function selectedShapeContext({
   contextMenu: {
     menu: { open, x, y, clickedInSelectedArea },
     closeContextMenu,
     selectedShapeContextRef,
+    overlayCanvasRef,
   },
 }: {
-  contextMenu: ContextMenuType;
+  contextMenu: ContextMenuType & {
+    overlayCanvasRef: RefObject<HTMLCanvasElement | null>;
+  };
 }) {
+  const setShapes = useSetShapes();
+  const shapes = useShapes();
+  const selectedShapesIds = useSelectedShapesIds();
+  const setFrames = useSetFrames();
+
+  const selected = new Set(selectedShapesIds);
+  const { invalidate } = useCanvasRenderer();
+
   const { deleteShapes } = useDeleteShapes();
   const { duplicateShapes } = useDuplicateShapes();
   const order = useShapeOrder();
+  const setSelectedGroupIds = useSetSelectedGroupsIds();
 
   const handleDuplicateClick = () => {
     duplicateShapes();
@@ -49,6 +74,77 @@ export default function selectedShapeContext({
     closeContextMenu();
   };
 
+  const handleGroupSelection = () => {
+    const groupId = uuidv4();
+
+    setSelectedGroupIds((prev) => [...prev, groupId]);
+
+    setShapes((prevShapes) =>
+      prevShapes.map((prevShape) =>
+        selected.has(prevShape.id) ? { ...prevShape, groupId } : prevShape,
+      ),
+    );
+
+    invalidate();
+  };
+
+  // Complete this
+  const handleUngroupSelection = () => {};
+
+  const handleWrapSelectionInFrame = () => {
+    const frameId = uuidv4();
+    
+    const ctx = overlayCanvasRef.current?.getContext("2d");
+    if (!ctx) return;
+
+    const selectedShapes = shapes.filter((shape) => selected.has(shape.id));
+    const { minX, minY, maxX, maxY } = getGroupBounds(selectedShapes);
+
+    // todo: later create a function for this
+    const startPoint = { x: minX, y: minY };
+    const endPoint = { x: maxX, y: maxY };
+
+    const rect = normalizeRect(startPoint, endPoint);
+
+    const frameName = {
+      name: "Frame Name",
+      fontSize: 14,
+      fontFamily: "Virgil",
+    };
+
+    const frame = {
+      ...rect,
+      id: frameId,
+      type: "frame" as const,
+      strokeWidth: 2,
+      text: {
+        ...frameName,
+        ...getTextDimensions({ ctx, ...frameName, text: frameName.name }),
+      },
+      childIds: selectedShapesIds,
+    };
+
+    setFrames((prevFrames) => [...prevFrames, frame]);
+
+    setShapes((prevShapes) => {
+      const unselectedShapes = prevShapes.filter(
+        (shape) => !selected.has(shape.id),
+      );
+
+      return [
+        ...unselectedShapes,
+        frame,
+        ...selectedShapes.map((shape) => ({ ...shape, frameId })),
+      ];
+    });
+
+    invalidate();
+  };
+
+  const handleRemoveAllElementFromFrame = () => {};
+
+  const handleRemoveFrame = () => {};
+
   return (
     <div
       className="fixed z-50 min-w-50 rounded-md border bg-popover p-1 text-popover-foreground shadow-md"
@@ -66,7 +162,18 @@ export default function selectedShapeContext({
 
       <Separator />
 
-      <MenuButton>Wrap selection in frame</MenuButton>
+      <MenuButton onClick={handleGroupSelection}>Group selection</MenuButton>
+      <MenuButton onClick={handleUngroupSelection}>
+        Ungroup selection
+      </MenuButton>
+
+      <MenuButton onClick={handleWrapSelectionInFrame}>
+        Wrap selection in frame
+      </MenuButton>
+      <MenuButton onClick={handleRemoveAllElementFromFrame}>
+        Remove all elements from frame
+      </MenuButton>
+      <MenuButton onClick={handleRemoveFrame}>Remove frame</MenuButton>
 
       <Separator />
 

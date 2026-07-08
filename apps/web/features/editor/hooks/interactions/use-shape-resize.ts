@@ -19,6 +19,7 @@ import {
 } from "../../transform/scale-shape-in-group";
 import { useCanvasRenderer } from "../../context/use-renderer";
 import { getGroupBounds } from "./use-selection-actions";
+import { getGroupedShapes } from "../../transform/get-grouped-shapes";
 
 function isLineEndpointHandle(
   handle: string | null,
@@ -191,6 +192,7 @@ export default function useShapeResize(
     pointerRefs.interactionRef.current = {
       ...interaction,
       previewShapes: updatedShapes,
+      groupedShapes: getGroupedShapes(updatedShapes),
       groupBounds: getGroupBounds(updatedShapes)!,
     };
 
@@ -213,6 +215,7 @@ export default function useShapeResize(
     pointerRefs.interactionRef.current = {
       type: "select",
       previewShapes: interaction.previewShapes,
+      groupedShapes: getGroupedShapes(interaction.previewShapes),
       groupBounds: interaction.groupBounds,
     };
 

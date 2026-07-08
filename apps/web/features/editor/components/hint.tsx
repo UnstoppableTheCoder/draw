@@ -20,10 +20,11 @@ const Hint = ({
     <Tooltip>
       <TooltipTrigger asChild>{children}</TooltipTrigger>
       <TooltipContent side={side} align={align} sideOffset={sideOffset}>
-        <p>{label}</p>
+        <p className="bg-[#7d7d7d]">{label}</p>
       </TooltipContent>
     </Tooltip>
   );
 };
 
 export default Hint;
+

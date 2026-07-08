@@ -17,3 +17,13 @@ export const useTextEditingState = () =>
 
 export const useSetTextEditingState = () =>
   useEditorStore((state) => state.setTextEditingState);
+
+export const useSelectedGroupsIds = () =>
+  useEditorStore((state) => state.selectedGroupsIds);
+
+export const useSetSelectedGroupsIds = () =>
+  useEditorStore((state) => state.setSelectedGroupsIds);
+
+export const useFrames = () => useEditorStore((state) => state.frames);
+
+export const useSetFrames = () => useEditorStore((state) => state.setFrames);

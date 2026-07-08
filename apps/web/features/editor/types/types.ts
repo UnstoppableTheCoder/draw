@@ -55,7 +55,7 @@ export interface BaseShape {
   strokeStyle?: StrokeStyle;
   roughness?: number;
   opacity?: number;
-  groupIds?: string[];
+  groupId?: string | null;
   frameId?: string | null;
   index?: string; // z-index
   roundness?: number | null;
@@ -139,6 +139,20 @@ export interface ImageShape extends BaseShape {
   crop?: CropData | null; // Stores cropped area.
 }
 
+export interface FrameShape extends Omit<BaseShape, "type"> {
+  type: "frame";
+  width: number;
+  height: number;
+  text: {
+    width: number;
+    height: number;
+    name: string;
+    fontSize: number;
+    fontFamily: string;
+  };
+  childIds: string[];
+}
+
 export type Shape =
   | RectangleShape
   | DiamondShape
@@ -147,7 +161,8 @@ export type Shape =
   | LineShape
   | FreeDrawShape
   | TextShape
-  | ImageShape;
+  | ImageShape
+  | FrameShape;
 
 export interface TextEditingState extends Omit<
   TextShape,
