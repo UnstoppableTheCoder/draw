@@ -12,12 +12,13 @@ export default function useDeleteShapes(
 ) {
   const setShapes = useSetShapes();
   const setSelectedShapesIds = useSetSelectedShapesIds();
-  const frameEditingState = useFrameEditingState();
+  // const frameEditingState = useFrameEditingState();
   const { invalidate } = useCanvasRenderer();
 
   const deleteShapes = () => {
     const { selectedShapesIds } = useEditorStore.getState();
     const selected = new Set(selectedShapesIds);
+    const { frameEditingState } = useEditorStore.getState();
 
     if (selectedShapesIds.length === 0) return;
     if (frameEditingState) return;

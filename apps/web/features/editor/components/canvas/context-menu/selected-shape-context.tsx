@@ -46,7 +46,7 @@ export default function selectedShapeContext({
 
   const handleDuplicateClick = () => {
     duplicateShapes();
-    closeContextMenu();
+    closeContextMenu(); 
   };
 
   const handleDeleteClick = () => {

@@ -68,7 +68,9 @@ export const renderShapes = ({
           shape,
           scale,
           hoveredFrameId === shape.id,
-          frameEditingState ? true : false,
+          frameEditingState && frameEditingState.frameId === shape.id
+            ? true
+            : false,
         );
         break;
     }

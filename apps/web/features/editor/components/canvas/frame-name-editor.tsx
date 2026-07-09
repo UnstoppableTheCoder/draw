@@ -84,6 +84,10 @@ export default function FrameNameEditor({
   }, [frame, value, overlayCanvasRef, viewportHelpers]);
 
   const updateFrameName = (frameId: string, value: string) => {
+    if (!overlayCanvasRef.current) return;
+    const ctx = overlayCanvasRef.current.getContext("2d");
+    if (!ctx) return;
+
     setShapes((prevShapes) =>
       prevShapes.map((shape) => {
         if (shape.type !== "frame") return shape;
@@ -94,6 +98,12 @@ export default function FrameNameEditor({
               text: {
                 ...shape.text,
                 name: value,
+                ...getTextDimensions({
+                  ctx,
+                  text: value,
+                  fontSize: shape.text.fontSize,
+                  fontFamily: shape.text.fontFamily,
+                }),
               },
             }
           : shape;

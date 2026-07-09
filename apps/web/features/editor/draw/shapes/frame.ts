@@ -17,7 +17,7 @@ export const drawFrame = (
 
   // Frame
   ctx.beginPath();
-  ctx.lineWidth = (shape.strokeWidth ?? 2) / scale;
+  ctx.lineWidth = 2 / scale;
   ctx.strokeStyle = borderColor;
 
   ctx.roundRect(x, y, width, height, shape.roundness ?? 10);
@@ -33,13 +33,13 @@ export const drawFrame = (
     ctx.fillText(text.name, x, y - TOLERANCE / scale);
 
     // Rectangle around the text
-    ctx.strokeStyle = "#7d7d7d";
-    ctx.strokeRect(
-      x,
-      y,
-      text.width / scale,
-      -text.height / scale - TOLERANCE / scale,
-    );
+    // ctx.strokeStyle = "#7d7d7d";
+    // ctx.strokeRect(
+    //   x,
+    //   y,
+    //   text.width / scale,
+    //   -text.height / scale - TOLERANCE / scale,
+    // );
   }
 
   ctx.restore();
