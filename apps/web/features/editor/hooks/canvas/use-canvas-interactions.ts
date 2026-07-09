@@ -1,8 +1,8 @@
-import { Dispatch, PointerEvent, RefObject, SetStateAction } from "react";
+import { PointerEvent, RefObject } from "react";
 import * as store from "../../store/editor/selectors";
 import { usePointerState } from "../pointer/use-pointer-state";
 import useCanvasCursor from "./use-canvas-cursor";
-import { Point } from "../../types/types";
+import { Point, Shape } from "../../types/types";
 import usePan from "../viewport/use-viewport-pan";
 import usePointer from "../pointer/use-pointer-helpers";
 import useTextEditing from "../text/use-text-editing";
@@ -12,7 +12,9 @@ import useShapeEraser from "../interactions/use-shape-eraser";
 import useShapeMove from "../interactions/use-shape-move";
 import useShapeResize from "../interactions/use-shape-resize";
 import { useCanvasRenderer } from "../../context/use-renderer";
-import { preLogSerializationClone } from "next/dist/next-devtools/userspace/app/forward-logs-utils";
+import useViewportHelpers from "../viewport/use-viewport-helpers";
+import { getShapeAtPosition } from "../../geometry/hit-test/get-shape-at-position";
+import { TOLERANCE } from "../../constants/canvas";
 
 const STICKY_TOOLS = new Set(["pan", "freedraw", "eraser"]);
 
@@ -36,6 +38,8 @@ export default function useCanvasInteractions({
   const selectedShapesIds = store.useSelectedShapesIds();
   const setSelectedShapesIds = store.useSetSelectedShapesIds();
   const shapes = store.useShapes();
+  const scale = store.useScale();
+  const setEditingFrameState = store.useSetFrameEditingState();
 
   const drawing = useShapeDrawing({
     sceneCanvasRef,
@@ -62,6 +66,7 @@ export default function useCanvasInteractions({
   const move = useShapeMove(sceneCanvasRef, overlayCanvasRef, pointerRefs);
   const resize = useShapeResize(overlayCanvasRef, pointerRefs);
   const text = useTextEditing(sceneCanvasRef, textareaRef);
+  const viewportHelpers = useViewportHelpers(overlayCanvasRef);
 
   function routePointerDown(
     event: PointerEvent<HTMLCanvasElement>,
@@ -237,5 +242,47 @@ export default function useCanvasInteractions({
     invalidate();
   }
 
-  return { handlePointerDown, handlePointerMove, handlePointerUp };
+  function isClickedOnFrameName(point: Point, frameShape: Shape) {
+    if (frameShape.type !== "frame") return false;
+
+    const text = frameShape.text;
+
+    const scaledTolerance = TOLERANCE / scale;
+    const scaledTextHeight = text.height / scale;
+    const scaledTextWidth = text.width / scale;
+
+    const insideText =
+      point.x >= frameShape.x &&
+      point.y <= frameShape.y &&
+      point.x <= frameShape.x + scaledTextWidth &&
+      point.y >= frameShape.y - scaledTextHeight - scaledTolerance;
+
+    return insideText;
+  }
+
+  function handleDoubleClick(event: PointerEvent<HTMLCanvasElement>) {
+    const point = viewportHelpers.clientToCanvas(event.clientX, event.clientY);
+    if (!point) return;
+
+    const hitShape = getShapeAtPosition({ point, shapes, scale });
+
+    if (hitShape?.type === "frame") {
+      if (!isClickedOnFrameName(point, hitShape)) return;
+
+      setEditingFrameState({
+        frameId: hitShape.id,
+        frameName: hitShape.text.name,
+      });
+      return;
+    }
+
+    text.handleDoubleClick(event);
+  }
+
+  return {
+    handlePointerDown,
+    handlePointerMove,
+    handlePointerUp,
+    handleDoubleClick,
+  };
 }

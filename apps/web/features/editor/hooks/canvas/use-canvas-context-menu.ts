@@ -1,6 +1,7 @@
 import { MouseEvent, RefObject, useRef, useState } from "react";
 import { getShapeAtPosition } from "../../geometry/hit-test/get-shape-at-position";
 import {
+  useScale,
   useSelectedShapesIds,
   useSetSelectedShapesIds,
   useShapes,
@@ -25,6 +26,7 @@ export default function useCanvasContextMenu(
 
   const viewport = useViewportHelpers(canvasRef);
   const { invalidate } = useCanvasRenderer();
+  const scale = useScale();
 
   const shapes = useShapes();
   let selectedShapesIds = useSelectedShapesIds();
@@ -84,7 +86,7 @@ export default function useCanvasContextMenu(
 
       clickedInSelectedArea = isPointInSelectedShapeBounds(point, groupBounds);
     } else {
-      const hitShape = getShapeAtPosition({ point, shapes });
+      const hitShape = getShapeAtPosition({ point, shapes, scale });
 
       if (hitShape) {
         clickedInSelectedArea = true;

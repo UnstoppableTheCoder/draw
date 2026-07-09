@@ -3,15 +3,20 @@ import { PropertiesPanelItemWrapper } from "../properties-panel-item-wrapper";
 import { PropertyItem } from "../property-item";
 import { useSelectedShapesIds } from "@/features/editor/store/editor/selectors";
 import { PropertiesDataType } from "../../types";
-import useDeleteShapes from "@/features/editor/hooks/actions/use-delete-shapes";
 import useDuplicateShapes from "@/features/editor/hooks/actions/use-duplicate-shapes";
+import { usePointerState } from "@/features/editor/hooks/pointer/use-pointer-state";
+import useDeleteShapes from "@/features/editor/hooks/actions/use-delete-shapes";
 
-export default function Actions() {
+export default function Actions({
+  pointerRefs,
+}: {
+  pointerRefs: ReturnType<typeof usePointerState>;
+}) {
   const selectedShapesIds = useSelectedShapesIds();
-  const { deleteShapes } = useDeleteShapes();
   const { duplicateShapes } = useDuplicateShapes();
+  const { deleteShapes } = useDeleteShapes(pointerRefs);
 
-  if (selectedShapesIds.length === 0) return;
+  if (selectedShapesIds.length === 0) return null;
 
   const layers = [
     {

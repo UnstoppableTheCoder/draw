@@ -1,8 +1,8 @@
 import { ToolType } from "@/types/toolbar.types";
 import {
   EraserPoint,
+  FrameEditingState,
   Point,
-  SelectedBounds,
   Shape,
   TextEditingState,
 } from "../../types/types";
@@ -35,18 +35,6 @@ export interface EditorStore {
     updater: string[] | ((prev: string[]) => string[]),
   ) => void;
 
-  selectionBounds: SelectedBounds | null;
-  setSelectionBounds: (bounds: SelectedBounds | null) => void;
-
-  selectedGroupsIds: string[];
-  setSelectedGroupsIds: (
-    updater: string[] | ((prev: string[]) => string[]),
-  ) => void;
-
-  // Add the types
-  frames: any[];
-  setFrames: (updater: any[] | ((prev: any[]) => any[])) => void;
-
   // Text Editing
   textEditingState: TextEditingState | null;
   setTextEditingState: (
@@ -77,5 +65,13 @@ export interface EditorStore {
   hoveredFrameId: string | null;
   setHoveredFrameId: (
     updater: string | null | ((prev: string | null) => string | null),
+  ) => void;
+
+  frameEditingState: FrameEditingState | null;
+  setFrameEditingState: (
+    updater:
+      | FrameEditingState
+      | null
+      | ((prev: FrameEditingState | null) => FrameEditingState | null),
   ) => void;
 }

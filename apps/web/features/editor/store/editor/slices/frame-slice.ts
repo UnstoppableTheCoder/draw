@@ -5,7 +5,13 @@ export const createFrameSlice: StateCreator<
   EditorStore,
   [["zustand/devtools", never]],
   [],
-  Pick<EditorStore, "hoveredFrameId" | "setHoveredFrameId">
+  Pick<
+    EditorStore,
+    | "hoveredFrameId"
+    | "setHoveredFrameId"
+    | "frameEditingState"
+    | "setFrameEditingState"
+  >
 > = (set) => ({
   hoveredFrameId: null,
   setHoveredFrameId: (updater) =>
@@ -18,5 +24,18 @@ export const createFrameSlice: StateCreator<
       }),
       false,
       "frame/setParentFrameId",
+    ),
+
+  frameEditingState: null,
+  setFrameEditingState: (updater) =>
+    set(
+      (state) => ({
+        frameEditingState:
+          typeof updater === "function"
+            ? updater(state.frameEditingState)
+            : updater,
+      }),
+      false,
+      "frame/setFrameEditingState",
     ),
 });

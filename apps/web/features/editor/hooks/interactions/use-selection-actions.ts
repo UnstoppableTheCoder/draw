@@ -76,7 +76,6 @@ export default function useSelectionActions({
   const setSelectedShapesIds = store.useSetSelectedShapesIds();
   const shapes = store.useShapes();
   const selectedShapesIds = store.useSelectedShapesIds();
-  const setShapes = store.useSetShapes();
   const setHoveredFrameId = store.useSetHoveredFrameId();
 
   const { moveShapes } = useShapeMove(

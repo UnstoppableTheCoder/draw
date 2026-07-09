@@ -5,22 +5,19 @@ import useDeleteShapes from "@/features/editor/hooks/actions/use-delete-shapes";
 import useDuplicateShapes from "@/features/editor/hooks/actions/use-duplicate-shapes";
 import useShapeOrder from "@/features/editor/hooks/order/use-shape-order";
 import {
-  useScale,
   useSelectedShapesIds,
-  useSetFrames,
-  useSetSelectedGroupsIds,
   useSetShapes,
   useShapes,
 } from "@/features/editor/store/editor/selectors";
 import { v4 as uuidv4 } from "uuid";
 import { useCanvasRenderer } from "@/features/editor/context/use-renderer";
-import { Shapes } from "lucide-react";
 import { getGroupBounds } from "@/features/editor/geometry/bounding-box/get-group-bounds";
 import { normalizeRect } from "@/features/editor/geometry/normalize-rect";
 import { RefObject } from "react";
 import getTextDimensions from "@/features/editor/utils/get-text-dimensions";
 import { FrameShape } from "@/features/editor/types/types";
 import { TOLERANCE } from "@/features/editor/constants/canvas";
+import { usePointerState } from "@/features/editor/hooks/pointer/use-pointer-state";
 
 export default function selectedShapeContext({
   contextMenu: {
@@ -29,23 +26,23 @@ export default function selectedShapeContext({
     selectedShapeContextRef,
     overlayCanvasRef,
   },
+  pointerRefs,
 }: {
   contextMenu: ContextMenuType & {
     overlayCanvasRef: RefObject<HTMLCanvasElement | null>;
   };
+  pointerRefs: ReturnType<typeof usePointerState>;
 }) {
   const setShapes = useSetShapes();
   const shapes = useShapes();
   const selectedShapesIds = useSelectedShapesIds();
-  const scale = useScale();
 
   const selected = new Set(selectedShapesIds);
   const { invalidate } = useCanvasRenderer();
 
-  const { deleteShapes } = useDeleteShapes();
+  const { deleteShapes } = useDeleteShapes(pointerRefs);
   const { duplicateShapes } = useDuplicateShapes();
   const order = useShapeOrder();
-  const setSelectedGroupIds = useSetSelectedGroupsIds();
 
   const handleDuplicateClick = () => {
     duplicateShapes();
@@ -79,8 +76,6 @@ export default function selectedShapeContext({
 
   const handleGroupSelection = () => {
     const groupId = uuidv4();
-
-    setSelectedGroupIds((prev) => [...prev, groupId]);
 
     setShapes((prevShapes) =>
       prevShapes.map((prevShape) =>

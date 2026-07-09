@@ -15,6 +15,7 @@ import { normalizeRect } from "../../geometry/normalize-rect";
 import { getBoundingBox } from "../../geometry/bounding-box/get-bounding-box";
 import { useEditorStore } from "../../store/editor/editor-store";
 import drawGroupedShapeSelection from "../../draw/selection/grouped-shapes-selection";
+import { useFrameEditingState } from "../../store/editor/selectors";
 
 export default function useCreateCanvasRenderer({
   sceneCanvasRef,
@@ -85,8 +86,13 @@ export default function useCreateCanvasRenderer({
     const ctx = sceneCanvasRef.current?.getContext("2d");
     if (!ctx) return;
 
-    const { shapes, textEditingState, scale, hoveredFrameId } =
-      useEditorStore.getState();
+    const {
+      shapes,
+      textEditingState,
+      scale,
+      hoveredFrameId,
+      frameEditingState,
+    } = useEditorStore.getState();
 
     const interaction = pointerRefs.interactionRef.current;
 
@@ -113,6 +119,7 @@ export default function useCreateCanvasRenderer({
       scale,
       skipShapeIds,
       hoveredFrameId,
+      frameEditingState,
     });
 
     ctx.restore();
@@ -125,7 +132,8 @@ export default function useCreateCanvasRenderer({
     if (!ctx) return;
 
     const interaction = pointerRefs.interactionRef.current;
-    const { shapes, selectedShapesIds, scale } = useEditorStore.getState();
+    const { shapes, selectedShapesIds, scale, frameEditingState } =
+      useEditorStore.getState();
 
     clearCanvas(ctx);
 
@@ -171,6 +179,7 @@ export default function useCreateCanvasRenderer({
         ctx,
         shapes: previewShapes,
         scale,
+        frameEditingState,
       });
     }
 
@@ -182,6 +191,7 @@ export default function useCreateCanvasRenderer({
         scale,
       });
     }
+
     // Group Selection
     if (
       isTransformInteraction ||

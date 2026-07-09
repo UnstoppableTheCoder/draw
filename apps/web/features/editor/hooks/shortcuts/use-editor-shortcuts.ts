@@ -1,8 +1,11 @@
 import { useEffect } from "react";
-import useShapeDelete from "../actions/use-delete-shapes";
+import useDeleteShapes from "../actions/use-delete-shapes";
+import { usePointerState } from "../pointer/use-pointer-state";
 
-export default function useEditorShortcuts() {
-  const { deleteShapes } = useShapeDelete();
+export default function useEditorShortcuts(
+  pointerRefs: ReturnType<typeof usePointerState>,
+) {
+  const { deleteShapes } = useDeleteShapes(pointerRefs);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {

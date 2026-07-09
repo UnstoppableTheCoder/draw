@@ -182,14 +182,11 @@ export type SelectedBounds = {
   maxY: number;
 };
 
-export type InteractionMode =
-  | "idle"
-  | "drawing"
-  | "moving"
-  | "resizing"
-  | "panning"
-  | "text-editing";
-
 export type EraserPoint = Point & {
   time: number;
+};
+
+export type FrameEditingState = {
+  frameId: string;
+  frameName: string;
 };

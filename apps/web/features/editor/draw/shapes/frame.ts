@@ -6,9 +6,11 @@ export const drawFrame = (
   shape: FrameShape,
   scale: number,
   hovered: boolean,
+  isEditing: boolean,
 ) => {
   const { x, y, width, height, text } = shape;
 
+  // const isEditing =
   const borderColor = hovered ? "#6965DB" : "#7d7d7d";
 
   ctx.save();
@@ -23,15 +25,22 @@ export const drawFrame = (
   ctx.stroke();
 
   // Frame title
-  ctx.font = `${text.fontSize / scale}px ${text.fontFamily}`;
-  ctx.fillStyle = "#7d7d7d";
-  ctx.textBaseline = "bottom";
+  if (!isEditing) {
+    ctx.font = `${text.fontSize / scale}px ${text.fontFamily}`;
+    ctx.fillStyle = "#7d7d7d";
+    ctx.textBaseline = "bottom";
 
-  ctx.fillText(text.name, x, y - TOLERANCE / scale);
+    ctx.fillText(text.name, x, y - TOLERANCE / scale);
 
-  // Debug bounds (remove later)
-  ctx.strokeStyle = "#7d7d7d";
-  ctx.strokeRect(x, y, text.width / scale, -text.height / scale - TOLERANCE / scale);
+    // Rectangle around the text
+    ctx.strokeStyle = "#7d7d7d";
+    ctx.strokeRect(
+      x,
+      y,
+      text.width / scale,
+      -text.height / scale - TOLERANCE / scale,
+    );
+  }
 
   ctx.restore();
 };

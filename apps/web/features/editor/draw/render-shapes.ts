@@ -1,4 +1,4 @@
-import { Shape } from "../types/types";
+import { FrameEditingState, Shape } from "../types/types";
 import { drawArrow } from "./shapes/arrow";
 import { drawDiamond } from "./shapes/diamond";
 import { drawEllipse } from "./shapes/ellipse";
@@ -15,6 +15,7 @@ type Props = {
   scale: number;
   skipShapeIds?: Set<string>;
   hoveredFrameId?: string | null;
+  frameEditingState: FrameEditingState | null;
 };
 
 export const renderShapes = ({
@@ -23,6 +24,7 @@ export const renderShapes = ({
   scale,
   skipShapeIds,
   hoveredFrameId,
+  frameEditingState,
 }: Props) => {
   for (const shape of shapes) {
     if (skipShapeIds?.has(shape.id)) continue;
@@ -61,7 +63,13 @@ export const renderShapes = ({
         break;
 
       case "frame":
-        drawFrame(ctx, shape, scale, hoveredFrameId === shape.id);
+        drawFrame(
+          ctx,
+          shape,
+          scale,
+          hoveredFrameId === shape.id,
+          frameEditingState ? true : false,
+        );
         break;
     }
   }

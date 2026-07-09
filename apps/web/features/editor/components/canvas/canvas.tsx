@@ -14,6 +14,7 @@ import useCanvasContextMenu from "../../hooks/canvas/use-canvas-context-menu";
 import { CanvasContextMenu } from "./context-menu/context-menu";
 import useShapeAppearance from "../../hooks/appearance/use-shape-appearance";
 import useEditorShortcuts from "../../hooks/shortcuts/use-editor-shortcuts";
+import FrameNameEditor from "./frame-name-editor";
 
 type CanvasProps = {
   editorRefs: {
@@ -24,10 +25,11 @@ type CanvasProps = {
 };
 
 const Canvas = ({ editorRefs }: CanvasProps) => {
-  const { sceneCanvasRef, overlayCanvasRef } = editorRefs;
+  const { sceneCanvasRef, overlayCanvasRef, pointerRefs } = editorRefs;
 
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const imageInputRef = useRef<HTMLInputElement | null>(null);
+  const frameNameInputRef = useRef<HTMLInputElement | null>(null);
 
   const contextMenu = useCanvasContextMenu(overlayCanvasRef);
   const canvasInteractions = useCanvasInteractions({
@@ -45,7 +47,7 @@ const Canvas = ({ editorRefs }: CanvasProps) => {
   useTextEditorResize(sceneCanvasRef, textareaRef); // Not in use - Instead used -> field-sizing-content in TextEditor
   useCanvasResize(sceneCanvasRef, overlayCanvasRef);
   useShapeAppearance(overlayCanvasRef);
-  useEditorShortcuts();
+  useEditorShortcuts(pointerRefs);
 
   if (!sceneCanvasRef || !overlayCanvasRef) return;
 
@@ -69,7 +71,7 @@ const Canvas = ({ editorRefs }: CanvasProps) => {
         onPointerDown={canvasInteractions.handlePointerDown}
         onPointerMove={canvasInteractions.handlePointerMove}
         onPointerUp={canvasInteractions.handlePointerUp}
-        onDoubleClick={textEditing.handleDoubleClick}
+        onDoubleClick={canvasInteractions.handleDoubleClick}
         onContextMenu={contextMenu.openContextMenu}
       />
 
@@ -87,12 +89,20 @@ const Canvas = ({ editorRefs }: CanvasProps) => {
         onChange={handleImageInputChange}
       />
 
+      <FrameNameEditor
+        frameNameInputRef={frameNameInputRef}
+        overlayCanvasRef={overlayCanvasRef}
+      />
+
       <div className="absolute bottom-4 left-4 flex items-center space-x-4 z-3">
         <ZoomControllers sceneCanvasRef={sceneCanvasRef} />
         <UndoRedo />
       </div>
 
-      <CanvasContextMenu contextMenu={{ ...contextMenu, overlayCanvasRef }} />
+      <CanvasContextMenu
+        contextMenu={{ ...contextMenu, overlayCanvasRef }}
+        pointerRefs={pointerRefs}
+      />
     </div>
   );
 };

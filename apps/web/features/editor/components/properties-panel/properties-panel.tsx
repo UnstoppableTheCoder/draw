@@ -17,12 +17,20 @@ import LayerPicker from "./layer-picker/layer-picker";
 import OpacityPicker from "./opacity-picker/opacity-picker";
 import { StrokeStylePicker } from "./stroke-style-picker/stroke-style-picker";
 import { StrokeWidthPicker } from "./stroke-width-picker/stroke-width-picker";
+import { usePointerState } from "../../hooks/pointer/use-pointer-state";
+import useDeleteShapes from "../../hooks/actions/use-delete-shapes";
 
-export const PropertiesPanel = ({
-  sceneCanvasRef,
-}: {
-  sceneCanvasRef: RefObject<HTMLCanvasElement | null>;
-}) => {
+type PropertiesPanelRef = {
+  editorRefs: {
+    sceneCanvasRef: RefObject<HTMLCanvasElement | null>;
+    overlayCanvasRef: RefObject<HTMLCanvasElement | null>;
+    pointerRefs: ReturnType<typeof usePointerState>;
+  };
+};
+
+export const PropertiesPanel = ({ editorRefs }: PropertiesPanelRef) => {
+  const { sceneCanvasRef, overlayCanvasRef, pointerRefs } = editorRefs;
+
   const selectedTool = useSelectedTool();
   const selectedShapesIds = useSelectedShapesIds();
   const textEditingState = useTextEditingState();
@@ -62,7 +70,7 @@ export const PropertiesPanel = ({
 
       <OpacityPicker sceneCanvasRef={sceneCanvasRef} />
       <LayerPicker />
-      <Actions />
+      <Actions pointerRefs={pointerRefs} />
     </div>
   );
 };
