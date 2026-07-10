@@ -24,12 +24,14 @@ export default function useCanvasInteractions({
   pointerRefs,
   textareaRef,
   closeContextMenu,
+  finishFrameTextEditing,
 }: {
   sceneCanvasRef: RefObject<HTMLCanvasElement | null>;
   overlayCanvasRef: RefObject<HTMLCanvasElement | null>;
   pointerRefs: ReturnType<typeof usePointerState>;
   textareaRef: RefObject<HTMLTextAreaElement | null>;
   closeContextMenu: () => void;
+  finishFrameTextEditing: () => void;
 }) {
   const selectedTool = store.useSelectedTool();
   const setTextEditingState = store.useSetTextEditingState();
@@ -168,10 +170,11 @@ export default function useCanvasInteractions({
 
   // ============== DOM Pointer Events Handlers ==============
   function handlePointerDown(event: PointerEvent<HTMLCanvasElement>) {
+    event.preventDefault();
+
     if (event.button === 2) return;
     closeContextMenu();
-
-    event.preventDefault();
+    finishFrameTextEditing();
     text.finishEditingIfClickedOutside(event);
 
     // Sets the required initial states for Middle Mouse Pan

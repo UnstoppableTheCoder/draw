@@ -15,6 +15,7 @@ import { CanvasContextMenu } from "./context-menu/context-menu";
 import useShapeAppearance from "../../hooks/appearance/use-shape-appearance";
 import useEditorShortcuts from "../../hooks/shortcuts/use-editor-shortcuts";
 import FrameNameEditor from "./frame-name-editor";
+import useFrameNameEditor from "../../hooks/frame/use-frame-name-editor";
 
 type CanvasProps = {
   editorRefs: {
@@ -32,10 +33,12 @@ const Canvas = ({ editorRefs }: CanvasProps) => {
   const frameNameInputRef = useRef<HTMLInputElement | null>(null);
 
   const contextMenu = useCanvasContextMenu(overlayCanvasRef);
+  const frameEditor = useFrameNameEditor(frameNameInputRef, overlayCanvasRef);
   const canvasInteractions = useCanvasInteractions({
     ...editorRefs,
     textareaRef,
     closeContextMenu: contextMenu.closeContextMenu,
+    finishFrameTextEditing: frameEditor.finishEditing,
   });
 
   const textEditing = useTextEditing(sceneCanvasRef, textareaRef);
@@ -92,6 +95,7 @@ const Canvas = ({ editorRefs }: CanvasProps) => {
       <FrameNameEditor
         frameNameInputRef={frameNameInputRef}
         overlayCanvasRef={overlayCanvasRef}
+        frameEditor={frameEditor}
       />
 
       <div className="absolute bottom-4 left-4 flex items-center space-x-4 z-3">
