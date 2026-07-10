@@ -15,7 +15,6 @@ import { normalizeRect } from "../../geometry/normalize-rect";
 import { getBoundingBox } from "../../geometry/bounding-box/get-bounding-box";
 import { useEditorStore } from "../../store/editor/editor-store";
 import drawGroupedShapeSelection from "../../draw/selection/grouped-shapes-selection";
-import { useFrameEditingState } from "../../store/editor/selectors";
 
 export default function useCreateCanvasRenderer({
   sceneCanvasRef,
@@ -139,124 +138,126 @@ export default function useCreateCanvasRenderer({
 
     ctx.save();
 
-    viewportHelpers.applyViewportTransform(ctx);
+    try {
+      viewportHelpers.applyViewportTransform(ctx);
 
-    // Marquee Selection Box
-    const marqueeSelect =
-      interaction.type === "selection-box" ? interaction : null;
+      // Marquee Selection Box
+      const marqueeSelect =
+        interaction.type === "selection-box" ? interaction : null;
 
-    if (marqueeSelect) {
-      const { startPoint, endPoint } = marqueeSelect;
+      if (marqueeSelect) {
+        const { startPoint, endPoint } = marqueeSelect;
 
-      const marqueeSelection = {
-        type: "selection-box" as const,
-        ...normalizeRect(startPoint, endPoint),
-      };
+        const marqueeSelection = {
+          type: "selection-box" as const,
+          ...normalizeRect(startPoint, endPoint),
+        };
 
-      if (marqueeSelection) {
-        drawMarqueeSelection(ctx, marqueeSelection, scale);
-      }
-    }
-
-    // Render Preview Shapes
-    const isTransformInteraction =
-      interaction.type === "move" ||
-      interaction.type === "resize" ||
-      interaction.type === "rotate";
-
-    // Preview Shapes
-    const previewShapes =
-      interaction.type === "draw"
-        ? interaction.previewShape
-          ? [interaction.previewShape]
-          : []
-        : isTransformInteraction
-          ? interaction.previewShapes
-          : [];
-
-    if (previewShapes.length > 0) {
-      renderShapes({
-        ctx,
-        shapes: previewShapes,
-        scale,
-        frameEditingState,
-      });
-    }
-
-    // Eraser Trail
-    if (pointerRefs.eraserTrailRef.current.length > 0) {
-      drawEraserBackground({
-        ctx,
-        eraserPoints: pointerRefs.eraserTrailRef.current,
-        scale,
-      });
-    }
-
-    // Group Selection
-    if (
-      isTransformInteraction ||
-      interaction.type === "select" ||
-      interaction.type === "selection-box"
-    ) {
-      const previewShapes = interaction.previewShapes;
-      if (!previewShapes) return;
-
-      const groupedShapes = getGroupedShapes(previewShapes);
-
-      for (const groupShapes of groupedShapes.values()) {
-        const groupBounds = getGroupBounds(groupShapes);
-        if (!groupBounds) continue;
-
-        // Draw when other shapes are also selected along with the group
-        if (groupShapes.length !== selectedShapesIds.length) {
-          drawGroupedShapeSelection(ctx, groupBounds, scale);
+        if (marqueeSelection) {
+          drawMarqueeSelection(ctx, marqueeSelection, scale);
         }
       }
-    }
 
-    // Shape Selection
-    const selectionShapes = isTransformInteraction
-      ? interaction.previewShapes
-      : shapes.filter((shape) => selectedShapesIds.includes(shape.id));
+      // Render Preview Shapes
+      const isTransformInteraction =
+        interaction.type === "move" ||
+        interaction.type === "resize" ||
+        interaction.type === "rotate";
 
-    if (selectionShapes.length === 1) {
-      const shape = selectionShapes[0];
-      if (!shape) return;
+      // Preview Shapes
+      const previewShapes =
+        interaction.type === "draw"
+          ? interaction.previewShape
+            ? [interaction.previewShape]
+            : []
+          : isTransformInteraction
+            ? interaction.previewShapes
+            : [];
 
-      // if shape belongs to a group return
-      if (shape.groupId) return;
+      if (previewShapes.length > 0) {
+        renderShapes({
+          ctx,
+          shapes: previewShapes,
+          scale,
+          frameEditingState,
+        });
+      }
 
-      renderShapeSelection(
-        ctx,
-        shape,
-        getBoundingBox(shape),
-        scale,
-        "group",
-        "solid",
-      );
-    } else if (selectionShapes.length > 1) {
-      const bounds = getGroupBounds(selectionShapes);
+      // Eraser Trail
+      if (pointerRefs.eraserTrailRef.current.length > 0) {
+        drawEraserBackground({
+          ctx,
+          eraserPoints: pointerRefs.eraserTrailRef.current,
+          scale,
+        });
+      }
 
-      selectionShapes.forEach((shape) => {
-        // if shape belongs to a group or frame -> return
-        if (shape.groupId || shape.frameId) return;
+      // Group Selection
+      if (
+        isTransformInteraction ||
+        interaction.type === "select" ||
+        interaction.type === "selection-box"
+      ) {
+        const previewShapes = interaction.previewShapes;
+        if (!previewShapes) return;
+
+        const groupedShapes = getGroupedShapes(previewShapes);
+
+        for (const groupShapes of groupedShapes.values()) {
+          const groupBounds = getGroupBounds(groupShapes);
+          if (!groupBounds) continue;
+
+          // Draw when other shapes are also selected along with the group
+          if (groupShapes.length !== selectedShapesIds.length) {
+            drawGroupedShapeSelection(ctx, groupBounds, scale);
+          }
+        }
+      }
+
+      // Shape Selection
+      const selectionShapes = isTransformInteraction
+        ? interaction.previewShapes
+        : shapes.filter((shape) => selectedShapesIds.includes(shape.id));
+
+      if (selectionShapes.length === 1) {
+        const shape = selectionShapes[0];
+        if (!shape) return;
+
+        // if shape belongs to a group return
+        if (shape.groupId) return;
 
         renderShapeSelection(
           ctx,
           shape,
           getBoundingBox(shape),
           scale,
-          "child",
+          "group",
           "solid",
         );
-      });
+      } else if (selectionShapes.length > 1) {
+        const bounds = getGroupBounds(selectionShapes);
 
-      if (bounds) {
-        renderGroupSelection(ctx, bounds, scale, "group", "dashed");
+        selectionShapes.forEach((shape) => {
+          // if shape belongs to a group or frame -> return
+          if (shape.groupId || shape.frameId) return;
+
+          renderShapeSelection(
+            ctx,
+            shape,
+            getBoundingBox(shape),
+            scale,
+            "child",
+            "solid",
+          );
+        });
+
+        if (bounds) {
+          renderGroupSelection(ctx, bounds, scale, "group", "dashed");
+        }
       }
+    } finally {
+      ctx.restore();
     }
-
-    ctx.restore();
   }, [
     overlayCanvasRef,
     pointerRefs,
