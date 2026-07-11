@@ -1,24 +1,20 @@
 import { RefObject } from "react";
 import { ContextMenuType } from "../../types";
-import CanvasContext from "./canvas-context";
-import SelectedShapeContext from "./selected-shape-context";
-import { usePointerState } from "@/features/editor/hooks/pointer/use-pointer-state";
+import CanvasContext from "./empty-canvas-menu";
+import SelectedShapeContext from "./selected-shape-menu";
+import { usePointerState } from "@/features/editor/pointer/use-pointer-state";
 
-export function CanvasContextMenu({
+export function ContextMenu({
   contextMenu,
-  pointerRefs,
 }: {
   contextMenu: ContextMenuType & {
     overlayCanvasRef: RefObject<HTMLCanvasElement | null>;
+    pointerRefs: ReturnType<typeof usePointerState>;
   };
-  pointerRefs: ReturnType<typeof usePointerState>;
 }) {
   return (
     <>
-      <SelectedShapeContext
-        contextMenu={contextMenu}
-        pointerRefs={pointerRefs}
-      />
+      <SelectedShapeContext contextMenu={contextMenu} />
       <CanvasContext contextMenu={contextMenu} />
     </>
   );

@@ -11,8 +11,8 @@ import {
 } from "@/features/editor/store/editor/selectors";
 import { useStrokeWidth } from "@/features/editor/store/properties/selectors";
 import { PropertiesDataType } from "../../types";
-import useShapeAppearance from "@/features/editor/hooks/appearance/use-shape-appearance";
-import getSelectedShapesTypes from "@/features/editor/shapes/get-selected-shapes-types";
+import useShapeAppearance from "@/features/editor/components/properties-panel/use-shape-appearance";
+import getSelectedShapesTypes from "@/features/editor/interactions/selection/get-selected-shapes-types";
 import { RefObject } from "react";
 
 export const StrokeWidthPicker = ({

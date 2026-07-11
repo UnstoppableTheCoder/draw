@@ -1,4 +1,4 @@
-import { ToolType } from "@/types/toolbar.types";
+import { ToolType } from "@/types/toolbar";
 import {
   EraserPoint,
   FrameEditingState,

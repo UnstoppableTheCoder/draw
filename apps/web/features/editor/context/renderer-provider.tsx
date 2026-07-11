@@ -1,23 +1,25 @@
-import { ReactNode, RefObject } from "react";
+import { ReactNode } from "react";
 
 import { RendererContext } from "./renderer-context";
-import useCreateCanvasRenderer from "../hooks/renderer/use-create-canvas-renderer";
-import { usePointerState } from "../hooks/pointer/use-pointer-state";
+import useCreateCanvasRenderer from "../renderer/use-create-canvas-renderer";
+import { EditorRefs } from "@/types";
 
 type RendererProviderProps = {
   children: ReactNode;
-  editorRefs: {
-    sceneCanvasRef: RefObject<HTMLCanvasElement | null>;
-    overlayCanvasRef: RefObject<HTMLCanvasElement | null>;
-    pointerRefs: ReturnType<typeof usePointerState>;
-  };
+  editorRefs: EditorRefs;
 };
 
 export default function RendererProvider({
   children,
-  editorRefs: { sceneCanvasRef, overlayCanvasRef, pointerRefs },
+  editorRefs: {
+    backgroundCanvasRef,
+    sceneCanvasRef,
+    overlayCanvasRef,
+    pointerRefs,
+  },
 }: RendererProviderProps) {
   const renderer = useCreateCanvasRenderer({
+    backgroundCanvasRef,
     sceneCanvasRef,
     overlayCanvasRef,
     pointerRefs,

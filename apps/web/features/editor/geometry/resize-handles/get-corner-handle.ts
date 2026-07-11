@@ -1,4 +1,4 @@
-import { Point } from "@/types/canvas.types";
+import { Point } from "@/types/canvas";
 import { SelectedBounds } from "../../types/types";
 import { ResizeHandleType } from "../../types/resize-handle";
 

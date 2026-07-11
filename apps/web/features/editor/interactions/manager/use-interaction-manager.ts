@@ -1,0 +1,284 @@
+import { PointerEvent, RefObject } from "react";
+import * as store from "../../store/editor/selectors";
+import useCanvasCursor from "../../renderer/cursor/use-canvas-cursor";
+import { Point, Shape } from "../../types/types";
+import usePan from "../viewport/use-viewport-pan";
+import useTextEditing from "../text/use-text-editing";
+import { useCanvasRenderer } from "../../context/use-renderer";
+import useViewportHelpers from "../viewport/use-viewport-helpers";
+import { getShapeAtPosition } from "../../geometry/hit-test/get-shape-at-position";
+import { TOLERANCE } from "../../constants/canvas";
+import useShapeDrawing from "../draw/use-shape-drawing";
+import useSelectionActions from "../selection/use-selection";
+import useShapeEraser from "../eraser/use-shape-eraser";
+import useShapeMove from "../move/use-shape-move";
+import useShapeResize from "../resize/use-shape-resize";
+import { usePointerState } from "../../pointer/use-pointer-state";
+import usePointer from "../../pointer/use-pointer-helpers";
+
+const STICKY_TOOLS = new Set(["pan", "freedraw", "eraser"]);
+
+export default function useInteractionManager({
+  sceneCanvasRef,
+  overlayCanvasRef,
+  pointerRefs,
+  textareaRef,
+}: {
+  sceneCanvasRef: RefObject<HTMLCanvasElement | null>;
+  overlayCanvasRef: RefObject<HTMLCanvasElement | null>;
+  pointerRefs: ReturnType<typeof usePointerState>;
+  textareaRef: RefObject<HTMLTextAreaElement | null>;
+}) {
+  const selectedTool = store.useSelectedTool();
+  const setTextEditingState = store.useSetTextEditingState();
+  const setSelectedTool = store.useSetSelectedTool();
+  const isLocked = store.useIsLocked();
+  const selectedShapesIds = store.useSelectedShapesIds();
+  const setSelectedShapesIds = store.useSetSelectedShapesIds();
+  const shapes = store.useShapes();
+  const scale = store.useScale();
+  const setEditingFrameState = store.useSetFrameEditingState();
+
+  const drawing = useShapeDrawing({
+    sceneCanvasRef,
+    overlayCanvasRef,
+    pointerRefs,
+  });
+  const selection = useSelectionActions({
+    sceneCanvasRef,
+    overlayCanvasRef,
+    pointerRefs,
+  });
+  const { handlePanMove } = usePan(pointerRefs);
+  const eraser = useShapeEraser({
+    sceneCanvasRef,
+    overlayCanvasRef,
+    pointerRefs,
+  });
+  const pointerHelpers = usePointer(overlayCanvasRef, pointerRefs);
+  const canvasCursor = useCanvasCursor({
+    overlayCanvasRef,
+    pointerRefs,
+  });
+  const { invalidate } = useCanvasRenderer();
+  const move = useShapeMove(sceneCanvasRef, overlayCanvasRef, pointerRefs);
+  const resize = useShapeResize(overlayCanvasRef, pointerRefs);
+  const text = useTextEditing(sceneCanvasRef, textareaRef);
+  const viewportHelpers = useViewportHelpers(overlayCanvasRef);
+
+  function routePointerDown(
+    event: PointerEvent<HTMLCanvasElement>,
+    startPoint: Point,
+  ) {
+    switch (selectedTool) {
+      case "pan":
+        pointerHelpers.initializePanState(event);
+        canvasCursor.updateCursor();
+        break;
+
+      case "select":
+        // Handles Select and Resize on Pointer Down
+        selection.onPointerDownSelection(startPoint, event.shiftKey);
+        break;
+
+      case "text":
+        text.onPointerDownText(startPoint);
+        break;
+
+      case "eraser":
+        eraser.onPointerMoveErase(startPoint);
+        return;
+
+      default:
+        pointerRefs.interactionRef.current = {
+          type: "draw",
+          previewShape: null,
+        };
+
+        // Set States for drawing tools with points
+        drawing.onPointerDownDrawing(event);
+    }
+  }
+
+  function routePointerMove(
+    event: React.PointerEvent<HTMLCanvasElement>,
+    endPoint: Point,
+  ) {
+    const isPointerDown = pointerRefs.isPointerDownRef.current;
+
+    switch (selectedTool) {
+      case "pan":
+        if (isPointerDown) {
+          handlePanMove(event.clientX, event.clientY);
+        }
+        return;
+
+      case "select": {
+        selection.onPointerMoveSelection(endPoint);
+        return;
+      }
+
+      case "eraser":
+        if (isPointerDown) {
+          eraser.onPointerMoveErase(endPoint);
+        }
+        return;
+
+      default:
+        // rectangle, ellipse, diamond, arrow, line, freedraw, image
+        drawing.onPointerMoveDrawing(event);
+        return;
+    }
+  }
+
+  function handleTextEditingOnPointerUp() {
+    const pointerDownTime = pointerRefs.pointerDownTimeRef.current;
+
+    // Always reset the timestamp before returning.
+    pointerRefs.pointerDownTimeRef.current = null;
+
+    if (!pointerDownTime) return;
+
+    const selectedShape = shapes.find((shape) =>
+      selectedShapesIds.includes(shape.id),
+    );
+
+    if (!selectedShape || selectedShape.type !== "text") return;
+
+    const interaction = pointerRefs.interactionRef.current;
+
+    // Only allow editing after a simple click, not a drag or resize
+    if (interaction.type !== "select") return;
+
+    const duration = performance.now() - pointerDownTime;
+
+    if (duration > 250) return;
+
+    setTextEditingState({ ...selectedShape });
+    setSelectedShapesIds([]);
+  }
+
+  function handleToolReset() {
+    if (!isLocked && !STICKY_TOOLS.has(selectedTool)) {
+      setSelectedTool("select");
+    }
+  }
+
+  // ============== DOM Pointer Events Handlers ==============
+  function handlePointerDown(event: PointerEvent<HTMLCanvasElement>) {
+    event.preventDefault();
+
+    if (event.button === 2) return;
+
+    // Sets the required initial states for Middle Mouse Pan
+    if (pointerHelpers.handleMiddleMousePan(event)) {
+      return;
+    }
+
+    // Sets the required initial states
+    const startPoint = pointerHelpers.initializePointerState(event);
+    if (!startPoint) return;
+
+    // Route based on tool
+    routePointerDown(event, startPoint);
+  }
+
+  function handlePointerMove(event: React.PointerEvent<HTMLCanvasElement>) {
+    if (selectedTool !== "select") {
+      canvasCursor.updateCursor();
+    }
+
+    // Middle mouse pan can happen regardless of selected tool
+    if (pointerRefs.isPanningRef.current) {
+      handlePanMove(event.clientX, event.clientY);
+      return;
+    }
+
+    const endPoint = pointerHelpers.getCurrentCanvasPoint(event);
+    if (!endPoint) return;
+
+    routePointerMove(event, endPoint);
+  }
+
+  function handlePointerUp(event: PointerEvent<HTMLCanvasElement>) {
+    if (!overlayCanvasRef.current) return;
+    overlayCanvasRef.current.releasePointerCapture(event.pointerId);
+
+    handleTextEditingOnPointerUp();
+
+    const interaction = pointerRefs.interactionRef.current;
+
+    switch (interaction.type) {
+      case "draw":
+        drawing.onPointerUpDrawing(event);
+        break;
+
+      case "move":
+        move.onPointerUp();
+        break;
+
+      case "resize":
+        resize.onPointerUp();
+        break;
+
+      case "selection-box":
+        selection.onPointerUpSelection(event.shiftKey);
+        break;
+
+      // case "rotate":
+      //   rotate.onPointerUp();
+      //   break;
+    }
+
+    handleToolReset();
+
+    pointerHelpers.resetPointerState();
+    pointerRefs.eraserTrailRef.current = [];
+
+    invalidate();
+  }
+
+  function isClickedOnFrameName(point: Point, frameShape: Shape) {
+    if (frameShape.type !== "frame") return false;
+
+    const text = frameShape.text;
+
+    const scaledTolerance = TOLERANCE / scale;
+    const scaledTextHeight = text.height / scale;
+    const scaledTextWidth = text.width / scale;
+
+    const insideText =
+      point.x >= frameShape.x &&
+      point.y <= frameShape.y &&
+      point.x <= frameShape.x + scaledTextWidth &&
+      point.y >= frameShape.y - scaledTextHeight - scaledTolerance;
+
+    return insideText;
+  }
+
+  function handleDoubleClick(event: PointerEvent<HTMLCanvasElement>) {
+    const point = viewportHelpers.clientToCanvas(event.clientX, event.clientY);
+    if (!point) return;
+
+    const hitShape = getShapeAtPosition({ point, shapes, scale });
+
+    if (hitShape?.type === "frame") {
+      if (!isClickedOnFrameName(point, hitShape)) return;
+
+      setEditingFrameState({
+        frameId: hitShape.id,
+        frameName: hitShape.text.name,
+      });
+      return;
+    }
+
+    text.handleDoubleClick(event);
+  }
+
+  return {
+    handlePointerDown,
+    handlePointerMove,
+    handlePointerUp,
+    handleDoubleClick,
+  };
+}

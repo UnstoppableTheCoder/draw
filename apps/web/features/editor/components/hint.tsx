@@ -20,7 +20,7 @@ const Hint = ({
     <Tooltip>
       <TooltipTrigger asChild>{children}</TooltipTrigger>
       <TooltipContent side={side} align={align} sideOffset={sideOffset}>
-        <p className="bg-[#7d7d7d]">{label}</p>
+        <p>{label}</p>
       </TooltipContent>
     </Tooltip>
   );

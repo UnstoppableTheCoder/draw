@@ -3,9 +3,9 @@ import { PropertiesPanelItemWrapper } from "../properties-panel-item-wrapper";
 import { PropertyItem } from "../property-item";
 import { useSelectedShapesIds } from "@/features/editor/store/editor/selectors";
 import { PropertiesDataType } from "../../types";
-import useDuplicateShapes from "@/features/editor/hooks/actions/use-duplicate-shapes";
-import { usePointerState } from "@/features/editor/hooks/pointer/use-pointer-state";
-import useDeleteShapes from "@/features/editor/hooks/actions/use-delete-shapes";
+import useDuplicateShapes from "@/features/editor/interactions/selection/use-duplicate-shapes";
+import useDeleteShapes from "@/features/editor/interactions/selection/use-delete-shapes";
+import { usePointerState } from "@/features/editor/pointer/use-pointer-state";
 
 export default function Actions({
   pointerRefs,

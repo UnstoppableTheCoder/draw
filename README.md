@@ -1,3 +1,5 @@
+https://chatgpt.com/c/6a514205-1c74-83e8-91a1-08ec4b474cef
+
 # The recent shape should always be at the top
 
 # Implement Undo and Redo
@@ -34,61 +36,38 @@ Learn Line Intersection
 Learn Ray Casting / Point in Polygon
 Learn Vector Math (dot product, cross product)
 
-components/
-└── excalidraw/
-├── editor.tsx <-- Top level editor
-├── canvas.tsx <-- Only renders canvas
-├── text-editor.tsx
-├── zoom-controllers.tsx
-│
-├── hooks/
-│ ├── use-canvas-size.ts
-│ ├── use-canvas-renderer.ts
-│ ├── use-canvas-interaction.ts
-│ ├── use-image-upload.ts
-│ ├── use-text-editing.ts
-│ ├── use-textarea-resize.ts
-│ ├── use-shape-move.ts
-│ ├── use-shape-resize.ts
-│ ├── use-pan.ts
-│ ├── use-history.ts
-│ └── use-shortcuts.ts
-│
-├── state/
-│ ├── use-shapes.ts
-│ ├── use-selection.ts
-│ └── use-editor-state.ts
-│
-├── rendering/
-│ ├── render-scene.ts
-│ ├── render-shape.ts
-│ ├── render-selection.ts
-│ ├── render-resize-handles.ts
-│ ├── render-preview.ts
-│ └── render-grid.ts
-│
-├── interactions/
-│ ├── pointer-down.ts
-│ ├── pointer-move.ts
-│ ├── pointer-up.ts
-│ ├── selection.ts
-│ ├── dragging.ts
-│ ├── resizing.ts
-│ └── panning.ts
-│
-├── geometry/
-│ ├── bounds.ts
-│ ├── hit-testing.ts
-│ ├── resize.ts
-│ ├── transforms.ts
-│ ├── line-distance.ts
-│ └── coordinates.ts
-│
-├── types/
-│ ├── shape.ts
-│ ├── point.ts
-│ └── resize-handle.ts
-│
-└── constants/
-├── canvas.ts
-└── tools.ts
+React UI
+──────────────────────────
+
+Collaboration Canvas
+• Remote cursors
+• Remote selections
+• Remote drawing previews
+• User names
+
+──────────────────────────
+
+Overlay Canvas
+• Your selection
+• Resize handles
+• Hover
+• Marquee
+• Local preview
+
+──────────────────────────
+
+Scene Canvas
+• Committed document
+• Shapes
+• Images
+• Frames
+• Text
+
+──────────────────────────
+
+Background Canvas
+• Infinite grid
+• Paper texture
+• Background image
+
+──────────────────────────

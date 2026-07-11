@@ -4,7 +4,7 @@ import { CaseUpper, Code, Pencil } from "lucide-react";
 import { PropertyItem } from "../../property-item";
 import { RefObject } from "react";
 import { useFontFamily } from "@/features/editor/store/properties/selectors";
-import useShapeAppearance from "@/features/editor/hooks/appearance/use-shape-appearance";
+import useShapeAppearance from "@/features/editor/components/properties-panel/use-shape-appearance";
 import {
   useSelectedShapesIds,
   useShapes,

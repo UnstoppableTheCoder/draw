@@ -8,7 +8,7 @@ import {
   useTextEditingState,
 } from "@/features/editor/store/editor/selectors";
 import { useRoundness } from "@/features/editor/store/properties/selectors";
-import useShapeAppearance from "@/features/editor/hooks/appearance/use-shape-appearance";
+import useShapeAppearance from "@/features/editor/components/properties-panel/use-shape-appearance";
 
 export default function EdgePicker({
   sceneCanvasRef,

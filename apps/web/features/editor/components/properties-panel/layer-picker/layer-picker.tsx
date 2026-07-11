@@ -7,7 +7,7 @@ import {
 import { PropertiesPanelItemWrapper } from "../properties-panel-item-wrapper";
 import { PropertyItem } from "../property-item";
 import { PropertiesDataType } from "../../types";
-import useShapeOrder from "@/features/editor/hooks/order/use-shape-order";
+import useShapeOrder from "@/features/editor/interactions/order/use-shape-order";
 
 export default function LayerPicker() {
   const order = useShapeOrder();

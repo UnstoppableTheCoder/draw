@@ -1,4 +1,4 @@
-import { Point } from "@/types/canvas.types";
+import { Point } from "@/types/canvas";
 import { Shape } from "../../types/types";
 import { getBoundingBox } from "../bounding-box/get-bounding-box";
 import { isPointInSelectedShapeBounds } from "./is-point-in-selected-bounds";

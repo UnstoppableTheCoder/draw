@@ -1,0 +1,169 @@
+import {
+  ChangeEvent,
+  KeyboardEvent,
+  RefObject,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+
+import {
+  useFrameEditingState,
+  useSetFrameEditingState,
+  useSetShapes,
+  useShapes,
+} from "../../store/editor/selectors";
+import { useCanvasRenderer } from "../../context/use-renderer";
+import getTextDimensions from "../../geometry/text/get-text-dimensions";
+import { TOLERANCE } from "../../constants/canvas";
+import useViewportHelpers from "../viewport/use-viewport-helpers";
+
+export default function useFrameNameEditor(
+  frameNameInputRef: RefObject<HTMLInputElement | null>,
+  overlayCanvasRef: RefObject<HTMLCanvasElement | null>,
+) {
+  const [value, setValue] = useState("");
+
+  const shapes = useShapes();
+  const setShapes = useSetShapes();
+
+  const frameEditingState = useFrameEditingState();
+  const setFrameEditingState = useSetFrameEditingState();
+
+  const { invalidate } = useCanvasRenderer();
+  const viewportHelpers = useViewportHelpers(overlayCanvasRef);
+
+  const frame =
+    frameEditingState &&
+    shapes.find(
+      (shape) =>
+        shape.type === "frame" && shape.id === frameEditingState.frameId,
+    );
+
+  useEffect(() => {
+    if (!frame || frame.type !== "frame") return;
+
+    setValue(frame.text.name);
+
+    requestAnimationFrame(() => {
+      frameNameInputRef.current?.focus();
+      frameNameInputRef.current?.select();
+    });
+  }, [frame?.id]);
+
+  const updateFrameName = (value: string) => {
+    if (!frame) return;
+
+    const ctx = overlayCanvasRef.current?.getContext("2d");
+    if (!ctx) return;
+
+    const frameName = value.trim() || "Frame Name";
+
+    setShapes((prev) =>
+      prev.map((shape) => {
+        if (shape.type !== "frame" || shape.id !== frame.id) {
+          return shape;
+        }
+
+        return {
+          ...shape,
+          text: {
+            ...shape.text,
+            name: frameName,
+            ...getTextDimensions({
+              ctx,
+              text: frameName,
+              fontSize: shape.text.fontSize,
+              fontFamily: shape.text.fontFamily,
+            }),
+          },
+        };
+      }),
+    );
+
+    invalidate();
+  };
+
+  const finishEditing = () => {
+    updateFrameName(value);
+    setFrameEditingState(null);
+  };
+
+  const cancelEditing = () => {
+    if (!frame || frame.type !== "frame") return;
+
+    setValue(frame.text.name);
+    setFrameEditingState(null);
+  };
+
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setValue(event.target.value);
+  };
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    switch (event.key) {
+      case "Enter":
+        finishEditing();
+        break;
+
+      case "Escape":
+        cancelEditing();
+        break;
+    }
+  };
+
+  const style = useMemo(() => {
+    if (!frame || frame.type !== "frame") return null;
+
+    const ctx = overlayCanvasRef.current?.getContext("2d");
+    if (!ctx) return null;
+
+    const point = viewportHelpers.canvasToClient(frame.x, frame.y);
+    if (!point) return null;
+
+    const { width, height } = getTextDimensions({
+      ctx,
+      text: value || " ",
+      fontSize: frame.text.fontSize,
+      fontFamily: frame.text.fontFamily,
+    });
+
+    return {
+      position: "absolute" as const,
+      left: point.x,
+      top: point.y - height - TOLERANCE,
+      width: width + 20,
+      height: height + 20,
+      fontSize: `${frame.text.fontSize}px`,
+      fontFamily: frame.text.fontFamily,
+    };
+  }, [frame, value, overlayCanvasRef, viewportHelpers]);
+
+  // Handles Finish Frame Text Editing
+  useEffect(() => {
+    if (!frameEditingState) return;
+
+    const handleFinishFrameEditing = (e: PointerEvent) => {
+      if (frameNameInputRef.current?.contains(e.target as Node)) {
+        return;
+      }
+
+      finishEditing();
+    };
+
+    document.addEventListener("pointerdown", handleFinishFrameEditing);
+    return () => {
+      document.removeEventListener("pointerdown", handleFinishFrameEditing);
+    };
+  }, [frameEditingState, finishEditing]);
+
+  return {
+    frame,
+    style,
+    value,
+    setValue,
+    finishEditing,
+    handleChange,
+    handleKeyDown,
+  };
+}

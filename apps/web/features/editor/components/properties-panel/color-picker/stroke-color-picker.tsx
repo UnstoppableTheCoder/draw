@@ -8,7 +8,7 @@ import {
   useSelectedShapesIds,
   useShapes,
 } from "@/features/editor/store/editor/selectors";
-import useShapeAppearance from "@/features/editor/hooks/appearance/use-shape-appearance";
+import useShapeAppearance from "@/features/editor/components/properties-panel/use-shape-appearance";
 
 const StrokeColorPicker = ({
   sceneCanvasRef,

@@ -3,7 +3,7 @@
 import { useFontSize } from "@/features/editor/store/properties/selectors";
 import { PropertyItem } from "../../property-item";
 import { PropertiesDataType } from "../../../types";
-import useShapeAppearance from "@/features/editor/hooks/appearance/use-shape-appearance";
+import useShapeAppearance from "@/features/editor/components/properties-panel/use-shape-appearance";
 import {
   useSelectedShapesIds,
   useShapes,

@@ -7,7 +7,7 @@ import { PropertiesPanelItemWrapper } from "../properties-panel-item-wrapper";
 import { FontFamilyPicker } from "./font-family-picker/font-family-picker";
 import { FontSizePicker } from "./font-size-picker/font-size-picker";
 import { TextAlignPicker } from "./text-align-picker/text-align-picker";
-import getSelectedShapesTypes from "@/features/editor/shapes/get-selected-shapes-types";
+import getSelectedShapesTypes from "@/features/editor/interactions/selection/get-selected-shapes-types";
 import { RefObject } from "react";
 
 export const FontTools = ({

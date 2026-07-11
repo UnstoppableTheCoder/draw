@@ -5,7 +5,7 @@ import { PropertyItem } from "../../property-item";
 import { RefObject } from "react";
 import { PropertiesDataType } from "../../../types";
 import { useTextAlign } from "@/features/editor/store/properties/selectors";
-import useShapeAppearance from "@/features/editor/hooks/appearance/use-shape-appearance";
+import useShapeAppearance from "@/features/editor/components/properties-panel/use-shape-appearance";
 import {
   useSelectedShapesIds,
   useShapes,

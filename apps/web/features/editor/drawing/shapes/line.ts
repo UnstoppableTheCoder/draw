@@ -1,0 +1,36 @@
+import { LineShape } from "@/features/editor/types/types";
+import { getAbsolutePoint } from "../../geometry/get-absolute-point";
+import getStrokeStyleValue from "../../components/properties-panel/get-stroke-style-value";
+
+export const drawLine = (ctx: CanvasRenderingContext2D, shape: LineShape) => {
+  const { x, y, points } = shape;
+
+  if (points.length < 2) return;
+
+  const strokeValue = getStrokeStyleValue(shape.strokeStyle ?? "solid");
+  ctx.setLineDash(strokeValue);
+  ctx.lineWidth = shape.strokeWidth ?? 2;
+  ctx.strokeStyle = shape.strokeColor ?? "white";
+  ctx.globalAlpha = (shape.opacity ?? 100) / 100;
+
+  const first = points[0];
+  if (!first) return;
+
+  const absoluteFirst = getAbsolutePoint(x, y, first);
+
+  ctx.save();
+  ctx.beginPath();
+
+  ctx.moveTo(absoluteFirst.x, absoluteFirst.y);
+
+  for (let i = 1; i < points.length; i++) {
+    const point = points[i];
+    if (!point) continue;
+
+    const absolutePoint = getAbsolutePoint(x, y, point);
+    ctx.lineTo(absolutePoint.x, absolutePoint.y);
+  }
+
+  ctx.stroke();
+  ctx.restore();
+};

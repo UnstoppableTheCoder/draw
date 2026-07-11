@@ -1,7 +1,7 @@
 "use client";
 
 import { RefObject } from "react";
-import getSelectedShapesTypes from "../../shapes/get-selected-shapes-types";
+import getSelectedShapesTypes from "../../interactions/selection/get-selected-shapes-types";
 import {
   useSelectedShapesIds,
   useSelectedTool,
@@ -17,8 +17,7 @@ import LayerPicker from "./layer-picker/layer-picker";
 import OpacityPicker from "./opacity-picker/opacity-picker";
 import { StrokeStylePicker } from "./stroke-style-picker/stroke-style-picker";
 import { StrokeWidthPicker } from "./stroke-width-picker/stroke-width-picker";
-import { usePointerState } from "../../hooks/pointer/use-pointer-state";
-import useDeleteShapes from "../../hooks/actions/use-delete-shapes";
+import { usePointerState } from "../../pointer/use-pointer-state";
 
 type PropertiesPanelRef = {
   editorRefs: {

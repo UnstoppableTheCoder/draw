@@ -1,14 +1,12 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { ToolbarItemType, ToolType } from "@/types/toolbar.types";
+import { ToolbarItemType, ToolType } from "@/types/toolbar";
 import { JSX } from "react";
 import Hint from "../hint";
 import { Button } from "../ui/button";
-import {
-  useSelectedTool,
-} from "../../store/editor/selectors";
-import useToolActions from "../../hooks/tool/use-tool-actions";
+import { useSelectedTool } from "../../store/editor/selectors";
+import useToolActions from "../../interactions/tool/use-tool-actions";
 
 type ToolbarButtonProp = {
   item: Omit<ToolbarItemType, "icon"> & { icon: JSX.Element };

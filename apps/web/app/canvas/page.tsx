@@ -4,16 +4,19 @@ import Canvas from "@/features/editor/components/canvas/canvas";
 import { PropertiesPanel } from "@/features/editor/components/properties-panel/properties-panel";
 import Toolbar from "@/features/editor/components/toolbar/toolbar";
 import RendererProvider from "@/features/editor/context/renderer-provider";
-import { usePointerState } from "@/features/editor/hooks/pointer/use-pointer-state";
+import { usePointerState } from "@/features/editor/pointer/use-pointer-state";
+import { EditorRefs } from "@/types/editor";
 import React, { useMemo, useRef } from "react";
 
 const CanvasWrapper = () => {
+  const backgroundCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const sceneCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const overlayCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const pointerRefs = usePointerState();
 
-  const editorRefs = useMemo(
+  const editorRefs: EditorRefs = useMemo(
     () => ({
+      backgroundCanvasRef,
       sceneCanvasRef,
       overlayCanvasRef,
       pointerRefs,
@@ -26,7 +29,7 @@ const CanvasWrapper = () => {
       <RendererProvider editorRefs={editorRefs}>
         <Toolbar />
         <PropertiesPanel editorRefs={editorRefs} />
-        <Canvas editorRefs={editorRefs} />
+        <Canvas editor={editorRefs} />
       </RendererProvider>
     </div>
   );

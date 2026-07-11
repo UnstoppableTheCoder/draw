@@ -3,10 +3,8 @@
 import { createContext } from "react";
 
 export type Renderer = {
-  renderScene: () => void;
-  renderOverlay: () => void;
-
   invalidate: () => void;
+  invalidateBackground: () => void;
   invalidateScene: () => void;
   invalidateOverlay: () => void;
 };

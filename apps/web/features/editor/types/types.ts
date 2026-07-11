@@ -120,7 +120,7 @@ export interface TextShape extends BaseShape {
   width?: number;
   height?: number;
   fontSize: number;
-  fontFamily: string; // know more
+  fontFamily: string;
   textAlign?: TextAlign;
   verticalAlign?: "top" | "middle" | "bottom";
   containerId?: string | null; // Shape containing text.
@@ -171,8 +171,8 @@ export interface TextEditingState extends Omit<
   x: number;
   y: number;
   text: string;
-  fontSize?: number;
-  fontFamily?: string;
+  fontSize: number;
+  fontFamily: string;
 }
 
 export type SelectedBounds = {

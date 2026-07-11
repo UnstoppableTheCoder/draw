@@ -1,4 +1,4 @@
-import { Point } from "@/types/canvas.types";
+import { Point } from "@/types/canvas";
 import { TOLERANCE } from "../../constants/canvas";
 import { SelectedBounds } from "../../types/types";
 

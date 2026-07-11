@@ -1,4 +1,4 @@
-import { Point } from "@/types/canvas.types";
+import { Point } from "@/types/canvas";
 import { pointInArrow } from "./shapes/arrow";
 import { pointInDiamond } from "./shapes/diamond";
 import { pointInEllipse } from "./shapes/ellipse";

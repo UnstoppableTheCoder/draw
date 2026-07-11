@@ -2,6 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { ReactNode } from "react";
+import Hint from "../hint";
 
 type DataType = {
   label: string;
@@ -17,16 +18,18 @@ type PropertyItemProps = {
 
 export const PropertyItem = ({ data, onClick }: PropertyItemProps) => {
   return (
-    <button
-      className={cn(
-        data.active
-          ? " bg-black/20 text-black"
-          : "hover:bg-black/20 bg-black/10",
-        "size-8 flex justify-center items-center rounded-sm  cursor-pointer",
-      )}
-      onClick={() => onClick(data)}
-    >
-      {data.icon}
-    </button>
+    <Hint label={data.label} side="bottom">
+      <button
+        className={cn(
+          data.active
+            ? " bg-black/20 text-black"
+            : "hover:bg-black/20 bg-black/10",
+          "size-8 flex justify-center items-center rounded-sm  cursor-pointer",
+        )}
+        onClick={() => onClick(data)}
+      >
+        {data.icon}
+      </button>
+    </Hint>
   );
 };

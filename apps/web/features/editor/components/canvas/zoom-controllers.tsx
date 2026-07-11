@@ -1,9 +1,10 @@
 import { Minus, Plus } from "lucide-react";
-import { Button } from "../ui/button";
 import { RefObject } from "react";
 
 import * as store from "../../store/editor/selectors";
-import useViewportZoom from "../../hooks/viewport/use-viewport-zoom";
+import useViewportZoom from "../../interactions/viewport/use-viewport-zoom";
+import Hint from "../hint";
+import CanvasButton from "./canvas-button";
 
 export default function ZoomControllers({
   sceneCanvasRef,
@@ -16,32 +17,24 @@ export default function ZoomControllers({
 
   return (
     <div className="flex items-center overflow-hidden rounded-xl border border-neutral-300 bg-white shadow-sm">
-      <Button
-        variant="ghost"
-        size="icon"
-        onClick={zoomOut}
-        className="w-10 cursor-pointer rounded-none border-r border-neutral-200 p-0 hover:bg-neutral-100"
-      >
-        <Minus className="h-4 w-4" />
-      </Button>
+      <CanvasButton onClick={zoomOut} label="Zoom out - Ctrl+-">
+        <Minus className="size-4" />
+      </CanvasButton>
 
-      <button
-        onClick={resetZoom}
-        className="min-w-[64px] cursor-pointer border-r border-neutral-200 px-3 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-100"
-      >
-        {new Intl.NumberFormat("en-GB", {
-          style: "percent",
-        }).format(scale)}
-      </button>
+      <Hint label="Reset zoom">
+        <button
+          onClick={resetZoom}
+          className="min-w-[64px] cursor-pointer border-r border-neutral-200 px-3 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-100"
+        >
+          {new Intl.NumberFormat("en-GB", {
+            style: "percent",
+          }).format(scale)}
+        </button>
+      </Hint>
 
-      <Button
-        variant="ghost"
-        size="icon"
-        onClick={zoomIn}
-        className="w-10 cursor-pointer rounded-none p-0 hover:bg-neutral-100"
-      >
-        <Plus className="h-4 w-4" />
-      </Button>
+      <CanvasButton onClick={zoomIn} label="Zoom in - Ctrl++">
+        <Plus className="size-4" />
+      </CanvasButton>
     </div>
   );
 }

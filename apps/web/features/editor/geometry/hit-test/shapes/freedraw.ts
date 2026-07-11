@@ -1,5 +1,5 @@
 import { FreeDrawShape } from "@/features/editor/types/types";
-import { Point } from "@/types/canvas.types";
+import { Point } from "@/types/canvas";
 import { PointsShape } from "../../types";
 import { pointInSegment } from "../algorithms/point-in-segment";
 
