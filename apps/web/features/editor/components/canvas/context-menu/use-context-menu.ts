@@ -142,7 +142,6 @@ export default function useContextMenu(
 
   function closeContextMenu() {
     setMenu(DEFAULT_MENU_STATE);
-    setSelectedShapeIds([]);
   }
 
   // Handles Close Context Menu

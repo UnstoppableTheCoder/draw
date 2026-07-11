@@ -166,6 +166,8 @@ export default function useInteractionManager({
 
   // ============== DOM Pointer Events Handlers ==============
   function handlePointerDown(event: PointerEvent<HTMLCanvasElement>) {
+    console.log("POINTER DOWN");
+    
     event.preventDefault();
 
     if (event.button === 2) return;

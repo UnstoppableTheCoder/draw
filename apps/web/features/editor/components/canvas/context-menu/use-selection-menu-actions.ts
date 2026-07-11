@@ -3,9 +3,6 @@ import { useCanvasRenderer } from "@/features/editor/context/use-renderer";
 import { getGroupBounds } from "@/features/editor/geometry/bounding-box/get-group-bounds";
 import { normalizeRect } from "@/features/editor/geometry/normalize-rect";
 import getTextDimensions from "@/features/editor/geometry/text/get-text-dimensions";
-import useShapeOrder from "@/features/editor/interactions/order/use-shape-order";
-import useDeleteShapes from "@/features/editor/interactions/selection/use-delete-shapes";
-import useDuplicateShapes from "@/features/editor/interactions/selection/use-duplicate-shapes";
 import {
   useSelectedShapesIds,
   useSetShapes,
