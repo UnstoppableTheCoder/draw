@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 
 import { RendererContext } from "./renderer-context";
 import useCreateCanvasRenderer from "../renderer/use-create-canvas-renderer";
-import { EditorRefs } from "@/types";
+import { EditorRefs } from "@/features/editor/types";
 
 type RendererProviderProps = {
   children: ReactNode;

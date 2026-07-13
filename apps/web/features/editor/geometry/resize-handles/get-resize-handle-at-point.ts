@@ -1,9 +1,8 @@
-import { Point } from "@/types/canvas";
-import { SelectedBounds, Shape } from "../../types/types";
 import { ResizeHandleType } from "../../types/resize-handle";
 import { getSegmentHandle } from "./get-segment-handle";
 import { getCornerHandle } from "./get-corner-handle";
 import { TOLERANCE } from "../../constants/canvas";
+import { Point, SelectedBounds, Shape } from "../../types";
 
 export function getResizeHandleAtPoint({
   point,

@@ -1,4 +1,4 @@
-import { SelectedBounds, Shape } from "../../types/types";
+import { SelectedBounds, Shape } from "../../types";
 import { getBoundingBox } from "./get-bounding-box";
 
 export function getGroupBounds(shapes: Shape[]): SelectedBounds {

@@ -1,6 +1,7 @@
 import { TOLERANCE } from "../../constants/canvas";
-import { SelectedBounds, TextShape } from "../../types/types";
+import { SelectedBounds } from "../../types/types";
 import getTextDimensions from "../../geometry/text/get-text-dimensions";
+import { TextShape } from "../../types";
 
 export default function resizeTextShape({
   ctx,

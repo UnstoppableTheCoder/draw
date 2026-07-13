@@ -1,5 +1,5 @@
 import { TOLERANCE } from "../../constants/canvas";
-import { Point, SelectedBounds, Shape } from "../../types/types";
+import { Point, SelectedBounds, Shape } from "../../types";
 
 export function getAdjustedGroupBounds(bounds: SelectedBounds) {
   return {

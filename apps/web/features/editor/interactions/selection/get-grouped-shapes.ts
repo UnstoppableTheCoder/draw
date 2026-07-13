@@ -1,4 +1,4 @@
-import { Shape } from "../../types/types";
+import { Shape } from "../../types";
 
 export function getGroupedShapes(previewShapes: Shape[]) {
   let groups: Record<string, Shape[]> = {};

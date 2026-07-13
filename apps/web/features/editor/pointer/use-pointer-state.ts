@@ -1,9 +1,10 @@
 "use client";
 
 import { RefObject, useEffect, useRef } from "react";
-import { EraserPoint, Point, PointTuple, SelectedBounds, Shape } from "../types/types";
+import { EraserPoint, Point, PointTuple, SelectedBounds } from "../types/types";
 import { ResizeHandleType } from "../types/resize-handle";
 import { useSelectedTool } from "../store/editor/selectors";
+import { Shape } from "../types";
 
 type InteractionPreview = {
   previewShapes: Shape[]; // it has both - frame or shape & children shapes

@@ -1,6 +1,6 @@
-import { FreeDrawShape } from "../../types/types";
 import { getAbsolutePoint } from "../../geometry/get-absolute-point";
 import getStrokeStyleValue from "../../components/properties-panel/get-stroke-style-value";
+import { FreeDrawShape } from "../../types";
 
 export const drawFreeDraw = (
   ctx: CanvasRenderingContext2D,

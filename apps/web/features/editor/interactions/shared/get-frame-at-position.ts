@@ -1,6 +1,5 @@
-import { Point } from "@/types/canvas";
-import { Shape } from "../../types/types";
 import { getPointInShape } from "../../geometry/hit-test/get-point-in-shape";
+import { Point, Shape } from "../../types";
 
 export const getFrameAtPosition = ({
   point,

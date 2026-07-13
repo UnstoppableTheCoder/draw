@@ -1,9 +1,8 @@
-import { Point } from "@/types/canvas";
 import { getAbsolutePoint } from "../../get-absolute-point";
 import { distanceToSegment } from "./distance-to-segment";
 import { TOLERANCE } from "@/features/editor/constants/canvas";
 import { PointsShape } from "../../types";
-import { scalePointInGroup } from "@/features/editor/interactions/resize/scale-shape-in-group";
+import { Point } from "@/features/editor/types";
 
 export function pointInSegment(
   point: Point,

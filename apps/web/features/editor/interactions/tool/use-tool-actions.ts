@@ -3,7 +3,7 @@ import {
   useSetSelectedShapesIds,
   useSetSelectedTool,
 } from "../../store/editor/selectors";
-import { ToolType } from "@/types/toolbar";
+import { ToolType } from "@/features/editor/types/toolbar";
 import { useCanvasRenderer } from "../../context/use-renderer";
 
 export default function useToolActions() {

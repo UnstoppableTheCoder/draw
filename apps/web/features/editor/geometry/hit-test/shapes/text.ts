@@ -1,6 +1,5 @@
 import { TOLERANCE } from "@/features/editor/constants/canvas";
-import { TextShape } from "@/features/editor/types/types";
-import { Point } from "@/types/canvas";
+import { Point, TextShape } from "@/features/editor/types";
 
 export const pointInText = (
   point: Point,

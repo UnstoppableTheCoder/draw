@@ -1,12 +1,6 @@
 import { RefObject } from "react";
 import * as store from "../../store/editor/selectors";
-import {
-  FrameShape,
-  Point,
-  PointTuple,
-  SelectedBounds,
-  Shape,
-} from "../../types/types";
+import { Point, PointTuple, SelectedBounds } from "../../types/types";
 import { getAbsolutePoint } from "../../geometry/get-absolute-point";
 import { useCanvasRenderer } from "../../context/use-renderer";
 import { ResizeHandleType } from "../../types/resize-handle";
@@ -21,6 +15,7 @@ import useCanvasCursor from "../../renderer/cursor/use-canvas-cursor";
 import useShapeMove from "../move/use-shape-move";
 import useShapeResize from "../resize/use-shape-resize";
 import { usePointerState } from "../../pointer/use-pointer-state";
+import { FrameShape, Shape } from "../../types";
 
 export function getGroupBounds(shapes: Shape[]): SelectedBounds {
   let minX = Infinity;

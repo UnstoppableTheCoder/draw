@@ -1,4 +1,4 @@
-import { ToolType } from "@/types/toolbar";
+import { ToolType } from "@/features/editor/types/toolbar";
 
 export function getCanvasCursor(tool: ToolType, isPanning: boolean): string {
   if (isPanning) {

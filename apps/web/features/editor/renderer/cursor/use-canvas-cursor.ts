@@ -1,7 +1,6 @@
 import { RefObject, useEffect } from "react";
-import { ToolType } from "@/types/toolbar";
+import { ToolType } from "@/features/editor/types/toolbar";
 import { getCanvasCursor } from "./get-canvas-cursor";
-import { Point, Shape } from "../../types/types";
 import { useScale, useSelectedTool } from "../../store/editor/selectors";
 import { getResizeHandleAtPoint } from "../../geometry/resize-handles/get-resize-handle-at-point";
 import { isPointInSelectedShapeBounds } from "../../geometry/hit-test/is-point-in-selected-bounds";
@@ -9,6 +8,7 @@ import { getResizeHandleCursor } from "../../interactions/resize/get-resize-hand
 import { useEditorStore } from "../../store/editor/editor-store";
 import { getGroupBounds } from "../../geometry/bounding-box/get-group-bounds";
 import { usePointerState } from "../../pointer/use-pointer-state";
+import { Point, Shape } from "../../types";
 
 interface Props {
   overlayCanvasRef: RefObject<HTMLCanvasElement | null>;

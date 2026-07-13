@@ -1,4 +1,3 @@
-import { Point } from "@/types/canvas";
 import { pointInArrow } from "./shapes/arrow";
 import { pointInDiamond } from "./shapes/diamond";
 import { pointInEllipse } from "./shapes/ellipse";
@@ -7,8 +6,8 @@ import { pointInImage } from "./shapes/image";
 import { pointInLine } from "./shapes/line";
 import { pointInRectangle } from "./shapes/rectangle";
 import { pointInText } from "./shapes/text";
-import { Shape } from "../../types/types";
 import { pointInFrame } from "./shapes/frame";
+import { Point, Shape } from "../../types";
 
 export const getPointInShape = (
   startPoint: Point,

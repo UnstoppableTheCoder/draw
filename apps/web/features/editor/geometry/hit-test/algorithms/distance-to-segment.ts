@@ -1,4 +1,4 @@
-import { Point } from "@/types/canvas";
+import { Point } from "@/features/editor/types";
 
 export function distanceToSegment(
   point: Point,

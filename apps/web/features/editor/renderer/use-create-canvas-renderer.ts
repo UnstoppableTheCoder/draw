@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef } from "react";
 import useViewportHelpers from "../interactions/viewport/use-viewport-helpers";
-import { SelectedBounds, Shape } from "../types/types";
+import { SelectedBounds } from "../types/types";
 import { useEditorStore } from "../store/editor/editor-store";
 import { normalizeRect } from "../geometry/normalize-rect";
 import { getGroupBounds } from "../geometry/bounding-box/get-group-bounds";
@@ -14,7 +14,7 @@ import { renderShapes } from "../drawing/render-shapes";
 import drawMarqueeSelection from "../drawing/selection/marquee-selection";
 import drawEraserBackground from "../drawing/eraser/background";
 import drawGroupedShapeSelection from "../drawing/selection/grouped-shapes-selection";
-import { EditorRefs } from "@/types";
+import { EditorRefs, Shape } from "@/features/editor/types";
 import drawGrid from "../drawing/background/draw-line-grid";
 import drawDotGrid from "../drawing/background/draw-dot-grid";
 import drawLineGrid from "../drawing/background/draw-line-grid";
@@ -132,6 +132,7 @@ export default function useCreateCanvasRenderer({
 
     const {
       shapes,
+      images,
       textEditingState,
       scale,
       hoveredFrameId,
@@ -160,6 +161,7 @@ export default function useCreateCanvasRenderer({
     renderShapes({
       ctx,
       shapes,
+      images,
       scale,
       skipShapeIds,
       hoveredFrameId,
@@ -176,7 +178,7 @@ export default function useCreateCanvasRenderer({
     if (!ctx) return;
 
     const interaction = pointerRefs.interactionRef.current;
-    const { shapes, selectedShapesIds, scale, frameEditingState } =
+    const { shapes, images, selectedShapesIds, scale, frameEditingState } =
       useEditorStore.getState();
 
     clearCanvas(ctx);
@@ -223,6 +225,7 @@ export default function useCreateCanvasRenderer({
         renderShapes({
           ctx,
           shapes: previewShapes,
+          images,
           scale,
           frameEditingState,
         });

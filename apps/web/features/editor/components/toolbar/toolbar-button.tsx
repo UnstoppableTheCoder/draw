@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { ToolbarItemType, ToolType } from "@/types/toolbar";
+import { ToolbarItemType, ToolType } from "@/features/editor/types/toolbar";
 import { JSX } from "react";
 import Hint from "../hint";
 import { Button } from "../ui/button";

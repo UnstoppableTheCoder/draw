@@ -1,7 +1,6 @@
 import { PointerEvent, RefObject } from "react";
 import * as store from "../../store/editor/selectors";
 import useCanvasCursor from "../../renderer/cursor/use-canvas-cursor";
-import { Point, Shape } from "../../types/types";
 import usePan from "../viewport/use-viewport-pan";
 import useTextEditing from "../text/use-text-editing";
 import { useCanvasRenderer } from "../../context/use-renderer";
@@ -15,6 +14,7 @@ import useShapeMove from "../move/use-shape-move";
 import useShapeResize from "../resize/use-shape-resize";
 import { usePointerState } from "../../pointer/use-pointer-state";
 import usePointer from "../../pointer/use-pointer-helpers";
+import { Point, Shape } from "../../types";
 
 const STICKY_TOOLS = new Set(["pan", "freedraw", "eraser"]);
 
@@ -167,7 +167,7 @@ export default function useInteractionManager({
   // ============== DOM Pointer Events Handlers ==============
   function handlePointerDown(event: PointerEvent<HTMLCanvasElement>) {
     console.log("POINTER DOWN");
-    
+
     event.preventDefault();
 
     if (event.button === 2) return;

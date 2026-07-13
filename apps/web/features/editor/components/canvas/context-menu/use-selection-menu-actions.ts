@@ -8,7 +8,7 @@ import {
   useSetShapes,
   useShapes,
 } from "@/features/editor/store/editor/selectors";
-import { FrameShape } from "@/features/editor/types/types";
+import { FrameShape } from "@/features/editor/types";
 import { v4 as uuidv4 } from "uuid";
 
 export default function useSelectionMenuActions({

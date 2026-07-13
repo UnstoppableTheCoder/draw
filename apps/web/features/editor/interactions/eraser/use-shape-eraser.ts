@@ -1,10 +1,10 @@
 import { RefObject } from "react";
 import * as store from "../../store/editor/selectors";
 import { ERASER_TOLERANCE } from "../../constants/eraser";
-import { Point } from "@/types/canvas";
 import { useCanvasRenderer } from "../../context/use-renderer";
 import { getPointInShape } from "../../geometry/hit-test/get-point-in-shape";
 import { usePointerState } from "../../pointer/use-pointer-state";
+import { Point } from "../../types";
 
 const ERASER_TRAIL_DURATION = 100;
 export default function useShapeEraser({

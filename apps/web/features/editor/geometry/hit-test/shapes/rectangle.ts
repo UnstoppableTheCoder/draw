@@ -1,6 +1,5 @@
 import { TOLERANCE } from "@/features/editor/constants/canvas";
-import { RectangleShape } from "@/features/editor/types/types";
-import { Point } from "@/types/canvas";
+import { Point, RectangleShape } from "@/features/editor/types";
 
 export const pointInRectangle = (
   point: Point,

@@ -1,11 +1,13 @@
-import { ToolType } from "@/types/toolbar";
+import { ToolType } from "@/features/editor/types/toolbar";
 import {
   EraserPoint,
   FrameEditingState,
   Point,
-  Shape,
   TextEditingState,
 } from "../../types/types";
+import { ImageAsset, Shape } from "../../types";
+
+export type ImageMap = Record<string, ImageAsset>;
 
 export type Group = {
   [groupId: string]: string[];
@@ -22,6 +24,13 @@ export interface EditorStore {
   // Shapes
   shapes: Shape[];
   setShapes: (updater: Shape[] | ((prev: Shape[]) => Shape[])) => void;
+
+  // Images
+  images: ImageMap;
+  setImages: (updater: ImageMap | ((prev: ImageMap) => ImageMap)) => void;
+  addImage: (image: ImageAsset) => void;
+  removeImage: (imageId: string) => void;
+  clearImages: () => void;
 
   // Eraser Points
   eraserPoints: EraserPoint[];

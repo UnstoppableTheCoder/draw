@@ -1,5 +1,4 @@
-import { ArrowShape } from "@/features/editor/types/types";
-import { Point } from "@/types/canvas";
+import { ArrowShape, Point } from "@/features/editor/types";
 import { PointsShape } from "../../types";
 import { pointInSegment } from "../algorithms/point-in-segment";
 

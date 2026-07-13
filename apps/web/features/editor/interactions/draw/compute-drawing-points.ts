@@ -1,4 +1,4 @@
-import { ToolType } from "@/types/toolbar";
+import { ToolType } from "@/features/editor/types/toolbar";
 import { PointTuple } from "../../types/types";
 
 export const computeDrawingPoints = ({

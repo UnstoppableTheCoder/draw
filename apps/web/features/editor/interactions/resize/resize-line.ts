@@ -1,5 +1,5 @@
+import { ArrowShape, LineShape, Point } from "../../types";
 import { ResizeHandleType } from "../../types/resize-handle";
-import { ArrowShape, LineShape, Point } from "../../types/types";
 
 type LinearShape = LineShape | ArrowShape;
 

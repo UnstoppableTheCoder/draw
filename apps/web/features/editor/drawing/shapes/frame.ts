@@ -1,5 +1,5 @@
 import { TOLERANCE } from "../../constants/canvas";
-import { FrameShape } from "../../types/types";
+import { FrameShape } from "../../types";
 
 export const drawFrame = (
   ctx: CanvasRenderingContext2D,

@@ -1,6 +1,5 @@
 import { TOLERANCE } from "@/features/editor/constants/canvas";
-import { EllipseShape } from "@/features/editor/types/types";
-import { Point } from "@/types/canvas";
+import { EllipseShape, Point } from "@/features/editor/types";
 
 export const pointInEllipse = (
   point: Point,

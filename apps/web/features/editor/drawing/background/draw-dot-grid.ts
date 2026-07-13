@@ -1,4 +1,4 @@
-import { Point } from "@/types";
+import { Point } from "@/features/editor/types";
 
 type DrawGridProps = {
   ctx: CanvasRenderingContext2D;

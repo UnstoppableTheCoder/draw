@@ -9,7 +9,6 @@ import React, {
 import { v4 as uuidv4 } from "uuid";
 import getTextDimensions from "../../geometry/text/get-text-dimensions";
 import * as store from "../../store/editor/selectors";
-import { Point, Shape } from "../../types/types";
 import {
   useFontFamily,
   useFontSize,
@@ -20,6 +19,7 @@ import {
 import { useCanvasRenderer } from "../../context/use-renderer";
 import useViewportHelpers from "../viewport/use-viewport-helpers";
 import { getFrameAtPosition } from "../shared/get-frame-at-position";
+import { Point, Shape } from "../../types";
 
 export default function useTextEditing(
   canvasRef: RefObject<HTMLCanvasElement | null>,

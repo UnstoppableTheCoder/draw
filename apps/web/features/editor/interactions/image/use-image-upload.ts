@@ -2,10 +2,10 @@ import { ChangeEvent, RefObject, useEffect } from "react";
 import * as store from "../../store/editor/selectors";
 import { useCanvasRenderer } from "../../context/use-renderer";
 import useViewportHelpers from "../viewport/use-viewport-helpers";
-import { loadImageInfos } from "./image-loader";
 import { IMAGE_GAP, MAX_IMAGE_SIZE } from "../../constants/image";
 import { createImageShape } from "./create-image-shape";
 import { usePointerState } from "../../pointer/use-pointer-state";
+import { loadImageAssets } from "./image-loader";
 
 export default function useImageUpload({
   sceneCanvasRef,
@@ -22,7 +22,7 @@ export default function useImageUpload({
   const setSelectedTool = store.useSetSelectedTool();
   const setShapes = store.useSetShapes();
   const setSelectedShapesIds = store.useSetSelectedShapesIds();
-  const selectedShapeIds = store.useSelectedShapesIds();
+  const addImage = store.useAddImage();
 
   const { invalidate } = useCanvasRenderer();
   const { clientToCanvas } = useViewportHelpers(sceneCanvasRef);
@@ -36,62 +36,64 @@ export default function useImageUpload({
   };
 
   const handleImageInputChange = async (e: ChangeEvent<HTMLInputElement>) => {
-    // overlayCanvasRef.current?.focus();
-
     const files = e.target.files;
     if (!files?.length) return;
 
     const canvas = sceneCanvasRef.current;
     if (!canvas) return;
 
-    // Returns - imageUrl, width and height
-    const imageInfos = await loadImageInfos(files);
+    const { assets, upload } = await loadImageAssets(files);
 
-    // Grid
-    const { rows, cols } = getGridSize(imageInfos.length);
+    // Cache uploaded assets
+    assets.forEach(addImage);
+
+    upload.then((res) => {
+      // invalidate();
+      console.log("Uploaded");
+      console.log(res);
+    });
+
+    const { rows, cols } = getGridSize(assets.length);
     const CELL_SIZE = MAX_IMAGE_SIZE + IMAGE_GAP;
 
     const canvasCoords = clientToCanvas(canvas.width / 2, canvas.height / 2);
+
     if (!canvasCoords) return;
+
     const { x: centerX, y: centerY } = canvasCoords;
 
-    // Formula
     const gridWidth = cols * CELL_SIZE - IMAGE_GAP;
     const gridHeight = rows * CELL_SIZE - IMAGE_GAP;
 
-    // Start Point of grid to center it on canvas
     const startX = centerX - gridWidth / 2;
     const startY = centerY - gridHeight / 2;
 
-    const shapes = imageInfos.map((image, index) => {
-      // Calculate the row and column for the current image based on its index
+    const shapes = assets.map((image, index) => {
       const row = Math.floor(index / cols);
       const col = index % cols;
 
-      // Calculates the (x, y) for the image
-      const x = startX + col * CELL_SIZE + (MAX_IMAGE_SIZE - image.width) / 2;
-      const y = startY + row * CELL_SIZE + (MAX_IMAGE_SIZE - image.height) / 2;
+      const shape = createImageShape(image);
+      shape.x = startX + col * CELL_SIZE + (MAX_IMAGE_SIZE - shape.width) / 2;
+      shape.y = startY + row * CELL_SIZE + (MAX_IMAGE_SIZE - shape.height) / 2;
 
-      return createImageShape({
-        image,
-        x,
-        y,
-      });
+      return shape;
     });
 
-    if (!shapes) return;
     setShapes((prev) => [...prev, ...shapes]);
     setSelectedTool("select");
 
-    pointerRefs.interactionRef.current = {
-      ...pointerRefs.interactionRef.current,
-      type: "select",
-      previewShapes: shapes,
-      selectedShapesIds: new Set(selectedShapeIds),
-    };
     setSelectedShapesIds(shapes.map((shape) => shape.id));
 
+    pointerRefs.interactionRef.current = {
+      type: "select",
+      previewShapes: shapes,
+      selectedShapesIds: new Set(shapes.map((shape) => shape.id)),
+    };
+
     invalidate();
+
+    // Allow selecting the same file again
+    e.target.value = "";
   };
 
   // Clicks image input if tool is image

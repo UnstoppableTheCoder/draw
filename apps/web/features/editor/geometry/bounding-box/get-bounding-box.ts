@@ -1,5 +1,5 @@
 import { TOLERANCE } from "../../constants/canvas";
-import { Point, Shape } from "../../types/types";
+import { Point, PointTuple, Shape } from "../../types";
 import { getAbsolutePoint } from "../get-absolute-point";
 import { ShapeWithoutPoints, ShapeWithPoints } from "../types";
 
@@ -31,7 +31,7 @@ export function getBoundingBox(shape: Shape) {
   const updateBoundsForShapesWithPoints = (shape: ShapeWithPoints) => {
     const { x, y, points } = shape;
 
-    points.forEach((point) => {
+    points.forEach((point: PointTuple) => {
       updateBounds(getAbsolutePoint(x, y, point));
     });
   };

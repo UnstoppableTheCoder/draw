@@ -10,7 +10,7 @@ import useEditorShortcuts from "../../interactions/shortcuts/use-editor-shortcut
 import FrameNameEditor from "./frame-name-editor";
 import useFrameNameEditor from "../../interactions/frame/use-frame-name-editor";
 import { ContextMenu } from "./context-menu/context-menu";
-import { EditorRefs } from "@/types";
+import { EditorRefs } from "@/features/editor/types";
 import useInteractionManager from "../../interactions/manager/use-interaction-manager";
 import CanvasLayers from "./canvas-layers";
 import useContextMenu from "./context-menu/use-context-menu";

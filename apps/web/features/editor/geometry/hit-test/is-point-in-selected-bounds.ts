@@ -1,6 +1,5 @@
-import { Point } from "@/types/canvas";
 import { TOLERANCE } from "../../constants/canvas";
-import { SelectedBounds } from "../../types/types";
+import { Point, SelectedBounds } from "../../types/types";
 
 export const isPointInSelectedShapeBounds = (
   point: Point,

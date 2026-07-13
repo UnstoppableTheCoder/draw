@@ -1,4 +1,4 @@
-import { Shape } from "../../types/types";
+import { Shape } from "../../types";
 
 export default function getSelectedShapesTypes(selectedShapes: Shape[]) {
   const selectedShapesTypes = new Set();

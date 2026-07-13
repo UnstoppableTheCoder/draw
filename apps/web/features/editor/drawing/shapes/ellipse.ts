@@ -1,5 +1,5 @@
-import { EllipseShape } from "../../types/types";
 import getStrokeStyleValue from "../../components/properties-panel/get-stroke-style-value";
+import { EllipseShape } from "../../types";
 
 export const drawEllipse = (
   ctx: CanvasRenderingContext2D,

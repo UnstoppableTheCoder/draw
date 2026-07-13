@@ -1,4 +1,3 @@
-import { FrameShape, Point, Shape } from "../../types/types";
 import {
   usePushHistory,
   useSetHoveredFrameId,
@@ -9,6 +8,7 @@ import { useCanvasRenderer } from "../../context/use-renderer";
 import { getBoundingBox } from "../../geometry/bounding-box/get-bounding-box";
 import { checkIsInsideFrame, getGroupBounds } from "../selection/use-selection";
 import { usePointerState } from "../../pointer/use-pointer-state";
+import { FrameShape, Point, Shape } from "../../types";
 
 export default function useShapeMove(
   sceneCanvasRef: RefObject<HTMLCanvasElement | null>,

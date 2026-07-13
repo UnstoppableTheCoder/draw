@@ -1,4 +1,3 @@
-import { Point } from "@/types/canvas";
 import { normalizeRect } from "../../geometry/normalize-rect";
 
 export default function drawMarqueeSelection(

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useCanvasRenderer } from "../context/use-renderer";
-import { EditorRefs } from "@/types";
+import { EditorRefs } from "@/features/editor/types";
 
 export default function useCanvasResize({
   backgroundCanvasRef,

@@ -1,6 +1,5 @@
 import { TOLERANCE } from "@/features/editor/constants/canvas";
-import { FrameShape } from "@/features/editor/types/types";
-import { Point } from "@/types/canvas";
+import { FrameShape, Point } from "@/features/editor/types";
 
 export const pointInFrame = (
   point: Point,

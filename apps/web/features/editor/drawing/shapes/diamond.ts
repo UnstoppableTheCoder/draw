@@ -1,5 +1,5 @@
-import { DiamondShape } from "../../types/types";
 import getStrokeStyleValue from "../../components/properties-panel/get-stroke-style-value";
+import { DiamondShape } from "../../types";
 
 // Draw a Diamond
 export const drawDiamond = (

@@ -1,4 +1,4 @@
-import { EditorRefs } from "@/types";
+import { EditorRefs } from "@/features/editor/types";
 import useInteractionManager from "../../interactions/manager/use-interaction-manager";
 
 type CanvasLayersProps = {

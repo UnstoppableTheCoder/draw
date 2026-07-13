@@ -1,18 +1,8 @@
-import { Point } from "@/types/canvas";
-import { ToolType } from "@/types/toolbar";
+import { ToolType } from "@/features/editor/types/toolbar";
 import { v4 as uuidv4 } from "uuid";
-import {
-  ArrowShape,
-  DiamondShape,
-  EllipseShape,
-  FreeDrawShape,
-  LineShape,
-  PointTuple,
-  RectangleShape,
-  Shape,
-  StrokeStyle,
-} from "../../types/types";
+
 import { normalizeRect } from "../../geometry/normalize-rect";
+import { ArrowShape, DiamondShape, EllipseShape, FreeDrawShape, LineShape, Point, PointTuple, RectangleShape, Shape, StrokeStyle } from "../../types";
 
 // Rectangle
 export const createRectangleShape = (

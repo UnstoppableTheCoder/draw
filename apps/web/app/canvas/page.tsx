@@ -5,7 +5,7 @@ import { PropertiesPanel } from "@/features/editor/components/properties-panel/p
 import Toolbar from "@/features/editor/components/toolbar/toolbar";
 import RendererProvider from "@/features/editor/context/renderer-provider";
 import { usePointerState } from "@/features/editor/pointer/use-pointer-state";
-import { EditorRefs } from "@/types/editor";
+import { EditorRefs } from "@/features/editor/types/editor";
 import React, { useMemo, useRef } from "react";
 
 const CanvasWrapper = () => {

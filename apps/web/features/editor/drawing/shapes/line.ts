@@ -1,6 +1,6 @@
-import { LineShape } from "@/features/editor/types/types";
 import { getAbsolutePoint } from "../../geometry/get-absolute-point";
 import getStrokeStyleValue from "../../components/properties-panel/get-stroke-style-value";
+import { LineShape } from "../../types";
 
 export const drawLine = (ctx: CanvasRenderingContext2D, shape: LineShape) => {
   const { x, y, points } = shape;

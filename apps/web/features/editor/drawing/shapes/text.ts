@@ -1,5 +1,5 @@
 import { useShapePropertiesStore } from "../../store/properties/properties-store";
-import { TextShape } from "../../types/types";
+import { TextShape } from "../../types";
 
 export const drawText = (ctx: CanvasRenderingContext2D, shape: TextShape) => {
   const {

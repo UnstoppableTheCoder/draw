@@ -1,4 +1,4 @@
-import { ToolbarItemType } from "@/types/toolbar";
+import { ToolbarItemType } from "@/features/editor/types/toolbar";
 import {
   Circle,
   Diamond,

@@ -1,5 +1,5 @@
-import { ArrowShape, LineShape } from "../../types/types";
 import { getAbsolutePoint } from "../../geometry/get-absolute-point";
+import { ArrowShape, LineShape } from "../../types";
 
 export default function drawLineSelection(
   ctx: CanvasRenderingContext2D,

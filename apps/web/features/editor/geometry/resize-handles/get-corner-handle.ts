@@ -1,5 +1,4 @@
-import { Point } from "@/types/canvas";
-import { SelectedBounds } from "../../types/types";
+import { Point, SelectedBounds } from "../../types/types";
 import { ResizeHandleType } from "../../types/resize-handle";
 
 function isPointInsideRect({

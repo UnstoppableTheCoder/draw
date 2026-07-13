@@ -1,4 +1,4 @@
-import { Point } from "@/types/canvas";
+import { Point } from "../types";
 
 export const getSize = ({
   startPoint,

@@ -1,5 +1,5 @@
 import { TOLERANCE } from "@/features/editor/constants/canvas";
-import { DiamondShape, Point } from "@/features/editor/types/types";
+import { DiamondShape, Point } from "@/features/editor/types";
 
 export const pointInDiamond = (
   point: Point,

@@ -1,0 +1,25 @@
+model ActivityLog {
+    id String @id @default(uuid())
+
+    roomId String
+
+    room Room @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+    pageId String?
+
+    page Page? @relation(fields: [pageId], references: [id])
+
+    userId String
+
+    user User @relation(fields: [userId], references: [id])
+
+    action String
+
+    metadata Json?
+
+    createdAt DateTime @default(now())
+
+    @@index([roomId, createdAt])
+    @@index([pageId, createdAt])
+    @@index([userId, createdAt])
+}

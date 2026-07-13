@@ -1,6 +1,6 @@
 import { PointerEvent, RefObject } from "react";
 import * as store from "../../store/editor/selectors";
-import { Point, PointTuple, Shape } from "../../types/types";
+import { Point, PointTuple } from "../../types/types";
 import { useCanvasRenderer } from "../../context/use-renderer";
 import {
   useBackgroundColor,
@@ -16,6 +16,7 @@ import { computeDrawingPoints } from "./compute-drawing-points";
 import useSelectionActions from "../selection/use-selection";
 import { usePointerState } from "../../pointer/use-pointer-state";
 import { createShape } from "./create-shape";
+import { Shape } from "../../types";
 
 type UseDrawingArgs = {
   sceneCanvasRef: RefObject<HTMLCanvasElement | null>;

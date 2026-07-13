@@ -7,7 +7,7 @@ import {
   useShapes,
 } from "../../store/editor/selectors";
 import { v4 as uuidv4 } from "uuid";
-import { Shape } from "../../types/types";
+import { Shape } from "../../types";
 
 export default function useDuplicateShapes() {
   const shapes = useShapes();

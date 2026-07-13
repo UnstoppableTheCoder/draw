@@ -1,4 +1,4 @@
-import { FreeDrawShape, PointTuple, SelectedBounds } from "../../types/types";
+import { FreeDrawShape, PointTuple, SelectedBounds } from "../../types";
 import { scalePointInGroup } from "./scale-shape-in-group";
 
 export function resizeFreeDrawShape({

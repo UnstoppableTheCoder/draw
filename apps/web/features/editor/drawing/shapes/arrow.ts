@@ -1,5 +1,5 @@
-import { ArrowShape } from "../../types/types";
 import getStrokeStyleValue from "../../components/properties-panel/get-stroke-style-value";
+import { ArrowShape } from "../../types";
 
 // Canvas Coordinate System
 // (0, 0) is at the top-left corner of the canvas.

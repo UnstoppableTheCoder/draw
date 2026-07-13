@@ -1,5 +1,5 @@
-import { RectangleShape } from "../../types/types";
 import getStrokeStyleValue from "../../components/properties-panel/get-stroke-style-value";
+import { RectangleShape } from "../../types";
 
 export const drawRectangle = (
   ctx: CanvasRenderingContext2D,
