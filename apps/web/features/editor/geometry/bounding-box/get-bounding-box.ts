@@ -29,7 +29,11 @@ export function getBoundingBox(shape: Shape) {
   };
 
   const updateBoundsForShapesWithPoints = (shape: ShapeWithPoints) => {
-    const { x, y, points } = shape;
+    const {
+      x,
+      y,
+      data: { points },
+    } = shape;
 
     points.forEach((point: PointTuple) => {
       updateBounds(getAbsolutePoint(x, y, point));

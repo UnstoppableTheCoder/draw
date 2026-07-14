@@ -3,12 +3,12 @@ import { useCanvasRenderer } from "@/features/editor/context/use-renderer";
 import { getGroupBounds } from "@/features/editor/geometry/bounding-box/get-group-bounds";
 import { normalizeRect } from "@/features/editor/geometry/normalize-rect";
 import getTextDimensions from "@/features/editor/geometry/text/get-text-dimensions";
+import { createFrameShape } from "@/features/editor/interactions/draw/create-shape";
 import {
   useSelectedShapesIds,
   useSetShapes,
   useShapes,
 } from "@/features/editor/store/editor/selectors";
-import { FrameShape } from "@/features/editor/types";
 import { v4 as uuidv4 } from "uuid";
 
 export default function useSelectionMenuActions({
@@ -52,27 +52,27 @@ export default function useSelectionMenuActions({
       { x: bounds.maxX + scaledTolerance, y: bounds.maxY + scaledTolerance },
     );
 
-    const frameName = {
+    const data = {
       name: "Frame Name",
       fontSize: 14,
       fontFamily: "Virgil",
     };
 
-    const frame: FrameShape = {
-      id: frameId,
-      type: "frame",
-      ...rect,
-      strokeWidth: 2,
+    const zIndex = "ad";
+
+    const frame = createFrameShape({
+      rect,
       text: {
-        ...frameName,
+        ...data,
         ...getTextDimensions({
           ctx,
-          text: frameName.name,
-          fontSize: frameName.fontSize,
-          fontFamily: frameName.fontFamily,
+          text: data.name,
+          fontSize: data.fontSize,
+          fontFamily: data.fontFamily,
         }),
       },
-    };
+      zIndex,
+    });
 
     setShapes((prevShapes) => {
       const selectedShapes = prevShapes

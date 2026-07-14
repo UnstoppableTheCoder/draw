@@ -31,8 +31,8 @@ export const FontFamilyPicker = ({
 
     if (selectedShape && selectedShape.type !== "text") return;
 
-    if (selectedShape?.fontFamily != null) {
-      fontFamily = selectedShape.fontFamily;
+    if (selectedShape?.data.fontFamily != null) {
+      fontFamily = selectedShape.data.fontFamily;
     }
   }
 

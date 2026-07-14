@@ -5,19 +5,33 @@ export const drawRectangle = (
   ctx: CanvasRenderingContext2D,
   shape: RectangleShape,
 ) => {
-  const { x, y, width, height } = shape;
+  const {
+    x,
+    y,
+    width,
+    height,
+    appearance: {
+      strokeStyle,
+      strokeWidth,
+      strokeColor,
+      backgroundColor,
+      opacity,
+      roundness,
+    },
+  } = shape;
 
   ctx.save();
   ctx.beginPath();
 
-  const strokeValue = getStrokeStyleValue(shape.strokeStyle ?? "solid");
-  ctx.setLineDash(strokeValue);
-  ctx.lineWidth = shape.strokeWidth ?? 2;
-  ctx.strokeStyle = shape.strokeColor ?? "white";
-  ctx.fillStyle = shape.backgroundColor ?? "white";
-  ctx.globalAlpha = (shape.opacity ?? 100) / 100;
+  const strokeValue = getStrokeStyleValue(strokeStyle);
 
-  ctx.roundRect(x, y, width, height, shape.roundness ?? 10);
+  ctx.setLineDash(strokeValue);
+  ctx.lineWidth = strokeWidth;
+  ctx.strokeStyle = strokeColor;
+  ctx.fillStyle = backgroundColor;
+  ctx.globalAlpha = opacity / 100;
+
+  ctx.roundRect(x, y, width, height, roundness ?? 10);
 
   ctx.fill();
   ctx.stroke();

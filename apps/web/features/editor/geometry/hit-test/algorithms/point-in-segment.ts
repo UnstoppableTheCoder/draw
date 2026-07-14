@@ -12,15 +12,21 @@ export function pointInSegment(
 ): PointsShape | null {
   const scaledTolerance = (tolerance ?? TOLERANCE) / scale;
 
-  for (let i = 0; i < shape.points.length - 1; i++) {
+  const {
+    x,
+    y,
+    data: { points },
+  } = shape;
+
+  for (let i = 0; i < points.length - 1; i++) {
     // firstPoint, secondPoint -> Relative Distance Point from Start (x, y)
-    const firstPoint = shape.points[i];
-    const secondPoint = shape.points[i + 1];
+    const firstPoint = points[i];
+    const secondPoint = points[i + 1];
 
     if (!firstPoint || !secondPoint) return null;
 
-    const startPoint = getAbsolutePoint(shape.x, shape.y, firstPoint);
-    const endPoint = getAbsolutePoint(shape.x, shape.y, secondPoint);
+    const startPoint = getAbsolutePoint(x, y, firstPoint);
+    const endPoint = getAbsolutePoint(x, y, secondPoint);
 
     const distance = distanceToSegment(point, startPoint, endPoint);
 

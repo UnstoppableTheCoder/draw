@@ -1,9 +1,12 @@
-import { v4 as uuidv4 } from "uuid";
-
-import { ImageAsset, ImageShape } from "../../types";
+import { ImageAsset, ImageShape, ShapeAppearance } from "../../types";
 import { MAX_IMAGE_SIZE } from "../../constants/image";
+import { createBaseShape, DEFAULT_APPEARANCE } from "../draw/create-shape";
 
-export const createImageShape = (image: ImageAsset): ImageShape => {
+export const createImageShape = (
+  image: ImageAsset,
+  zIndex: string,
+  appearance?: Partial<ShapeAppearance>,
+): ImageShape => {
   const ratio = Math.min(
     1,
     MAX_IMAGE_SIZE / Math.max(image.naturalWidth, image.naturalHeight),
@@ -12,13 +15,25 @@ export const createImageShape = (image: ImageAsset): ImageShape => {
   const initialWidth = image.naturalWidth * ratio;
   const initialHeight = image.naturalHeight * ratio;
 
-  return {
-    id: uuidv4(),
-    imageId: image.id,
-    type: "image",
-    x: 0,
-    y: 0,
-    width: initialWidth,
-    height: initialHeight,
+  const shapeAppearance: ShapeAppearance = {
+    ...DEFAULT_APPEARANCE.image,
+    ...appearance,
   };
+
+  return createBaseShape(
+    "image",
+    {
+      x: 0,
+      y: 0,
+      width: initialWidth,
+      height: initialHeight,
+    },
+    {
+      imageId: image.id,
+      scale: [1, 1],
+      crop: null,
+    },
+    shapeAppearance,
+    zIndex,
+  );
 };

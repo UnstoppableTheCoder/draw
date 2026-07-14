@@ -30,8 +30,8 @@ export const FontSizePicker = ({
 
     if (selectedShape && selectedShape.type !== "text") return;
 
-    if (selectedShape?.fontSize != null) {
-      fontSize = selectedShape.fontSize;
+    if (selectedShape?.data.fontSize != null) {
+      fontSize = selectedShape.data.fontSize;
     }
   }
 

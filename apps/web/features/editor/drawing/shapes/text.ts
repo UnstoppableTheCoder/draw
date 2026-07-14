@@ -6,33 +6,31 @@ export const drawText = (ctx: CanvasRenderingContext2D, shape: TextShape) => {
     x,
     y,
     width,
-    text,
-    fontSize,
-    fontFamily,
-    strokeColor,
-    textAlign = "left",
+    appearance: { strokeColor, opacity },
+    data: { text, fontSize, fontFamily, textAlign = "left", lineHeight },
   } = shape;
+
   const { lineHeightMultiplier } = useShapePropertiesStore.getState();
 
   ctx.save();
 
   ctx.font = `${fontSize}px ${fontFamily}`;
-  ctx.fillStyle = strokeColor ?? "white";
+  ctx.fillStyle = strokeColor;
   ctx.textBaseline = "top";
-  ctx.globalAlpha = (shape.opacity ?? 100) / 100;
+  ctx.globalAlpha = opacity / 100;
   ctx.textAlign = textAlign;
 
   const drawX =
     textAlign === "center"
-      ? x + width! / 2
+      ? x + width / 2
       : textAlign === "right"
-        ? x + width!
+        ? x + width
         : x;
 
-  const lineHeight = fontSize * (lineHeightMultiplier ?? 1.25);
+  const computedLineHeight = lineHeight ?? fontSize * lineHeightMultiplier;
 
   text.split("\n").forEach((line, index) => {
-    ctx.fillText(line, drawX, y + index * lineHeight);
+    ctx.fillText(line, drawX, y + index * computedLineHeight);
   });
 
   ctx.restore();

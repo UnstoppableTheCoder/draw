@@ -28,7 +28,7 @@ const StrokeColorPicker = ({
 
     if (!selectedShape) return;
 
-    strokeColor = selectedShape.strokeColor!;
+    strokeColor = selectedShape.appearance.strokeColor!;
   }
 
   const handleStrokeColorChangeClick = (color: string) => {

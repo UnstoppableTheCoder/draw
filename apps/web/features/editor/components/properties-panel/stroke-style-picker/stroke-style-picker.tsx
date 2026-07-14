@@ -43,8 +43,8 @@ export const StrokeStylePicker = ({
       (shape) => shape.id === selectedShapeIds[0],
     );
 
-    if (selectedShape?.strokeStyle != null) {
-      strokeStyle = selectedShape.strokeStyle;
+    if (selectedShape?.appearance.strokeStyle != null) {
+      strokeStyle = selectedShape.appearance.strokeStyle;
     }
   }
 

@@ -6,6 +6,7 @@ import { IMAGE_GAP, MAX_IMAGE_SIZE } from "../../constants/image";
 import { createImageShape } from "./create-image-shape";
 import { usePointerState } from "../../pointer/use-pointer-state";
 import { loadImageAssets } from "./image-loader";
+import { getNextZIndex } from "../../utils/z-index";
 
 export default function useImageUpload({
   sceneCanvasRef,
@@ -72,7 +73,9 @@ export default function useImageUpload({
       const row = Math.floor(index / cols);
       const col = index % cols;
 
-      const shape = createImageShape(image);
+      const zIndex = getNextZIndex(shapes);
+      const shape = createImageShape(image, zIndex);
+
       shape.x = startX + col * CELL_SIZE + (MAX_IMAGE_SIZE - shape.width) / 2;
       shape.y = startY + row * CELL_SIZE + (MAX_IMAGE_SIZE - shape.height) / 2;
 

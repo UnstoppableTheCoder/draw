@@ -1,7 +1,7 @@
 import {
   Arrowhead,
+  ArrowRouting,
   Binding,
-  BoundElement,
   CropData,
   DrawableTool,
   FillStyle,
@@ -10,118 +10,127 @@ import {
   TextAlign,
 } from "./types";
 
-export interface BaseShape {
-  id: string;
-  type: DrawableTool;
-  x: number;
-  y: number;
-  width?: number;
-  height?: number;
-  angle?: number;
-  strokeColor?: string;
-  backgroundColor?: string;
-  fillStyle?: FillStyle;
-  strokeWidth?: number;
-  strokeStyle?: StrokeStyle;
-  roughness?: number;
-  opacity?: number;
-  groupId?: string | null;
-  frameId?: string | null;
-  index?: string; // z-index
-  roundness?: number | null;
-  seed?: number; // Random seed used by Rough.js.
-  version?: number; // Increment when shape changes.
-  versionNonce?: number; // Extra collision protection during syncing.
-  isDeleted?: boolean;
-  boundElements?: BoundElement[] | null; // Stores elements attached to this shape.
-  updated?: number;
-  link?: string | null; // Hyperlink attached to shape.
-  locked?: boolean;
+export type ShapeType = DrawableTool | "frame";
+
+// Shared Shape Types
+export interface ShapeAppearance {
+  strokeColor: string;
+  backgroundColor: string;
+  fillStyle: FillStyle;
+  strokeWidth: number;
+  strokeStyle: StrokeStyle;
+  roughness: number;
+  opacity: number;
+  roundness: number | null;
 }
 
-export interface RectangleShape extends BaseShape {
-  type: "rectangle";
-  width: number;
-  height: number;
-}
-
-export interface DiamondShape extends BaseShape {
-  type: "diamond";
-  width: number;
-  height: number;
-}
-
-export interface EllipseShape extends BaseShape {
-  type: "ellipse";
-  width: number;
-  height: number;
-}
-
-export interface ArrowShape extends BaseShape {
-  type: "arrow";
+// Shape Data
+export interface RectangleData {}
+export interface DiamondData {}
+export interface EllipseData {}
+export interface ArrowData {
   points: PointTuple[];
-  startBinding?: Binding | null; // Connected shape at start.
-  endBinding?: Binding | null; // Connected shape at end.
+  routing?: ArrowRouting;
+  startBinding?: Binding | null;
+  endBinding?: Binding | null;
   startArrowhead?: Arrowhead;
   endArrowhead?: Arrowhead;
-  elbowed?: boolean; // Arrow bends at 90°.
 }
 
-export interface LineShape extends BaseShape {
-  type: "line";
+export interface LineData {
   points: PointTuple[];
   startBinding?: Binding | null;
   endBinding?: Binding | null;
   startArrowhead?: Arrowhead;
   endArrowhead?: Arrowhead;
-  polygon?: boolean; // Used for polyline/polygon rendering.
+  polygon?: boolean;
 }
 
-export interface FreeDrawShape extends BaseShape {
-  type: "freedraw";
+export interface FreeDrawData {
   points: PointTuple[];
-  pressures?: number[]; // Pen pressure values.
-  simulatePressure?: boolean; // Fake pressure when using mouse.
+  pressures?: number[];
+  pressureMode?: "real" | "simulated";
 }
 
-export interface TextShape extends BaseShape {
-  type: "text";
+export interface TextData {
   text: string;
-  width?: number;
-  height?: number;
   fontSize: number;
   fontFamily: string;
   textAlign?: TextAlign;
   verticalAlign?: "top" | "middle" | "bottom";
-  containerId?: string | null; // Shape containing text.
-  originalText?: string; // Before processing/wrapping.
-  autoResize?: boolean; // Text box grows automatically.
-  lineHeight?: number; // Spacing between lines.
+  containerId?: string | null;
+  originalText?: string;
+  autoResize?: boolean;
+  lineHeight?: number;
 }
 
-export interface ImageShape extends BaseShape {
-  type: "image";
+export interface ImageData {
   imageId: string;
-  width: number;
-  height: number;
-  status?: "pending" | "saved" | "error";
-  scale?: [number, number]; // Image flipping/scaling.
-  crop?: CropData | null; // Stores cropped area.
+  scale?: [number, number];
+  crop?: CropData | null;
 }
 
-export interface FrameShape extends Omit<BaseShape, "type"> {
-  type: "frame";
-  width: number;
-  height: number;
+export interface FrameData {
   text: {
+    name: string;
     width: number;
     height: number;
-    name: string;
     fontSize: number;
     fontFamily: string;
   };
 }
 
+// Base Shape
+export interface BaseShape<TType extends ShapeType, TData = unknown> {
+  id: string;
+  type: TType;
+
+  // Geometry
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  angle: number;
+
+  // Appearance
+  appearance: ShapeAppearance;
+
+  // Hierarchy
+  groupId: string | null;
+  frameId: string | null;
+
+  // Ordering
+  zIndex: string;
+
+  // Collaboration
+  seed: number;
+  version: number;
+  versionNonce: number;
+  updated: number;
+
+  // State
+  isDeleted: boolean;
+  locked: boolean;
+
+  // Misc
+  link: string | null;
+
+  // Shape-specific
+  data: TData;
+}
+
+// Shapes
+export type RectangleShape = BaseShape<"rectangle", RectangleData>;
+export type DiamondShape = BaseShape<"diamond", DiamondData>;
+export type EllipseShape = BaseShape<"ellipse", EllipseData>;
+export type ArrowShape = BaseShape<"arrow", ArrowData>;
+export type LineShape = BaseShape<"line", LineData>;
+export type FreeDrawShape = BaseShape<"freedraw", FreeDrawData>;
+export type TextShape = BaseShape<"text", TextData>;
+export type ImageShape = BaseShape<"image", ImageData>;
+export type FrameShape = BaseShape<"frame", FrameData>;
+
+// Union
 export type Shape =
   | RectangleShape
   | DiamondShape

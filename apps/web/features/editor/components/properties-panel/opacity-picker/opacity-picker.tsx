@@ -26,8 +26,8 @@ export default function OpacityPicker({
       (shape) => shape.id === selectedShapesIds[0],
     );
 
-    if (selectedShape?.opacity != null) {
-      opacity = selectedShape.opacity;
+    if (selectedShape?.appearance.opacity != null) {
+      opacity = selectedShape.appearance.opacity;
     }
   }
 

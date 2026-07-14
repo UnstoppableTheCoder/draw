@@ -243,7 +243,7 @@ export default function useInteractionManager({
   function isClickedOnFrameName(point: Point, frameShape: Shape) {
     if (frameShape.type !== "frame") return false;
 
-    const text = frameShape.text;
+    const text = frameShape.data.text;
 
     const scaledTolerance = TOLERANCE / scale;
     const scaledTextHeight = text.height / scale;
@@ -269,7 +269,7 @@ export default function useInteractionManager({
 
       setEditingFrameState({
         frameId: hitShape.id,
-        frameName: hitShape.text.name,
+        frameName: hitShape.data.text.name,
       });
       return;
     }

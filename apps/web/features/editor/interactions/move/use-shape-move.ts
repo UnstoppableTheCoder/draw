@@ -151,7 +151,12 @@ export default function useShapeMove(
           frames.filter((frame) => frame.id !== shape.id),
         );
 
-        shape.frameId = parentFrame?.id;
+        if (!parentFrame) {
+          shape.frameId = null;
+          continue;
+        }
+
+        shape.frameId = parentFrame.id;
       }
 
       return reorderShapesByFrame(updatedShapes);

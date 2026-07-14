@@ -8,6 +8,8 @@ import {
 } from "../../store/editor/selectors";
 import { v4 as uuidv4 } from "uuid";
 import { Shape } from "../../types";
+import { generateKeyBetween } from "fractional-indexing";
+import { getZIndexBetween } from "../../utils/z-index";
 
 export default function useDuplicateShapes() {
   const shapes = useShapes();
@@ -21,17 +23,33 @@ export default function useDuplicateShapes() {
   ): Shape[] => {
     const groupIdMap = new Map<string, string>();
 
+    let previousZIndex = shapes.at(-1)?.zIndex ?? null;
+
     return shapes
       .filter((shape) => selectedIds.has(shape.id))
-      .map((shape) => ({
-        ...shape,
-        id: uuidv4(),
-        x: shape.x + DUPLICATE_OFFSET,
-        y: shape.y + DUPLICATE_OFFSET,
-        groupId: shape.groupId
-          ? getDuplicatedGroupId(shape.groupId, groupIdMap)
-          : undefined,
-      }));
+      .map((shape) => {
+        const zIndex = getZIndexBetween(previousZIndex, null);
+
+        return {
+          ...shape,
+          id: uuidv4(),
+          x: shape.x + DUPLICATE_OFFSET,
+          y: shape.y + DUPLICATE_OFFSET,
+
+          // Hierarchy
+          groupId: shape.groupId
+            ? getDuplicatedGroupId(shape.groupId, groupIdMap)
+            : null,
+
+          // Ordering
+          zIndex,
+
+          // Collaboration
+          version: shape.version + 1,
+          versionNonce: Math.floor(Math.random() * 2 ** 31),
+          updated: Date.now(),
+        };
+      });
   };
 
   const getDuplicatedGroupId = (

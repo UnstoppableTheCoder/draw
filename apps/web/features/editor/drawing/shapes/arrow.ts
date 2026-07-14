@@ -7,20 +7,29 @@ import { ArrowShape } from "../../types";
 // Y increases as you move down.
 
 export const drawArrow = (ctx: CanvasRenderingContext2D, shape: ArrowShape) => {
-  const { x, y, points } = shape;
+  const {
+    x,
+    y,
+    appearance: { strokeColor, strokeStyle, strokeWidth, opacity },
+    data: { points },
+  } = shape;
 
   if (points.length < 2) return;
-  const strokeValue = getStrokeStyleValue(shape.strokeStyle ?? "solid");
+
+  const strokeValue = getStrokeStyleValue(strokeStyle);
 
   ctx.save();
   ctx.beginPath();
   ctx.setLineDash(strokeValue);
-  ctx.lineWidth = shape.strokeWidth ?? 2;
-  ctx.strokeStyle = shape.strokeColor ?? "white";
-  ctx.globalAlpha = (shape.opacity ?? 100) / 100;
+  ctx.lineWidth = strokeWidth;
+  ctx.strokeStyle = strokeColor;
+  ctx.globalAlpha = opacity / 100;
 
   const first = points[0];
-  if (!first) return;
+  if (!first) {
+    ctx.restore();
+    return;
+  }
 
   // Draw the arrow line segments
   ctx.moveTo(x + first[0], y + first[1]);
@@ -41,7 +50,11 @@ export const drawArrow = (ctx: CanvasRenderingContext2D, shape: ArrowShape) => {
   // Draw Arrow Wings
   const secondLast = points[points.length - 2];
   const last = points[points.length - 1];
-  if (!secondLast || !last) return;
+
+  if (!secondLast || !last) {
+    ctx.restore();
+    return;
+  }
 
   // Second Last Indexes -> Absolute Points
   const startX = x + secondLast[0];

@@ -9,19 +9,26 @@ export default function drawLineSelection(
   lineStyle: "solid" | "dashed",
 ) {
   if (!selectedShape) return;
-  const { x, y, points } = selectedShape;
+
+  const {
+    x,
+    y,
+    data: { points },
+  } = selectedShape;
+
   const handleRadius = 5 / scale;
 
   const [start, end] = points.map((point) => getAbsolutePoint(x, y, point));
+
   if (!start || !end) return;
 
   const handles = [
-    { x: start.x, y: start.y }, // start
+    { x: start.x, y: start.y },
     {
       x: (start.x + end.x) / 2,
       y: (start.y + end.y) / 2,
-    }, // midpoint
-    { x: end.x, y: end.y }, // end
+    },
+    { x: end.x, y: end.y },
   ];
 
   ctx.save();
@@ -40,14 +47,12 @@ export default function drawLineSelection(
   ctx.stroke();
 
   if (selectionType === "group") {
-    handles.forEach(({ x, y }) => {
+    for (const { x, y } of handles) {
       ctx.beginPath();
-
       ctx.arc(x, y, handleRadius, 0, Math.PI * 2);
-
       ctx.fill();
       ctx.stroke();
-    });
+    }
   }
 
   ctx.restore();

@@ -6,29 +6,39 @@ export const drawFreeDraw = (
   ctx: CanvasRenderingContext2D,
   shape: FreeDrawShape,
 ) => {
-  const { x, y, points } = shape;
+  const {
+    x,
+    y,
+    appearance: { strokeStyle, strokeWidth, strokeColor, opacity },
+    data: { points },
+  } = shape;
 
-  const strokeValue = getStrokeStyleValue(shape.strokeStyle ?? "solid");
+  const strokeValue = getStrokeStyleValue(strokeStyle);
 
   ctx.save();
   ctx.setLineDash(strokeValue);
-  ctx.lineWidth = shape.strokeWidth ?? 2;
-  ctx.strokeStyle = shape.strokeColor ?? "white";
+  ctx.lineWidth = strokeWidth;
+  ctx.strokeStyle = strokeColor;
   ctx.lineCap = "round";
   ctx.lineJoin = "round";
-  ctx.globalAlpha = (shape.opacity ?? 100) / 100;
+  ctx.globalAlpha = opacity / 100;
 
   // Draw a dot
   if (points.length === 1) {
     ctx.beginPath();
-    ctx.arc(x, y, 2, 0, Math.PI * 2);
-    ctx.fillStyle = shape.strokeColor ?? "white";
+    ctx.arc(x, y, strokeWidth / 2, 0, Math.PI * 2);
+    ctx.fillStyle = strokeColor;
     ctx.fill();
+    ctx.restore();
     return;
   }
 
   const firstPoint = points[0];
-  if (!firstPoint) return;
+  if (!firstPoint) {
+    ctx.restore();
+    return;
+  }
+
   const first = getAbsolutePoint(x, y, firstPoint);
 
   ctx.beginPath();

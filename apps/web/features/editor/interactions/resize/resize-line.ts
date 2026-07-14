@@ -25,10 +25,13 @@ export function resizeLineShape({
         ...shape,
         x: currentPoint.x,
         y: currentPoint.y,
-        points: [
-          [0, 0],
-          [end.x - currentPoint.x, end.y - currentPoint.y],
-        ],
+        data: {
+          ...shape.data,
+          points: [
+            [0, 0],
+            [end.x - currentPoint.x, end.y - currentPoint.y],
+          ],
+        },
       };
     }
 
@@ -39,10 +42,13 @@ export function resizeLineShape({
         ...shape,
         x: start.x,
         y: start.y,
-        points: [
-          [0, 0],
-          [currentPoint.x - start.x, currentPoint.y - start.y],
-        ],
+        data: {
+          ...shape.data,
+          points: [
+            [0, 0],
+            [currentPoint.x - start.x, currentPoint.y - start.y],
+          ],
+        },
       };
     }
 

@@ -5,15 +5,29 @@ export const drawEllipse = (
   ctx: CanvasRenderingContext2D,
   shape: EllipseShape,
 ) => {
-  const { x, y, width, height } = shape;
+  const {
+    x,
+    y,
+    width,
+    height,
+    appearance: {
+      strokeStyle,
+      strokeWidth,
+      strokeColor,
+      backgroundColor,
+      opacity,
+    },
+  } = shape;
 
   ctx.save();
-  const strokeValue = getStrokeStyleValue(shape.strokeStyle ?? "solid");
+
+  const strokeValue = getStrokeStyleValue(strokeStyle);
+
   ctx.setLineDash(strokeValue);
-  ctx.lineWidth = shape.strokeWidth ?? 2;
-  ctx.strokeStyle = shape.strokeColor ?? "white";
-  ctx.fillStyle = shape.backgroundColor ?? "white";
-  ctx.globalAlpha = (shape.opacity ?? 100) / 100;
+  ctx.lineWidth = strokeWidth;
+  ctx.strokeStyle = strokeColor;
+  ctx.fillStyle = backgroundColor;
+  ctx.globalAlpha = opacity / 100;
 
   const centerX = x + width / 2;
   const centerY = y + height / 2;

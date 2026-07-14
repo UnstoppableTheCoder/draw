@@ -3,22 +3,32 @@ import getStrokeStyleValue from "../../components/properties-panel/get-stroke-st
 import { LineShape } from "../../types";
 
 export const drawLine = (ctx: CanvasRenderingContext2D, shape: LineShape) => {
-  const { x, y, points } = shape;
+  const {
+    x,
+    y,
+    appearance: { strokeStyle, strokeWidth, strokeColor, opacity },
+    data: { points },
+  } = shape;
 
   if (points.length < 2) return;
 
-  const strokeValue = getStrokeStyleValue(shape.strokeStyle ?? "solid");
+  const strokeValue = getStrokeStyleValue(strokeStyle);
+
+  ctx.save();
+
   ctx.setLineDash(strokeValue);
-  ctx.lineWidth = shape.strokeWidth ?? 2;
-  ctx.strokeStyle = shape.strokeColor ?? "white";
-  ctx.globalAlpha = (shape.opacity ?? 100) / 100;
+  ctx.lineWidth = strokeWidth;
+  ctx.strokeStyle = strokeColor;
+  ctx.globalAlpha = opacity / 100;
 
   const first = points[0];
-  if (!first) return;
+  if (!first) {
+    ctx.restore();
+    return;
+  }
 
   const absoluteFirst = getAbsolutePoint(x, y, first);
 
-  ctx.save();
   ctx.beginPath();
 
   ctx.moveTo(absoluteFirst.x, absoluteFirst.y);

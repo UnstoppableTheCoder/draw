@@ -38,8 +38,8 @@ export default function EdgePicker({
       (shape) => shape.id === selectedShapesIds[0],
     );
 
-    if (selectedShape?.roundness != null) {
-      roundness = selectedShape.roundness;
+    if (selectedShape?.appearance.roundness != null) {
+      roundness = selectedShape.appearance.roundness;
     }
 
     if (selectedShape?.type === "text") return;

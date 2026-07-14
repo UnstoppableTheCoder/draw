@@ -10,6 +10,7 @@ export type PointTuple = [number, number];
 export type StrokeStyle = "solid" | "dashed" | "dotted";
 export type FillStyle = "solid" | "hachure" | "cross-hatch" | "dots" | "zigzag";
 export type Arrowhead = "arrow" | "triangle" | "bar" | "dot" | null;
+export type ArrowRouting = "straight" | "elbow" | "curved" | "smart";
 
 export type TextAlign = "left" | "center" | "right";
 
@@ -33,7 +34,6 @@ export interface CropData {
 
 export type DrawableTool =
   | "rectangle"
-  | "circle"
   | "ellipse"
   | "diamond"
   | "line"
@@ -42,17 +42,9 @@ export type DrawableTool =
   | "text"
   | "image";
 
-export interface TextEditingState extends Omit<
-  TextShape,
-  "id" | "fontSize" | "fontFamily"
-> {
+export type TextEditingState = Omit<TextShape, "id"> & {
   id?: string;
-  x: number;
-  y: number;
-  text: string;
-  fontSize: number;
-  fontFamily: string;
-}
+};
 
 export type SelectedBounds = {
   minX: number;

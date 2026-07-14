@@ -20,6 +20,8 @@ import { useCanvasRenderer } from "../../context/use-renderer";
 import useViewportHelpers from "../viewport/use-viewport-helpers";
 import { getFrameAtPosition } from "../shared/get-frame-at-position";
 import { Point, Shape } from "../../types";
+import { createBaseShape, DEFAULT_APPEARANCE } from "../draw/create-shape";
+import { getNextZIndex } from "../../utils/z-index";
 
 export default function useTextEditing(
   canvasRef: RefObject<HTMLCanvasElement | null>,
@@ -63,7 +65,7 @@ export default function useTextEditing(
   const saveTextShape = () => {
     if (!textEditingState) return;
 
-    const text = textEditingState.text;
+    const text = textEditingState.data.text;
 
     const ctx = canvasRef.current?.getContext("2d");
     if (!ctx) return;
@@ -96,12 +98,15 @@ export default function useTextEditing(
 
       return {
         ...shape,
-        text,
+        data: {
+          ...shape.data,
+          text,
+        },
         ...getTextDimensions({
           ctx,
           text,
-          fontSize: shape.fontSize,
-          fontFamily: shape.fontFamily,
+          fontSize: shape.data.fontSize,
+          fontFamily: shape.data.fontFamily,
         }),
       };
     });
@@ -120,18 +125,31 @@ export default function useTextEditing(
       fontFamily,
     });
 
+    const zIndex = getNextZIndex(shapes);
+
     return [
       ...shapes,
-      {
-        ...editingState,
-        id: uuidv4(),
-        text,
-        width: width / scale,
-        height: height / scale,
-        fontSize: fontSize / scale,
-        fontFamily,
-        frameId: hoveredFrameId,
-      },
+      createBaseShape(
+        "text",
+        {
+          x: editingState.x,
+          y: editingState.y,
+          width: width / scale,
+          height: height / scale,
+        },
+        {
+          text,
+          fontSize: fontSize / scale,
+          fontFamily,
+          textAlign,
+          lineHeight: lineHeightMultiplier,
+        },
+        {
+          ...DEFAULT_APPEARANCE.text,
+          strokeColor,
+        },
+        zIndex,
+      ),
     ];
   }
 
@@ -164,11 +182,33 @@ export default function useTextEditing(
       type: "text",
       x: point.x,
       y: point.y,
-      text: "",
-      fontSize,
-      fontFamily,
-      strokeColor,
-      textAlign,
+      width: 0,
+      height: 0,
+      angle: 0,
+
+      appearance: {
+        ...DEFAULT_APPEARANCE.text,
+        strokeColor,
+      },
+
+      data: {
+        text: "",
+        fontSize,
+        fontFamily,
+        textAlign,
+        lineHeight: lineHeightMultiplier,
+      },
+
+      groupId: null,
+      frameId: hoveredFrameId,
+      zIndex: "",
+      seed: 0,
+      version: 0,
+      versionNonce: 0,
+      updated: 0,
+      isDeleted: false,
+      locked: false,
+      link: null,
     });
   }
 
@@ -190,7 +230,10 @@ export default function useTextEditing(
         prev
           ? {
               ...prev,
-              text: value,
+              data: {
+                ...prev.data,
+                text: value,
+              },
             }
           : null,
       );
@@ -214,13 +257,13 @@ export default function useTextEditing(
       top: point.y - 4,
       fontSize: `${
         textEditingState.id
-          ? textEditingState.fontSize * scale
-          : textEditingState.fontSize
+          ? textEditingState.data.fontSize * scale
+          : textEditingState.data.fontSize
       }px`,
-      fontFamily: textEditingState.fontFamily,
-      color: textEditingState.strokeColor,
+      fontFamily: textEditingState.data.fontFamily,
+      color: textEditingState.appearance.strokeColor,
       lineHeight: lineHeightMultiplier,
-      textAlign: textEditingState.textAlign,
+      textAlign: textEditingState.data.textAlign,
       zIndex: 3,
     };
   }, [textEditingState, scale, lineHeightMultiplier, viewportHelpers]);

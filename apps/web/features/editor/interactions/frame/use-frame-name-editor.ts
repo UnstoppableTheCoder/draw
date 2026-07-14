@@ -42,14 +42,17 @@ export default function useFrameNameEditor(
 
   useEffect(() => {
     if (!frame || frame.type !== "frame") return;
+    const {
+      data: { text },
+    } = frame;
 
-    setValue(frame.text.name);
+    setValue(text.name);
 
     requestAnimationFrame(() => {
       frameNameInputRef.current?.focus();
       frameNameInputRef.current?.select();
     });
-  }, [frame?.id]);
+  }, [frame?.id, frameNameInputRef]);
 
   const updateFrameName = (value: string) => {
     if (!frame) return;
@@ -65,17 +68,24 @@ export default function useFrameNameEditor(
           return shape;
         }
 
+        const {
+          data: { text },
+        } = shape;
+
         return {
           ...shape,
-          text: {
-            ...shape.text,
-            name: frameName,
-            ...getTextDimensions({
-              ctx,
-              text: frameName,
-              fontSize: shape.text.fontSize,
-              fontFamily: shape.text.fontFamily,
-            }),
+          data: {
+            ...shape.data,
+            text: {
+              ...text,
+              name: frameName,
+              ...getTextDimensions({
+                ctx,
+                text: frameName,
+                fontSize: text.fontSize,
+                fontFamily: text.fontFamily,
+              }),
+            },
           },
         };
       }),
@@ -92,7 +102,7 @@ export default function useFrameNameEditor(
   const cancelEditing = () => {
     if (!frame || frame.type !== "frame") return;
 
-    setValue(frame.text.name);
+    setValue(frame.data.text.name);
     setFrameEditingState(null);
   };
 
@@ -115,6 +125,10 @@ export default function useFrameNameEditor(
   const style = useMemo(() => {
     if (!frame || frame.type !== "frame") return null;
 
+    const {
+      data: { text },
+    } = frame;
+
     const ctx = overlayCanvasRef.current?.getContext("2d");
     if (!ctx) return null;
 
@@ -124,8 +138,8 @@ export default function useFrameNameEditor(
     const { width, height } = getTextDimensions({
       ctx,
       text: value || " ",
-      fontSize: frame.text.fontSize,
-      fontFamily: frame.text.fontFamily,
+      fontSize: text.fontSize,
+      fontFamily: text.fontFamily,
     });
 
     return {
@@ -134,8 +148,8 @@ export default function useFrameNameEditor(
       top: point.y - height - TOLERANCE,
       width: width + 20,
       height: height + 20,
-      fontSize: `${frame.text.fontSize}px`,
-      fontFamily: frame.text.fontFamily,
+      fontSize: `${text.fontSize}px`,
+      fontFamily: text.fontFamily,
     };
   }, [frame, value, overlayCanvasRef, viewportHelpers]);
 

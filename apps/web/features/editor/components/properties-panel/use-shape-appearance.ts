@@ -1,3 +1,14 @@
+import { RefObject, useCallback } from "react";
+
+import { useCanvasRenderer } from "../../context/use-renderer";
+import getTextDimensions from "../../geometry/text/get-text-dimensions";
+import {
+  usePushHistory,
+  useSelectedShapesIds,
+  useSetShapes,
+  useSetTextEditingState,
+  useTextEditingState,
+} from "../../store/editor/selectors";
 import {
   useSetBackgroundColor,
   useSetFontFamily,
@@ -9,25 +20,23 @@ import {
   useSetStrokeWidth,
   useSetTextAlign,
 } from "../../store/properties/selectors";
-import { useCanvasRenderer } from "../../context/use-renderer";
-import { StrokeStyle, TextAlign } from "../../types/types";
-import { RefObject, useCallback } from "react";
 import {
-  usePushHistory,
-  useSelectedShapesIds,
-  useSetShapes,
-  useSetTextEditingState,
-  useTextEditingState,
-} from "../../store/editor/selectors";
-import getTextDimensions from "../../geometry/text/get-text-dimensions";
+  Shape,
+  ShapeAppearance,
+  StrokeStyle,
+  TextAlign,
+  TextShape,
+} from "../../types";
 
 export default function useShapeAppearance(
   canvasRef: RefObject<HTMLCanvasElement | null>,
 ) {
   const selectedShapesIds = useSelectedShapesIds();
   const setShapes = useSetShapes();
+
   const textEditingState = useTextEditingState();
   const setTextEditingState = useSetTextEditingState();
+
   const setPropertyStrokeColor = useSetStrokeColor();
   const setPropertyBackgroundColor = useSetBackgroundColor();
   const setPropertyStrokeWidth = useSetStrokeWidth();
@@ -42,115 +51,198 @@ export default function useShapeAppearance(
   const pushHistory = usePushHistory();
 
   const updateSelectedShapes = useCallback(
-    (updates: any) => {
-      if (!canvasRef) return;
+    ({
+      appearance,
+      data,
+    }: {
+      appearance?: Partial<ShapeAppearance>;
+      data?: Partial<TextShape["data"]>;
+    }) => {
       const ctx = canvasRef.current?.getContext("2d");
+      if (!ctx) return;
 
       if (selectedShapesIds.length === 0) return;
 
       const selected = new Set(selectedShapesIds);
 
       setShapes((prevShapes) =>
-        prevShapes.map((shape) =>
-          selected.has(shape.id)
-            ? shape.type === "text"
-              ? updates.hasOwnProperty("fontSize") ||
-                updates.hasOwnProperty("fontFamily")
+        prevShapes.map((shape) => {
+          if (!selected.has(shape.id)) {
+            return shape;
+          }
+
+          if (shape.type === "text") {
+            const updatedData = data
+              ? {
+                  ...shape.data,
+                  ...data,
+                }
+              : shape.data;
+
+            const dimensions = getTextDimensions({
+              ctx,
+              text: updatedData.text,
+              fontSize: updatedData.fontSize,
+              fontFamily: updatedData.fontFamily,
+            });
+
+            return {
+              ...shape,
+              appearance: appearance
                 ? {
-                    ...shape,
-                    ...getTextDimensions({ ctx, ...shape, ...updates }),
-                    ...updates,
+                    ...shape.appearance,
+                    ...appearance,
                   }
-                : { ...shape, ...updates }
-              : { ...shape, ...updates }
-            : shape,
-        ),
+                : shape.appearance,
+              data: updatedData,
+              ...dimensions,
+            };
+          }
+
+          return {
+            ...shape,
+            appearance: appearance
+              ? {
+                  ...shape.appearance,
+                  ...appearance,
+                }
+              : shape.appearance,
+          };
+        }),
       );
+
       pushHistory();
       invalidate();
     },
-    [selectedShapesIds, setShapes, invalidate, canvasRef, getTextDimensions],
+    [canvasRef, invalidate, pushHistory, selectedShapesIds, setShapes],
   );
 
   function setStrokeColor(strokeColor: string) {
     setPropertyStrokeColor(strokeColor);
 
     if (textEditingState) {
-      setTextEditingState((prev) => {
-        if (!prev) return prev;
-
-        return { ...prev, strokeColor };
-      });
+      setTextEditingState((prev) =>
+        prev
+          ? {
+              ...prev,
+              appearance: {
+                ...prev.appearance,
+                strokeColor,
+              },
+            }
+          : null,
+      );
     }
 
-    updateSelectedShapes({ strokeColor });
+    updateSelectedShapes({
+      appearance: { strokeColor },
+    });
   }
 
   function setBackgroundColor(backgroundColor: string) {
     setPropertyBackgroundColor(backgroundColor);
-    updateSelectedShapes({ backgroundColor });
+
+    updateSelectedShapes({
+      appearance: { backgroundColor },
+    });
   }
 
   function setStrokeWidth(strokeWidth: number) {
     setPropertyStrokeWidth(strokeWidth);
-    updateSelectedShapes({ strokeWidth });
+
+    updateSelectedShapes({
+      appearance: { strokeWidth },
+    });
   }
 
   function setStrokeStyle(strokeStyle: StrokeStyle) {
     setPropertyStrokeStyle(strokeStyle);
-    updateSelectedShapes({ strokeStyle });
+
+    updateSelectedShapes({
+      appearance: { strokeStyle },
+    });
   }
 
   function setFontSize(fontSize: number) {
     setPropertyFontSize(fontSize);
 
     if (textEditingState) {
-      setTextEditingState((prev) => {
-        if (!prev) return prev;
-
-        return { ...prev, fontSize };
-      });
+      setTextEditingState((prev) =>
+        prev
+          ? {
+              ...prev,
+              data: {
+                ...prev.data,
+                fontSize,
+              },
+            }
+          : null,
+      );
     }
 
-    updateSelectedShapes({ fontSize });
+    updateSelectedShapes({
+      data: { fontSize },
+    });
   }
 
   function setRoundness(roundness: number) {
     setPropertyRoundness(roundness);
-    updateSelectedShapes({ roundness });
+
+    updateSelectedShapes({
+      appearance: { roundness },
+    });
   }
 
   function setOpacity(opacity: number) {
     setPropertyOpacity(opacity);
-    updateSelectedShapes({ opacity });
+
+    updateSelectedShapes({
+      appearance: { opacity },
+    });
   }
 
   function setTextAlign(textAlign: TextAlign) {
     setPropertyTextAlign(textAlign);
 
     if (textEditingState) {
-      setTextEditingState((prev) => {
-        if (!prev) return prev;
-
-        return { ...prev, textAlign };
-      });
+      setTextEditingState((prev) =>
+        prev
+          ? {
+              ...prev,
+              data: {
+                ...prev.data,
+                textAlign,
+              },
+            }
+          : null,
+      );
     }
 
-    updateSelectedShapes({ textAlign });
+    updateSelectedShapes({
+      data: { textAlign },
+    });
   }
 
   function setFontFamily(fontFamily: string) {
     setPropertyFontFamily(fontFamily);
 
     if (textEditingState) {
-      setTextEditingState((prev) => {
-        if (!prev) return prev;
-
-        return { ...prev, fontFamily };
-      });
+      setTextEditingState((prev) =>
+        prev
+          ? {
+              ...prev,
+              data: {
+                ...prev.data,
+                fontFamily,
+              },
+            }
+          : null,
+      );
     }
 
-    updateSelectedShapes({ fontFamily });
+    updateSelectedShapes({
+      data: { fontFamily },
+    });
   }
 
   return {

@@ -23,7 +23,13 @@ export default function resizeTextShape({
   initialFontSize: number;
   scale?: number;
 }) {
-  const updatedShape = { ...shape, ...rect };
+  const updatedShape: TextShape = {
+    ...shape,
+    ...rect,
+    data: {
+      ...shape.data,
+    },
+  };
 
   let { minX, minY, maxX, maxY } = initialBounds;
 
@@ -34,20 +40,20 @@ export default function resizeTextShape({
   maxY = maxY - TOLERANCE;
 
   const oldHeight = maxY - minY;
-  const oldWidth = maxY - minY;
+  const oldWidth = maxX - minX;
   const newHeight = rect.height;
   const newWidth = rect.width;
 
   const scaleX = oldWidth === 0 ? 1 : newWidth / oldWidth;
   const scaleY = oldHeight === 0 ? 1 : newHeight / oldHeight;
 
-  updatedShape.fontSize = Math.max(1, initialFontSize * (scale ?? scaleY));
+  updatedShape.data.fontSize = Math.max(1, initialFontSize * (scale ?? scaleY));
 
   const dimensions = getTextDimensions({
     ctx,
-    text: updatedShape.text,
-    fontSize: updatedShape.fontSize,
-    fontFamily: updatedShape.fontFamily,
+    text: updatedShape.data.text,
+    fontSize: updatedShape.data.fontSize,
+    fontFamily: updatedShape.data.fontFamily,
   });
 
   if (dimensions) {

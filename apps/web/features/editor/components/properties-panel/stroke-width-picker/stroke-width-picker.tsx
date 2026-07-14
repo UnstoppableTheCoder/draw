@@ -41,8 +41,8 @@ export const StrokeWidthPicker = ({
       (shape) => shape.id === selectedShapeIds[0],
     );
 
-    if (selectedShape?.strokeWidth != null) {
-      strokeWidth = selectedShape.strokeWidth;
+    if (selectedShape?.appearance.strokeWidth != null) {
+      strokeWidth = selectedShape.appearance.strokeWidth;
     }
   }
   // Rendering Stroke Style Picker Conditionally

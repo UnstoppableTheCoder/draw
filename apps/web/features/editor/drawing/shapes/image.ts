@@ -21,7 +21,16 @@ export const drawImage = (
   shape: ImageShape,
   images: ImageMap,
 ) => {
-  const asset = images[shape.imageId];
+  const {
+    x,
+    y,
+    width,
+    height,
+    appearance: { opacity },
+    data: { imageId },
+  } = shape;
+
+  const asset = images[imageId];
   if (!asset) return;
 
   const imageUrl = asset.renderUrl ?? asset.publicUrl;
@@ -34,9 +43,24 @@ export const drawImage = (
   }
 
   ctx.save();
-  ctx.globalAlpha = (shape.opacity ?? 100) / 100;
+  ctx.globalAlpha = opacity / 100;
 
-  ctx.drawImage(img, shape.x, shape.y, shape.width, shape.height);
+  // if (crop) {
+  //   ctx.drawImage(
+  //     img,
+  //     crop.x,
+  //     crop.y,
+  //     crop.width,
+  //     crop.height,
+  //     x,
+  //     y,
+  //     width,
+  //     height,
+  //   );
+  // } else {
+  //   ctx.drawImage(img, x, y, width, height);
+  // }
+  ctx.drawImage(img, x, y, width, height);
 
   ctx.restore();
 };

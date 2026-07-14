@@ -19,13 +19,21 @@ export function getSegmentHandle(
   selectedShape: LineShape | ArrowShape,
   scale: number,
 ): ResizeHandleType {
-  const [startRel, endRel] = selectedShape.points;
+  const {
+    x,
+    y,
+    data: { points },
+  } = selectedShape;
+
+  const [startRel, endRel] = points;
+
   if (!startRel || !endRel) {
     return null;
   }
 
-  const start = getAbsolutePoint(selectedShape.x, selectedShape.y, startRel);
-  const end = getAbsolutePoint(selectedShape.x, selectedShape.y, endRel);
+  const start = getAbsolutePoint(x, y, startRel);
+  const end = getAbsolutePoint(x, y, endRel);
+
   const middle = {
     x: start.x + (end.x - start.x) / 2,
     y: start.y + (end.y - start.y) / 2,

@@ -34,7 +34,7 @@ const BackgroundColorPicker = ({
 
     if (!selectedShape) return;
 
-    backgroundColor = selectedShape.backgroundColor!;
+    backgroundColor = selectedShape.appearance.backgroundColor!;
   }
 
   // Render Background Color Picker Conditionally

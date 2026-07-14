@@ -100,25 +100,28 @@ export default function useSelectionActions({
         if (!data.initialFontSizes) {
           data.initialFontSizes = {};
         }
-        data.initialFontSizes[previewShape.id] = previewShape.fontSize;
+
+        data.initialFontSizes[previewShape.id] = previewShape.data.fontSize;
       }
 
       if (previewShape.type === "freedraw") {
         if (!data.freeDrawPoints) {
           data.freeDrawPoints = {};
         }
-        data.freeDrawPoints[previewShape.id] = previewShape.points.map(
+
+        data.freeDrawPoints[previewShape.id] = previewShape.data.points.map(
           ([px, py]) => [previewShape.x + px, previewShape.y + py],
         );
       }
 
       if (previewShape.type === "line" || previewShape.type === "arrow") {
-        const [startRel, endRel] = previewShape.points;
+        const [startRel, endRel] = previewShape.data.points;
 
         if (startRel && endRel) {
           if (!data.lineResizeStates) {
             data.lineResizeStates = {};
           }
+
           data.lineResizeStates[previewShape.id] = {
             start: getAbsolutePoint(previewShape.x, previewShape.y, startRel),
             end: getAbsolutePoint(previewShape.x, previewShape.y, endRel),

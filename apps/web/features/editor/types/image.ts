@@ -5,5 +5,5 @@ export interface ImageAsset {
   publicUrl?: string; // URL used to load the image
   naturalWidth: number;
   naturalHeight: number;
-  status: "uploading" | "uploaded";
+  status: "uploading" | "uploaded" | "error";
 }

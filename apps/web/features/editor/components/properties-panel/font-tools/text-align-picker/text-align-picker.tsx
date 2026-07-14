@@ -32,8 +32,8 @@ export const TextAlignPicker = ({
 
     if (selectedShape && selectedShape.type !== "text") return;
 
-    if (selectedShape?.textAlign != null) {
-      textAlign = selectedShape.textAlign;
+    if (selectedShape?.data.textAlign != null) {
+      textAlign = selectedShape.data.textAlign;
     }
   }
 

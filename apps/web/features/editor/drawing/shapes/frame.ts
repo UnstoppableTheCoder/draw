@@ -8,7 +8,14 @@ export const drawFrame = (
   hovered: boolean,
   isEditing: boolean,
 ) => {
-  const { x, y, width, height, text } = shape;
+  const {
+    x,
+    y,
+    width,
+    height,
+    appearance: { roundness },
+    data: { text },
+  } = shape;
 
   // const isEditing =
   const borderColor = hovered ? "#6965DB" : "#7d7d7d";
@@ -20,7 +27,7 @@ export const drawFrame = (
   ctx.lineWidth = 2 / scale;
   ctx.strokeStyle = borderColor;
 
-  ctx.roundRect(x, y, width, height, shape.roundness ?? 10);
+  ctx.roundRect(x, y, width, height, roundness ?? 10);
 
   ctx.stroke();
 
@@ -31,15 +38,6 @@ export const drawFrame = (
     ctx.textBaseline = "bottom";
 
     ctx.fillText(text.name, x, y - TOLERANCE / scale);
-
-    // Rectangle around the text
-    // ctx.strokeStyle = "#7d7d7d";
-    // ctx.strokeRect(
-    //   x,
-    //   y,
-    //   text.width / scale,
-    //   -text.height / scale - TOLERANCE / scale,
-    // );
   }
 
   ctx.restore();

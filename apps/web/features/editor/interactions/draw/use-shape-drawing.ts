@@ -16,7 +16,8 @@ import { computeDrawingPoints } from "./compute-drawing-points";
 import useSelectionActions from "../selection/use-selection";
 import { usePointerState } from "../../pointer/use-pointer-state";
 import { createShape } from "./create-shape";
-import { Shape } from "../../types";
+import { DrawableTool, Shape } from "../../types";
+import { getNextZIndex } from "../../utils/z-index";
 
 type UseDrawingArgs = {
   sceneCanvasRef: RefObject<HTMLCanvasElement | null>;
@@ -61,12 +62,15 @@ export default function useShapeDrawing({
   function createDrawingShape(end: Point) {
     if (!drawingStartRef.current) return null;
 
+    const zIndex = getNextZIndex(shapes);
+
     return createShape({
-      tool: selectedTool,
+      tool: selectedTool as DrawableTool,
       startPoint: drawingStartRef.current,
       endPoint: end,
       points: drawingPointsRef.current,
-      style: {
+      zIndex,
+      appearance: {
         strokeColor,
         backgroundColor,
         strokeWidth,

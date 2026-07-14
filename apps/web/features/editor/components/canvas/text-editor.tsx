@@ -30,7 +30,7 @@ export default function TextEditor({
       ref={textareaRef}
       autoFocus
       wrap="off"
-      value={textEditingState.text}
+      value={textEditingState.data.text}
       onChange={textEditing.handleChange}
       onKeyDown={textEditing.handleKeyDown}
       className="fixed field-sizing-content resize-none border-none outline-none bg-transparent overflow-hidden p-0 m-0"

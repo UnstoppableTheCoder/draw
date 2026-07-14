@@ -1,45 +1,48 @@
 model Shape {
     id String @id @default(uuid())
 
-    pageId String
-    page   Page   @relation(fields: [pageId], references: [id], onDelete: Cascade)
-
+    // Relations
+    pageId      String
+    page        Page   @relation(fields: [pageId], references: [id], onDelete: Cascade)
     createdById String
     createdBy   User   @relation(fields: [createdById], references: [id])
 
-    // Shared geometry
+    // Geometry
     type   ShapeType
     x      Float
     y      Float
-    width  Float?
-    height Float?
+    width  Float
+    height Float
     angle  Float     @default(0)
-    zIndex String?
 
-    // Group and frame identifiers
-    groupId String?
-    frameId String?
+    // Appearance
+    appearance Json
 
-    // Collaboration metadata.
-    seed         Int?
+    // Metadata
+    groupId      String?
+    frameId      String?
+    zIndex       String
+    seed         Int
     version      Int     @default(1)
-    versionNonce Int?
-    locked       Boolean @default(false)
+    versionNonce Int
+    updated      BigInt
     isDeleted    Boolean @default(false)
-    updated      BigInt?
+    locked       Boolean @default(false)
     link         String?
 
-    // Appearance is shared styling
-    appearance Json @default("{}")
-    data       Json @default("{}")
+    // Shape Specific Data
+    data Json
 
+    // Audit
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
+    // Relations
     comments Comment[]
 
+    // Indexes
+    @@index([pageId])
     @@index([pageId, zIndex])
     @@index([pageId, groupId])
     @@index([pageId, frameId])
-    @@index([createdById])
 }
