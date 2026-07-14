@@ -1,0 +1,39 @@
+enum BoardRole {
+    OWNER
+    EDITOR
+    VIEWER
+}
+
+enum ShapeType {
+    RECTANGLE
+    DIAMOND
+    ELLIPSE
+    LINE
+    ARROW
+    FREEDRAW
+    TEXT
+    IMAGE
+    FRAME
+    STICKY_NOTE
+}
+
+enum ImageStatus {
+    UPLOADING
+    UPLOADED
+    ERROR
+}
+
+enum ChatMessageType {
+    TEXT
+    IMAGE
+    FILE
+    SYSTEM
+}
+
+enum NotificationType {
+    INVITE
+    COMMENT
+    MENTION
+    CHAT
+    VERSION
+}

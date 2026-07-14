@@ -9,7 +9,57 @@
 * 🟢 You can import this file directly.
 */
 
+export const BoardRole = {
+  OWNER: 'OWNER',
+  ADMIN: 'ADMIN',
+  EDITOR: 'EDITOR',
+  VIEWER: 'VIEWER'
+} as const
+
+export type BoardRole = (typeof BoardRole)[keyof typeof BoardRole]
 
 
-// This file is empty because there are no enums in the schema.
-export {}
+export const ShapeType = {
+  RECTANGLE: 'RECTANGLE',
+  DIAMOND: 'DIAMOND',
+  ELLIPSE: 'ELLIPSE',
+  LINE: 'LINE',
+  ARROW: 'ARROW',
+  FREEDRAW: 'FREEDRAW',
+  TEXT: 'TEXT',
+  IMAGE: 'IMAGE',
+  FRAME: 'FRAME',
+  STICKY_NOTE: 'STICKY_NOTE'
+} as const
+
+export type ShapeType = (typeof ShapeType)[keyof typeof ShapeType]
+
+
+export const ImageStatus = {
+  UPLOADING: 'UPLOADING',
+  UPLOADED: 'UPLOADED',
+  ERROR: 'ERROR'
+} as const
+
+export type ImageStatus = (typeof ImageStatus)[keyof typeof ImageStatus]
+
+
+export const ChatMessageType = {
+  TEXT: 'TEXT',
+  IMAGE: 'IMAGE',
+  FILE: 'FILE',
+  SYSTEM: 'SYSTEM'
+} as const
+
+export type ChatMessageType = (typeof ChatMessageType)[keyof typeof ChatMessageType]
+
+
+export const NotificationType = {
+  INVITE: 'INVITE',
+  COMMENT: 'COMMENT',
+  MENTION: 'MENTION',
+  CHAT: 'CHAT',
+  VERSION: 'VERSION'
+} as const
+
+export type NotificationType = (typeof NotificationType)[keyof typeof NotificationType]

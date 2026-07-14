@@ -1,0 +1,30 @@
+model Call {
+    id String @id @default(uuid())
+
+    boardId      String
+    board        Board             @relation(fields: [boardId], references: [id], onDelete: Cascade)
+    startedById  String
+    startedBy    User              @relation(fields: [startedById], references: [id])
+    startedAt    DateTime          @default(now())
+    endedAt      DateTime?
+    participants CallParticipant[]
+
+    @@index([boardId, startedAt])
+    @@index([startedById])
+}
+
+model CallParticipant {
+    id            String    @id @default(uuid())
+    callId        String
+    call          Call      @relation(fields: [callId], references: [id], onDelete: Cascade)
+    userId        String
+    user          User      @relation(fields: [userId], references: [id])
+    joinedAt      DateTime  @default(now())
+    leftAt        DateTime?
+    micEnabled    Boolean   @default(true)
+    cameraEnabled Boolean   @default(true)
+    screenSharing Boolean   @default(false)
+
+    @@index([callId, joinedAt])
+    @@index([userId])
+}

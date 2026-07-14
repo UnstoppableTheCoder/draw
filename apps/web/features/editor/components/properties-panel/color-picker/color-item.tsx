@@ -9,14 +9,19 @@ interface ColorItemProps {
   active?: boolean;
 }
 
-export const ColorItem = ({ color, onClick, size = "sm" }: ColorItemProps) => {
+export const ColorItem = ({
+  color,
+  onClick,
+  size = "sm",
+  active,
+}: ColorItemProps) => {
   return (
     <button
       onClick={onClick ? () => onClick(color) : undefined}
       style={{ backgroundColor: color }}
       className={cn(
-        "rounded-sm border-gray-300 border-1 transition duration-150 relative hover:scale-105 cursor-pointer",
-        size === "sm" ? "size-6" : "size-7",
+        "rounded-sm border transition duration-150 relative hover:scale-105 cursor-pointer",
+        size === "sm" ? "size-6" : "size-7", active && "border-gray-300"
       )}
     />
   );

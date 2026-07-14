@@ -16,7 +16,7 @@ export default function ZoomControllers({
   const { zoomIn, zoomOut, resetZoom } = useViewportZoom(sceneCanvasRef);
 
   return (
-    <div className="flex items-center overflow-hidden rounded-xl border border-neutral-300 bg-white shadow-sm">
+    <div className="flex items-center overflow-hidden rounded-xl border bg-white dark:bg-[#212121] shadow-sm">
       <CanvasButton onClick={zoomOut} label="Zoom out - Ctrl+-">
         <Minus className="size-4" />
       </CanvasButton>
@@ -24,7 +24,7 @@ export default function ZoomControllers({
       <Hint label="Reset zoom">
         <button
           onClick={resetZoom}
-          className="min-w-[64px] cursor-pointer border-r border-neutral-200 px-3 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-100"
+          className="min-w-[64px] cursor-pointer border-neutral-200 px-3 text-sm font-medium text-neutral-700 dark:text-white transition-colors"
         >
           {new Intl.NumberFormat("en-GB", {
             style: "percent",

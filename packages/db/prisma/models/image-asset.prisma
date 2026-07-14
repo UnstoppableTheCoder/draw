@@ -1,0 +1,19 @@
+model ImageAsset {
+    id            String      @id
+    boardId       String
+    board         Board       @relation(fields: [boardId], references: [id], onDelete: Cascade)
+    uploadedById  String
+    uploadedBy    User        @relation(fields: [uploadedById], references: [id])
+    s3Key         String?
+    renderUrl     String
+    publicUrl     String?
+    mimeType      String?
+    fileSize      BigInt?
+    naturalWidth  Int
+    naturalHeight Int
+    status        ImageStatus @default(UPLOADING)
+    createdAt     DateTime    @default(now())
+
+    @@index([boardId, createdAt])
+    @@index([uploadedById])
+}

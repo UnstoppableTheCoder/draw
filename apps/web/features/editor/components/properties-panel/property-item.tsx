@@ -22,8 +22,8 @@ export const PropertyItem = ({ data, onClick }: PropertyItemProps) => {
       <button
         className={cn(
           data.active
-            ? " bg-black/20 text-black"
-            : "hover:bg-black/20 bg-black/10",
+            ? " bg-black/20 text-black dark:bg-[#515151] dark:text-white"
+            : "hover:bg-black/20 bg-black/10 dark:bg-[#333333] dark:hover:bg-[#414141]",
           "size-8 flex justify-center items-center rounded-sm  cursor-pointer",
         )}
         onClick={() => onClick(data)}

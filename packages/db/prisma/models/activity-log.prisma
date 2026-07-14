@@ -1,0 +1,16 @@
+model ActivityLog {
+    id        String   @id @default(uuid())
+    boardId   String
+    board     Board    @relation(fields: [boardId], references: [id], onDelete: Cascade)
+    pageId    String?
+    page      Page?    @relation(fields: [pageId], references: [id])
+    userId    String
+    user      User     @relation(fields: [userId], references: [id])
+    action    String
+    metadata  Json?
+    createdAt DateTime @default(now())
+
+    @@index([boardId, createdAt])
+    @@index([pageId, createdAt])
+    @@index([userId, createdAt])
+}

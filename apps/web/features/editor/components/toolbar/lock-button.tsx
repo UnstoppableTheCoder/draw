@@ -18,8 +18,10 @@ export default function LockButton() {
     <Hint label={"Lock"} side="bottom" align="center" sideOffset={10}>
       <Button
         className={cn(
-          isLocked ? "bg-black/20 hover:bg-black/20 " : "",
-          "active:border active:border-black",
+          isLocked
+            ? "bg-black/20 dark:bg-[#515151] dark:hover:bg-[#515151]"
+            : "dark:hover:bg-[#373737]",
+          "active:border active:border-black cursor-pointer",
         )}
         variant={"ghost"}
         onClick={() => handleLockSelect(isLocked)}

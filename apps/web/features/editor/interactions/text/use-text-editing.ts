@@ -65,16 +65,29 @@ export default function useTextEditing(
   const saveTextShape = () => {
     if (!textEditingState) return;
 
-    const text = textEditingState.data.text;
+    const text = textEditingState.data.text.trim();
 
     const ctx = canvasRef.current?.getContext("2d");
     if (!ctx) return;
 
-    setShapes((prevShapes) =>
-      textEditingState.id
-        ? updateTextShape(prevShapes, textEditingState.id, text, ctx)
-        : createTextShape(prevShapes, textEditingState, text, ctx),
-    );
+    setShapes((prevShapes) => {
+      // Editing an existing text shape
+      if (textEditingState.id) {
+        // Delete the shape if text becomes empty
+        if (!text) {
+          return prevShapes.filter((shape) => shape.id !== textEditingState.id);
+        }
+
+        return updateTextShape(prevShapes, textEditingState.id, text, ctx);
+      }
+
+      // Creating a new text shape
+      if (!text) {
+        return prevShapes;
+      }
+
+      return createTextShape(prevShapes, textEditingState, text, ctx);
+    });
 
     finishTextEditing();
     invalidate();

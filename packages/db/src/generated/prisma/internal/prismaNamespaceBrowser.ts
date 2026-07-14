@@ -51,7 +51,21 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
-
+  ActivityLog: 'ActivityLog',
+  Board: 'Board',
+  BoardMember: 'BoardMember',
+  Call: 'Call',
+  CallParticipant: 'CallParticipant',
+  ChatMessage: 'ChatMessage',
+  Comment: 'Comment',
+  CommentReply: 'CommentReply',
+  ImageAsset: 'ImageAsset',
+  Invite: 'Invite',
+  Notification: 'Notification',
+  Page: 'Page',
+  Shape: 'Shape',
+  User: 'User',
+  BoardVersion: 'BoardVersion'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -68,4 +82,270 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 } as const)
 
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
+
+
+export const ActivityLogScalarFieldEnum = {
+  id: 'id',
+  boardId: 'boardId',
+  pageId: 'pageId',
+  userId: 'userId',
+  action: 'action',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+} as const
+
+export type ActivityLogScalarFieldEnum = (typeof ActivityLogScalarFieldEnum)[keyof typeof ActivityLogScalarFieldEnum]
+
+
+export const BoardScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  slug: 'slug',
+  description: 'description',
+  thumbnail: 'thumbnail',
+  isPublic: 'isPublic',
+  ownerId: 'ownerId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BoardScalarFieldEnum = (typeof BoardScalarFieldEnum)[keyof typeof BoardScalarFieldEnum]
+
+
+export const BoardMemberScalarFieldEnum = {
+  id: 'id',
+  boardId: 'boardId',
+  userId: 'userId',
+  role: 'role',
+  joinedAt: 'joinedAt'
+} as const
+
+export type BoardMemberScalarFieldEnum = (typeof BoardMemberScalarFieldEnum)[keyof typeof BoardMemberScalarFieldEnum]
+
+
+export const CallScalarFieldEnum = {
+  id: 'id',
+  boardId: 'boardId',
+  startedById: 'startedById',
+  startedAt: 'startedAt',
+  endedAt: 'endedAt'
+} as const
+
+export type CallScalarFieldEnum = (typeof CallScalarFieldEnum)[keyof typeof CallScalarFieldEnum]
+
+
+export const CallParticipantScalarFieldEnum = {
+  id: 'id',
+  callId: 'callId',
+  userId: 'userId',
+  joinedAt: 'joinedAt',
+  leftAt: 'leftAt',
+  micEnabled: 'micEnabled',
+  cameraEnabled: 'cameraEnabled',
+  screenSharing: 'screenSharing'
+} as const
+
+export type CallParticipantScalarFieldEnum = (typeof CallParticipantScalarFieldEnum)[keyof typeof CallParticipantScalarFieldEnum]
+
+
+export const ChatMessageScalarFieldEnum = {
+  id: 'id',
+  boardId: 'boardId',
+  senderId: 'senderId',
+  type: 'type',
+  message: 'message',
+  replyToId: 'replyToId',
+  createdAt: 'createdAt'
+} as const
+
+export type ChatMessageScalarFieldEnum = (typeof ChatMessageScalarFieldEnum)[keyof typeof ChatMessageScalarFieldEnum]
+
+
+export const CommentScalarFieldEnum = {
+  id: 'id',
+  pageId: 'pageId',
+  shapeId: 'shapeId',
+  userId: 'userId',
+  message: 'message',
+  x: 'x',
+  y: 'y',
+  resolved: 'resolved',
+  createdAt: 'createdAt'
+} as const
+
+export type CommentScalarFieldEnum = (typeof CommentScalarFieldEnum)[keyof typeof CommentScalarFieldEnum]
+
+
+export const CommentReplyScalarFieldEnum = {
+  id: 'id',
+  commentId: 'commentId',
+  userId: 'userId',
+  message: 'message',
+  createdAt: 'createdAt'
+} as const
+
+export type CommentReplyScalarFieldEnum = (typeof CommentReplyScalarFieldEnum)[keyof typeof CommentReplyScalarFieldEnum]
+
+
+export const ImageAssetScalarFieldEnum = {
+  id: 'id',
+  boardId: 'boardId',
+  uploadedById: 'uploadedById',
+  s3Key: 's3Key',
+  renderUrl: 'renderUrl',
+  publicUrl: 'publicUrl',
+  mimeType: 'mimeType',
+  fileSize: 'fileSize',
+  naturalWidth: 'naturalWidth',
+  naturalHeight: 'naturalHeight',
+  status: 'status',
+  createdAt: 'createdAt'
+} as const
+
+export type ImageAssetScalarFieldEnum = (typeof ImageAssetScalarFieldEnum)[keyof typeof ImageAssetScalarFieldEnum]
+
+
+export const InviteScalarFieldEnum = {
+  id: 'id',
+  boardId: 'boardId',
+  email: 'email',
+  role: 'role',
+  token: 'token',
+  expiresAt: 'expiresAt',
+  accepted: 'accepted',
+  createdAt: 'createdAt'
+} as const
+
+export type InviteScalarFieldEnum = (typeof InviteScalarFieldEnum)[keyof typeof InviteScalarFieldEnum]
+
+
+export const NotificationScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  type: 'type',
+  metadata: 'metadata',
+  isRead: 'isRead',
+  createdAt: 'createdAt'
+} as const
+
+export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
+
+
+export const PageScalarFieldEnum = {
+  id: 'id',
+  boardId: 'boardId',
+  name: 'name',
+  index: 'index',
+  backgroundColor: 'backgroundColor',
+  createdById: 'createdById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PageScalarFieldEnum = (typeof PageScalarFieldEnum)[keyof typeof PageScalarFieldEnum]
+
+
+export const ShapeScalarFieldEnum = {
+  id: 'id',
+  pageId: 'pageId',
+  createdById: 'createdById',
+  type: 'type',
+  x: 'x',
+  y: 'y',
+  width: 'width',
+  height: 'height',
+  angle: 'angle',
+  appearance: 'appearance',
+  groupId: 'groupId',
+  frameId: 'frameId',
+  zIndex: 'zIndex',
+  seed: 'seed',
+  version: 'version',
+  versionNonce: 'versionNonce',
+  updated: 'updated',
+  isDeleted: 'isDeleted',
+  locked: 'locked',
+  link: 'link',
+  data: 'data',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ShapeScalarFieldEnum = (typeof ShapeScalarFieldEnum)[keyof typeof ShapeScalarFieldEnum]
+
+
+export const UserScalarFieldEnum = {
+  id: 'id',
+  username: 'username',
+  email: 'email',
+  passwordHash: 'passwordHash',
+  name: 'name',
+  avatarUrl: 'avatarUrl',
+  bio: 'bio',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  lastSeen: 'lastSeen'
+} as const
+
+export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const BoardVersionScalarFieldEnum = {
+  id: 'id',
+  boardId: 'boardId',
+  createdById: 'createdById',
+  message: 'message',
+  snapshot: 'snapshot',
+  createdAt: 'createdAt'
+} as const
+
+export type BoardVersionScalarFieldEnum = (typeof BoardVersionScalarFieldEnum)[keyof typeof BoardVersionScalarFieldEnum]
+
+
+export const SortOrder = {
+  asc: 'asc',
+  desc: 'desc'
+} as const
+
+export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+export const NullableJsonNullValueInput = {
+  DbNull: DbNull,
+  JsonNull: JsonNull
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
+
+
+export const JsonNullValueInput = {
+  JsonNull: JsonNull
+} as const
+
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
+
+
+export const QueryMode = {
+  default: 'default',
+  insensitive: 'insensitive'
+} as const
+
+export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
+
+
+export const JsonNullValueFilter = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+  AnyNull: AnyNull
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
+
+
+export const NullsOrder = {
+  first: 'first',
+  last: 'last'
+} as const
+
+export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 

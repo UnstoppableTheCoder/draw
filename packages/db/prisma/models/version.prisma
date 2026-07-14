@@ -1,0 +1,15 @@
+model BoardVersion {
+    id      String @id @default(uuid())
+    boardId String
+
+    board       Board   @relation(fields: [boardId], references: [id], onDelete: Cascade)
+    createdById String
+    createdBy   User    @relation(fields: [createdById], references: [id])
+    message     String?
+    snapshot    Json
+
+    createdAt DateTime @default(now())
+
+    @@index([boardId, createdAt])
+    @@index([createdById])
+}

@@ -8,7 +8,7 @@ export const UndoRedo = () => {
   const { canRedo, canUndo, undo, redo } = useHistory();
 
   return (
-    <div className="flex items-center overflow-hidden rounded-xl border border-neutral-300 bg-white shadow-sm">
+    <div className="flex items-center overflow-hidden rounded-xl border bg-white dark:bg-[#212121] shadow-sm">
       <CanvasButton disabled={!canUndo} onClick={undo} label="Undo">
         <Undo2 className="size-4" />
       </CanvasButton>

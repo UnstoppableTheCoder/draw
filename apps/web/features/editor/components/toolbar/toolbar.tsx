@@ -6,7 +6,7 @@ import { Separator } from "../ui/separator";
 
 const Toolbar = () => {
   return (
-    <div className="absolute top-8 left-1/2 -translate-x-1/2 flex gap-1 z-50 select-none bg-white cursor-default w-fit p-1 shadow-spread rounded-md">
+    <div className="absolute top-8 left-1/2 -translate-x-1/2 flex gap-1 z-50 select-none bg-white dark:bg-[#212121] border cursor-default w-fit p-1 shadow-spread rounded-md">
       <LockButton />
       <Separator orientation="vertical" />
       <ToolbarItems />

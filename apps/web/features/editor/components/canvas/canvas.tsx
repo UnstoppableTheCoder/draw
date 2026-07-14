@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import TextEditor from "./text-editor";
 import useCanvasResize from "../../renderer/use-canvas-resize";
 import ZoomControllers from "./zoom-controllers";
@@ -47,12 +47,7 @@ const Canvas = ({ editor }: CanvasProps) => {
   useEditorShortcuts(pointerRefs);
 
   return (
-    <div
-      className="relative overflow-hidden w-screen h-screen"
-      style={{
-        backgroundColor: "#1e1e1e",
-      }}
-    >
+    <div className="relative h-screen w-screen overflow-hidden bg-[#1e1e1e]">
       <CanvasLayers
         editor={editor}
         interaction={interaction}
@@ -74,13 +69,17 @@ const Canvas = ({ editor }: CanvasProps) => {
         frameEditor={frameEditor}
       />
 
-      <div className="absolute bottom-4 left-4 flex items-center space-x-4 z-3">
+      <div className="absolute bottom-4 left-4 z-40 flex items-center gap-4">
         <ZoomControllers sceneCanvasRef={sceneCanvasRef} />
         <UndoRedo />
       </div>
 
       <ContextMenu
-        contextMenu={{ ...contextMenu, overlayCanvasRef, pointerRefs }}
+        contextMenu={{
+          ...contextMenu,
+          overlayCanvasRef,
+          pointerRefs,
+        }}
       />
     </div>
   );

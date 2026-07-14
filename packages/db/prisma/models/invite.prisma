@@ -1,0 +1,15 @@
+model Invite {
+  id String @id @default(uuid())
+
+  boardId   String
+  board     Board     @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  email     String
+  role      BoardRole
+  token     String    @unique
+  expiresAt DateTime
+  accepted  Boolean   @default(false)
+  createdAt DateTime  @default(now())
+
+  @@index([boardId, email])
+  @@index([expiresAt])
+}

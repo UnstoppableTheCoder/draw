@@ -33,7 +33,7 @@ export default function TextEditor({
       value={textEditingState.data.text}
       onChange={textEditing.handleChange}
       onKeyDown={textEditing.handleKeyDown}
-      className="fixed field-sizing-content resize-none border-none outline-none bg-transparent overflow-hidden p-0 m-0"
+      className="fixed  field-sizing-content resize-none border-none outline-none bg-transparent overflow-hidden p-0 m-0"
       style={{ ...textEditing.style, zIndex: 3 }}
     />
   );

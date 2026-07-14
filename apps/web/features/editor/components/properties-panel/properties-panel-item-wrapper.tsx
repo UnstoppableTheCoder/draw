@@ -9,7 +9,7 @@ export const PropertiesPanelItemWrapper = ({
 }: PropertiesPanelItemWrapperProps) => {
   return (
     <div>
-      <p className="text-xs text-neutral-600">{title}</p>
+      <p className="text-xs text-neutral-600 dark:text-white">{title}</p>
       {children}
     </div>
   );

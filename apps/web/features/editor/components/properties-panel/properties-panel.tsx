@@ -41,6 +41,12 @@ export const PropertiesPanel = ({ editorRefs }: PropertiesPanelRef) => {
 
   const selectedShapesTypes = getSelectedShapesTypes(selectedShapes);
 
+  if (
+    pointerRefs.interactionRef.current.type === "selection-box" &&
+    selectedShapesIds.length === 0
+  )
+    return;
+
   // Render Properties Panel Conditionally
   if (
     !textEditingState &&
@@ -53,7 +59,7 @@ export const PropertiesPanel = ({ editorRefs }: PropertiesPanelRef) => {
   }
 
   return (
-    <div className="w-[202px] select-none h-fit z-50 bg-white cursor-default rounded-md shadow-spread p-3 space-y-4 absolute top-28 left-5">
+    <div className="w-[202px] select-none h-fit z-50 bg-white dark:bg-[#212121] cursor-default rounded-md shadow-spread p-3 space-y-4 absolute top-20 left-5 border">
       {/* Rendering Style Pickers Conditionally */}
       {selectedTool !== "image" &&
         (selectedShapes.length !== 1 || !selectedShapesTypes.has("image")) && (

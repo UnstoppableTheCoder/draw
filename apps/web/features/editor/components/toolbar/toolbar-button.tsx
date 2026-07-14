@@ -20,8 +20,10 @@ export const ToolbarButton = ({ item }: ToolbarButtonProp) => {
     <Hint label={item.label} side="bottom" align="center" sideOffset={10}>
       <Button
         className={cn(
-          selectedTool === item.tool ? "bg-black/20 hover:bg-black/20 " : "",
-          "active:border active:border-black",
+          selectedTool === item.tool
+            ? "bg-black/20 dark:bg-[#515151] dark:hover:bg-[#515151]"
+            : "dark:hover:bg-[#373737]",
+          "active:border active:border-black cursor-pointer",
         )}
         variant={"ghost"}
         onClick={() => selectTool(item.tool)}

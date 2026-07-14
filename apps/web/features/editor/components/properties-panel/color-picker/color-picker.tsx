@@ -3,6 +3,10 @@ import { ColorItem } from "./color-item";
 import { PropertiesPanelItemWrapper } from "../properties-panel-item-wrapper";
 import { Separator } from "../../ui/separator";
 import { COLOR_PALETTE } from "@/features/editor/constants/colors";
+import {
+  useBackgroundColor,
+  useStrokeColor,
+} from "@/features/editor/store/properties/selectors";
 
 type ColorPickerProps = {
   title: "Stroke" | "Background";
@@ -12,9 +16,11 @@ type ColorPickerProps = {
 };
 
 const ColorPicker = ({ title, type, value, onClick }: ColorPickerProps) => {
-  const theme = "dark";
-
   const colors = Object.values(COLOR_PALETTE);
+  const backgroundColor = useBackgroundColor();
+  const strokeColor = useStrokeColor();
+
+  const selectedColor = type === "background" ? backgroundColor : strokeColor;
 
   return (
     <PropertiesPanelItemWrapper title={title}>
@@ -28,7 +34,7 @@ const ColorPicker = ({ title, type, value, onClick }: ColorPickerProps) => {
               color={color["dark"][type]}
               onClick={onClick}
               size="sm"
-              active={false}
+              active={selectedColor === color["dark"][type]}
             />
           );
         })}
