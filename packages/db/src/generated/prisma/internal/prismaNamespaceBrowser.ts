@@ -100,10 +100,10 @@ export type ActivityLogScalarFieldEnum = (typeof ActivityLogScalarFieldEnum)[key
 export const BoardScalarFieldEnum = {
   id: 'id',
   name: 'name',
-  slug: 'slug',
   description: 'description',
   thumbnail: 'thumbnail',
   isPublic: 'isPublic',
+  favorite: 'favorite',
   ownerId: 'ownerId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -235,7 +235,7 @@ export const PageScalarFieldEnum = {
   id: 'id',
   boardId: 'boardId',
   name: 'name',
-  index: 'index',
+  orderKey: 'orderKey',
   backgroundColor: 'backgroundColor',
   createdById: 'createdById',
   createdAt: 'createdAt',
@@ -262,7 +262,6 @@ export const ShapeScalarFieldEnum = {
   seed: 'seed',
   version: 'version',
   versionNonce: 'versionNonce',
-  updated: 'updated',
   isDeleted: 'isDeleted',
   locked: 'locked',
   link: 'link',
@@ -276,7 +275,6 @@ export type ShapeScalarFieldEnum = (typeof ShapeScalarFieldEnum)[keyof typeof Sh
 
 export const UserScalarFieldEnum = {
   id: 'id',
-  username: 'username',
   email: 'email',
   passwordHash: 'passwordHash',
   name: 'name',

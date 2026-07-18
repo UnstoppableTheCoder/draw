@@ -2,13 +2,7 @@
 
 import { cn } from "@/lib/utils";
 
-import { BoardKind } from "../types";
-
-interface PreviewProps {
-  kind: BoardKind;
-}
-
-export function Preview({ kind }: PreviewProps) {
+export function Preview({ kind }: any) {
   return (
     <div className="canvas-grid relative h-36 overflow-hidden bg-background">
       {kind === "flow" && (

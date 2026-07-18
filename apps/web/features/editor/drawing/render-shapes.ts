@@ -1,3 +1,6 @@
+import { useCanvasRenderer } from "../context/use-renderer";
+import { useImageManager } from "../interactions/manager/image-manager";
+import useCanvasCursor from "../renderer/cursor/use-canvas-cursor";
 import { ImageMap } from "../store/editor/editor-types";
 import { Shape } from "../types";
 import { FrameEditingState } from "../types/types";
@@ -19,6 +22,7 @@ type Props = {
   skipShapeIds?: Set<string>;
   hoveredFrameId?: string | null;
   frameEditingState: FrameEditingState | null;
+  imageManager: ReturnType<typeof useImageManager>;
 };
 
 export const renderShapes = ({
@@ -29,6 +33,7 @@ export const renderShapes = ({
   skipShapeIds,
   hoveredFrameId,
   frameEditingState,
+  imageManager,
 }: Props) => {
   for (const shape of shapes) {
     if (skipShapeIds?.has(shape.id)) continue;
@@ -63,7 +68,7 @@ export const renderShapes = ({
         break;
 
       case "image":
-        drawImage(ctx, shape, images);
+        drawImage(ctx, shape, imageManager);
         break;
 
       case "frame":

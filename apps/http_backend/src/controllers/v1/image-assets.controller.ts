@@ -1,14 +1,42 @@
 import { prisma } from "@repo/db";
 import type { Request, Response } from "express";
 
+export const createImageAssets = async (req: Request, res: Response) => {
+  try {
+    const { boardId } = req.params;
+    const imageAssets = req.body;
+
+    if (!Array.isArray(imageAssets)) {
+      return res.status(400).json({
+        message: "Expected an array of image assets.",
+      });
+    }
+
+    const images = await prisma.imageAsset.createManyAndReturn({
+      data: imageAssets.map((image) => ({
+        ...image,
+        boardId,
+      })),
+    });
+
+    return res.status(201).json(images);
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      message: "Failed to create image assets.",
+    });
+  }
+};
+
 export const createImageAsset = async (req: Request, res: Response) => {
   try {
-    const { roomId } = req.params;
+    const { boardId } = req.params;
 
     const image = await prisma.imageAsset.create({
       data: {
         ...req.body,
-        roomId,
+        boardId,
       },
     });
 

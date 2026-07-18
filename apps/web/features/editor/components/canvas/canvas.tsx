@@ -1,6 +1,5 @@
 "use client";
 
-import { useRef, useState } from "react";
 import TextEditor from "./text-editor";
 import useCanvasResize from "../../renderer/use-canvas-resize";
 import ZoomControllers from "./zoom-controllers";
@@ -14,17 +13,27 @@ import { EditorRefs } from "@/features/editor/types";
 import useInteractionManager from "../../interactions/manager/use-interaction-manager";
 import CanvasLayers from "./canvas-layers";
 import useContextMenu from "./context-menu/use-context-menu";
-
+import { cn } from "@/lib/utils";
+import { useLoadBoard } from "../../hooks/use-load-board";
+import { useLoadPage } from "../../hooks/use-load-page";
+import { useRef } from "react";
+import { useImageManager } from "../../interactions/manager/image-manager";
+import { useCanvasRenderer } from "../../context/use-renderer";
 type CanvasProps = {
   editor: EditorRefs;
+  isSidebarOpen: boolean;
 };
 
-const Canvas = ({ editor }: CanvasProps) => {
-  const { sceneCanvasRef, overlayCanvasRef, pointerRefs } = editor;
+const Canvas = ({ editor, isSidebarOpen }: CanvasProps) => {
+  const { sceneCanvasRef, overlayCanvasRef, pointerRefs, imageManager } =
+    editor;
 
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const imageInputRef = useRef<HTMLInputElement | null>(null);
   const frameNameInputRef = useRef<HTMLInputElement | null>(null);
+
+  useLoadBoard();
+  useLoadPage(imageManager);
 
   // UI
   const contextMenu = useContextMenu(overlayCanvasRef);
@@ -40,9 +49,9 @@ const Canvas = ({ editor }: CanvasProps) => {
   const imageUpload = useImageUpload({
     ...editor,
     imageInputRef,
+    imageManager,
   });
 
-  // Global Effects
   useCanvasResize({ ...editor });
   useEditorShortcuts(pointerRefs);
 
@@ -69,7 +78,12 @@ const Canvas = ({ editor }: CanvasProps) => {
         frameEditor={frameEditor}
       />
 
-      <div className="absolute bottom-4 left-4 z-40 flex items-center gap-4">
+      <div
+        className={cn(
+          "absolute bottom-4 z-40 flex items-center gap-4",
+          isSidebarOpen ? "left-60" : "left-5",
+        )}
+      >
         <ZoomControllers sceneCanvasRef={sceneCanvasRef} />
         <UndoRedo />
       </div>

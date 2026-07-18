@@ -1,5 +1,3 @@
-// features/dashboard/components/sidebar.tsx
-
 "use client";
 
 import { cn } from "@/lib/utils";

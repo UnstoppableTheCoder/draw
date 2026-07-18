@@ -1,4 +1,4 @@
-import { Button } from "@/features/editor/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Logo } from "../logo";
 import { Menu, PanelLeftClose } from "lucide-react";
 

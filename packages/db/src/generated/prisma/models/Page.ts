@@ -20,25 +20,15 @@ export type PageModel = runtime.Types.Result.DefaultSelection<Prisma.$PagePayloa
 
 export type AggregatePage = {
   _count: PageCountAggregateOutputType | null
-  _avg: PageAvgAggregateOutputType | null
-  _sum: PageSumAggregateOutputType | null
   _min: PageMinAggregateOutputType | null
   _max: PageMaxAggregateOutputType | null
-}
-
-export type PageAvgAggregateOutputType = {
-  index: number | null
-}
-
-export type PageSumAggregateOutputType = {
-  index: number | null
 }
 
 export type PageMinAggregateOutputType = {
   id: string | null
   boardId: string | null
   name: string | null
-  index: number | null
+  orderKey: string | null
   backgroundColor: string | null
   createdById: string | null
   createdAt: Date | null
@@ -49,7 +39,7 @@ export type PageMaxAggregateOutputType = {
   id: string | null
   boardId: string | null
   name: string | null
-  index: number | null
+  orderKey: string | null
   backgroundColor: string | null
   createdById: string | null
   createdAt: Date | null
@@ -60,7 +50,7 @@ export type PageCountAggregateOutputType = {
   id: number
   boardId: number
   name: number
-  index: number
+  orderKey: number
   backgroundColor: number
   createdById: number
   createdAt: number
@@ -69,19 +59,11 @@ export type PageCountAggregateOutputType = {
 }
 
 
-export type PageAvgAggregateInputType = {
-  index?: true
-}
-
-export type PageSumAggregateInputType = {
-  index?: true
-}
-
 export type PageMinAggregateInputType = {
   id?: true
   boardId?: true
   name?: true
-  index?: true
+  orderKey?: true
   backgroundColor?: true
   createdById?: true
   createdAt?: true
@@ -92,7 +74,7 @@ export type PageMaxAggregateInputType = {
   id?: true
   boardId?: true
   name?: true
-  index?: true
+  orderKey?: true
   backgroundColor?: true
   createdById?: true
   createdAt?: true
@@ -103,7 +85,7 @@ export type PageCountAggregateInputType = {
   id?: true
   boardId?: true
   name?: true
-  index?: true
+  orderKey?: true
   backgroundColor?: true
   createdById?: true
   createdAt?: true
@@ -149,18 +131,6 @@ export type PageAggregateArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
-   * Select which fields to average
-  **/
-  _avg?: PageAvgAggregateInputType
-  /**
-   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
-   * Select which fields to sum
-  **/
-  _sum?: PageSumAggregateInputType
-  /**
-   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
    * Select which fields to find the minimum value
   **/
   _min?: PageMinAggregateInputType
@@ -191,8 +161,6 @@ export type PageGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
   take?: number
   skip?: number
   _count?: PageCountAggregateInputType | true
-  _avg?: PageAvgAggregateInputType
-  _sum?: PageSumAggregateInputType
   _min?: PageMinAggregateInputType
   _max?: PageMaxAggregateInputType
 }
@@ -201,14 +169,12 @@ export type PageGroupByOutputType = {
   id: string
   boardId: string
   name: string
-  index: number
+  orderKey: string
   backgroundColor: string | null
   createdById: string
   createdAt: Date
   updatedAt: Date
   _count: PageCountAggregateOutputType | null
-  _avg: PageAvgAggregateOutputType | null
-  _sum: PageSumAggregateOutputType | null
   _min: PageMinAggregateOutputType | null
   _max: PageMaxAggregateOutputType | null
 }
@@ -235,7 +201,7 @@ export type PageWhereInput = {
   id?: Prisma.StringFilter<"Page"> | string
   boardId?: Prisma.StringFilter<"Page"> | string
   name?: Prisma.StringFilter<"Page"> | string
-  index?: Prisma.IntFilter<"Page"> | number
+  orderKey?: Prisma.StringFilter<"Page"> | string
   backgroundColor?: Prisma.StringNullableFilter<"Page"> | string | null
   createdById?: Prisma.StringFilter<"Page"> | string
   createdAt?: Prisma.DateTimeFilter<"Page"> | Date | string
@@ -251,7 +217,7 @@ export type PageOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   boardId?: Prisma.SortOrder
   name?: Prisma.SortOrder
-  index?: Prisma.SortOrder
+  orderKey?: Prisma.SortOrder
   backgroundColor?: Prisma.SortOrderInput | Prisma.SortOrder
   createdById?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -265,13 +231,12 @@ export type PageOrderByWithRelationInput = {
 
 export type PageWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  boardId_index?: Prisma.PageBoardIdIndexCompoundUniqueInput
   AND?: Prisma.PageWhereInput | Prisma.PageWhereInput[]
   OR?: Prisma.PageWhereInput[]
   NOT?: Prisma.PageWhereInput | Prisma.PageWhereInput[]
   boardId?: Prisma.StringFilter<"Page"> | string
   name?: Prisma.StringFilter<"Page"> | string
-  index?: Prisma.IntFilter<"Page"> | number
+  orderKey?: Prisma.StringFilter<"Page"> | string
   backgroundColor?: Prisma.StringNullableFilter<"Page"> | string | null
   createdById?: Prisma.StringFilter<"Page"> | string
   createdAt?: Prisma.DateTimeFilter<"Page"> | Date | string
@@ -281,22 +246,20 @@ export type PageWhereUniqueInput = Prisma.AtLeast<{
   shapes?: Prisma.ShapeListRelationFilter
   comments?: Prisma.CommentListRelationFilter
   activityLogs?: Prisma.ActivityLogListRelationFilter
-}, "id" | "boardId_index">
+}, "id">
 
 export type PageOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   boardId?: Prisma.SortOrder
   name?: Prisma.SortOrder
-  index?: Prisma.SortOrder
+  orderKey?: Prisma.SortOrder
   backgroundColor?: Prisma.SortOrderInput | Prisma.SortOrder
   createdById?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.PageCountOrderByAggregateInput
-  _avg?: Prisma.PageAvgOrderByAggregateInput
   _max?: Prisma.PageMaxOrderByAggregateInput
   _min?: Prisma.PageMinOrderByAggregateInput
-  _sum?: Prisma.PageSumOrderByAggregateInput
 }
 
 export type PageScalarWhereWithAggregatesInput = {
@@ -306,7 +269,7 @@ export type PageScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"Page"> | string
   boardId?: Prisma.StringWithAggregatesFilter<"Page"> | string
   name?: Prisma.StringWithAggregatesFilter<"Page"> | string
-  index?: Prisma.IntWithAggregatesFilter<"Page"> | number
+  orderKey?: Prisma.StringWithAggregatesFilter<"Page"> | string
   backgroundColor?: Prisma.StringNullableWithAggregatesFilter<"Page"> | string | null
   createdById?: Prisma.StringWithAggregatesFilter<"Page"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Page"> | Date | string
@@ -316,7 +279,7 @@ export type PageScalarWhereWithAggregatesInput = {
 export type PageCreateInput = {
   id?: string
   name: string
-  index: number
+  orderKey: string
   backgroundColor?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -331,7 +294,7 @@ export type PageUncheckedCreateInput = {
   id?: string
   boardId: string
   name: string
-  index: number
+  orderKey: string
   backgroundColor?: string | null
   createdById: string
   createdAt?: Date | string
@@ -344,7 +307,7 @@ export type PageUncheckedCreateInput = {
 export type PageUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  index?: Prisma.IntFieldUpdateOperationsInput | number
+  orderKey?: Prisma.StringFieldUpdateOperationsInput | string
   backgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -359,7 +322,7 @@ export type PageUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   boardId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  index?: Prisma.IntFieldUpdateOperationsInput | number
+  orderKey?: Prisma.StringFieldUpdateOperationsInput | string
   backgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -373,7 +336,7 @@ export type PageCreateManyInput = {
   id?: string
   boardId: string
   name: string
-  index: number
+  orderKey: string
   backgroundColor?: string | null
   createdById: string
   createdAt?: Date | string
@@ -383,7 +346,7 @@ export type PageCreateManyInput = {
 export type PageUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  index?: Prisma.IntFieldUpdateOperationsInput | number
+  orderKey?: Prisma.StringFieldUpdateOperationsInput | string
   backgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -393,7 +356,7 @@ export type PageUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   boardId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  index?: Prisma.IntFieldUpdateOperationsInput | number
+  orderKey?: Prisma.StringFieldUpdateOperationsInput | string
   backgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -420,31 +383,22 @@ export type PageScalarRelationFilter = {
   isNot?: Prisma.PageWhereInput
 }
 
-export type PageBoardIdIndexCompoundUniqueInput = {
-  boardId: string
-  index: number
-}
-
 export type PageCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   boardId?: Prisma.SortOrder
   name?: Prisma.SortOrder
-  index?: Prisma.SortOrder
+  orderKey?: Prisma.SortOrder
   backgroundColor?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
-export type PageAvgOrderByAggregateInput = {
-  index?: Prisma.SortOrder
-}
-
 export type PageMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   boardId?: Prisma.SortOrder
   name?: Prisma.SortOrder
-  index?: Prisma.SortOrder
+  orderKey?: Prisma.SortOrder
   backgroundColor?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -455,15 +409,11 @@ export type PageMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   boardId?: Prisma.SortOrder
   name?: Prisma.SortOrder
-  index?: Prisma.SortOrder
+  orderKey?: Prisma.SortOrder
   backgroundColor?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-}
-
-export type PageSumOrderByAggregateInput = {
-  index?: Prisma.SortOrder
 }
 
 export type PageCreateNestedOneWithoutActivityLogsInput = {
@@ -597,7 +547,7 @@ export type PageUncheckedUpdateManyWithoutCreatedByNestedInput = {
 export type PageCreateWithoutActivityLogsInput = {
   id?: string
   name: string
-  index: number
+  orderKey: string
   backgroundColor?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -611,7 +561,7 @@ export type PageUncheckedCreateWithoutActivityLogsInput = {
   id?: string
   boardId: string
   name: string
-  index: number
+  orderKey: string
   backgroundColor?: string | null
   createdById: string
   createdAt?: Date | string
@@ -639,7 +589,7 @@ export type PageUpdateToOneWithWhereWithoutActivityLogsInput = {
 export type PageUpdateWithoutActivityLogsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  index?: Prisma.IntFieldUpdateOperationsInput | number
+  orderKey?: Prisma.StringFieldUpdateOperationsInput | string
   backgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -653,7 +603,7 @@ export type PageUncheckedUpdateWithoutActivityLogsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   boardId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  index?: Prisma.IntFieldUpdateOperationsInput | number
+  orderKey?: Prisma.StringFieldUpdateOperationsInput | string
   backgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -665,7 +615,7 @@ export type PageUncheckedUpdateWithoutActivityLogsInput = {
 export type PageCreateWithoutBoardInput = {
   id?: string
   name: string
-  index: number
+  orderKey: string
   backgroundColor?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -678,7 +628,7 @@ export type PageCreateWithoutBoardInput = {
 export type PageUncheckedCreateWithoutBoardInput = {
   id?: string
   name: string
-  index: number
+  orderKey: string
   backgroundColor?: string | null
   createdById: string
   createdAt?: Date | string
@@ -721,7 +671,7 @@ export type PageScalarWhereInput = {
   id?: Prisma.StringFilter<"Page"> | string
   boardId?: Prisma.StringFilter<"Page"> | string
   name?: Prisma.StringFilter<"Page"> | string
-  index?: Prisma.IntFilter<"Page"> | number
+  orderKey?: Prisma.StringFilter<"Page"> | string
   backgroundColor?: Prisma.StringNullableFilter<"Page"> | string | null
   createdById?: Prisma.StringFilter<"Page"> | string
   createdAt?: Prisma.DateTimeFilter<"Page"> | Date | string
@@ -731,7 +681,7 @@ export type PageScalarWhereInput = {
 export type PageCreateWithoutCommentsInput = {
   id?: string
   name: string
-  index: number
+  orderKey: string
   backgroundColor?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -745,7 +695,7 @@ export type PageUncheckedCreateWithoutCommentsInput = {
   id?: string
   boardId: string
   name: string
-  index: number
+  orderKey: string
   backgroundColor?: string | null
   createdById: string
   createdAt?: Date | string
@@ -773,7 +723,7 @@ export type PageUpdateToOneWithWhereWithoutCommentsInput = {
 export type PageUpdateWithoutCommentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  index?: Prisma.IntFieldUpdateOperationsInput | number
+  orderKey?: Prisma.StringFieldUpdateOperationsInput | string
   backgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -787,7 +737,7 @@ export type PageUncheckedUpdateWithoutCommentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   boardId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  index?: Prisma.IntFieldUpdateOperationsInput | number
+  orderKey?: Prisma.StringFieldUpdateOperationsInput | string
   backgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -799,7 +749,7 @@ export type PageUncheckedUpdateWithoutCommentsInput = {
 export type PageCreateWithoutShapesInput = {
   id?: string
   name: string
-  index: number
+  orderKey: string
   backgroundColor?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -813,7 +763,7 @@ export type PageUncheckedCreateWithoutShapesInput = {
   id?: string
   boardId: string
   name: string
-  index: number
+  orderKey: string
   backgroundColor?: string | null
   createdById: string
   createdAt?: Date | string
@@ -841,7 +791,7 @@ export type PageUpdateToOneWithWhereWithoutShapesInput = {
 export type PageUpdateWithoutShapesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  index?: Prisma.IntFieldUpdateOperationsInput | number
+  orderKey?: Prisma.StringFieldUpdateOperationsInput | string
   backgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -855,7 +805,7 @@ export type PageUncheckedUpdateWithoutShapesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   boardId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  index?: Prisma.IntFieldUpdateOperationsInput | number
+  orderKey?: Prisma.StringFieldUpdateOperationsInput | string
   backgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -867,7 +817,7 @@ export type PageUncheckedUpdateWithoutShapesInput = {
 export type PageCreateWithoutCreatedByInput = {
   id?: string
   name: string
-  index: number
+  orderKey: string
   backgroundColor?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -881,7 +831,7 @@ export type PageUncheckedCreateWithoutCreatedByInput = {
   id?: string
   boardId: string
   name: string
-  index: number
+  orderKey: string
   backgroundColor?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -919,7 +869,7 @@ export type PageUpdateManyWithWhereWithoutCreatedByInput = {
 export type PageCreateManyBoardInput = {
   id?: string
   name: string
-  index: number
+  orderKey: string
   backgroundColor?: string | null
   createdById: string
   createdAt?: Date | string
@@ -929,7 +879,7 @@ export type PageCreateManyBoardInput = {
 export type PageUpdateWithoutBoardInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  index?: Prisma.IntFieldUpdateOperationsInput | number
+  orderKey?: Prisma.StringFieldUpdateOperationsInput | string
   backgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -942,7 +892,7 @@ export type PageUpdateWithoutBoardInput = {
 export type PageUncheckedUpdateWithoutBoardInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  index?: Prisma.IntFieldUpdateOperationsInput | number
+  orderKey?: Prisma.StringFieldUpdateOperationsInput | string
   backgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -955,7 +905,7 @@ export type PageUncheckedUpdateWithoutBoardInput = {
 export type PageUncheckedUpdateManyWithoutBoardInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  index?: Prisma.IntFieldUpdateOperationsInput | number
+  orderKey?: Prisma.StringFieldUpdateOperationsInput | string
   backgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -966,7 +916,7 @@ export type PageCreateManyCreatedByInput = {
   id?: string
   boardId: string
   name: string
-  index: number
+  orderKey: string
   backgroundColor?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -975,7 +925,7 @@ export type PageCreateManyCreatedByInput = {
 export type PageUpdateWithoutCreatedByInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  index?: Prisma.IntFieldUpdateOperationsInput | number
+  orderKey?: Prisma.StringFieldUpdateOperationsInput | string
   backgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -989,7 +939,7 @@ export type PageUncheckedUpdateWithoutCreatedByInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   boardId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  index?: Prisma.IntFieldUpdateOperationsInput | number
+  orderKey?: Prisma.StringFieldUpdateOperationsInput | string
   backgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1002,7 +952,7 @@ export type PageUncheckedUpdateManyWithoutCreatedByInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   boardId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  index?: Prisma.IntFieldUpdateOperationsInput | number
+  orderKey?: Prisma.StringFieldUpdateOperationsInput | string
   backgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1061,7 +1011,7 @@ export type PageSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   id?: boolean
   boardId?: boolean
   name?: boolean
-  index?: boolean
+  orderKey?: boolean
   backgroundColor?: boolean
   createdById?: boolean
   createdAt?: boolean
@@ -1078,7 +1028,7 @@ export type PageSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   id?: boolean
   boardId?: boolean
   name?: boolean
-  index?: boolean
+  orderKey?: boolean
   backgroundColor?: boolean
   createdById?: boolean
   createdAt?: boolean
@@ -1091,7 +1041,7 @@ export type PageSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   id?: boolean
   boardId?: boolean
   name?: boolean
-  index?: boolean
+  orderKey?: boolean
   backgroundColor?: boolean
   createdById?: boolean
   createdAt?: boolean
@@ -1104,14 +1054,14 @@ export type PageSelectScalar = {
   id?: boolean
   boardId?: boolean
   name?: boolean
-  index?: boolean
+  orderKey?: boolean
   backgroundColor?: boolean
   createdById?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type PageOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "boardId" | "name" | "index" | "backgroundColor" | "createdById" | "createdAt" | "updatedAt", ExtArgs["result"]["page"]>
+export type PageOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "boardId" | "name" | "orderKey" | "backgroundColor" | "createdById" | "createdAt" | "updatedAt", ExtArgs["result"]["page"]>
 export type PageInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   board?: boolean | Prisma.BoardDefaultArgs<ExtArgs>
   createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -1142,7 +1092,7 @@ export type $PagePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     id: string
     boardId: string
     name: string
-    index: number
+    orderKey: string
     backgroundColor: string | null
     createdById: string
     createdAt: Date
@@ -1578,7 +1528,7 @@ export interface PageFieldRefs {
   readonly id: Prisma.FieldRef<"Page", 'String'>
   readonly boardId: Prisma.FieldRef<"Page", 'String'>
   readonly name: Prisma.FieldRef<"Page", 'String'>
-  readonly index: Prisma.FieldRef<"Page", 'Int'>
+  readonly orderKey: Prisma.FieldRef<"Page", 'String'>
   readonly backgroundColor: Prisma.FieldRef<"Page", 'String'>
   readonly createdById: Prisma.FieldRef<"Page", 'String'>
   readonly createdAt: Prisma.FieldRef<"Page", 'DateTime'>

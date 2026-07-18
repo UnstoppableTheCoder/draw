@@ -1,8 +1,7 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { ChevronDown, Video } from "lucide-react";
-
-import { Button } from "@/features/editor/components/ui/button";
 
 export function UpcomingCall() {
   return (

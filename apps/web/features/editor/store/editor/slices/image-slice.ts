@@ -15,10 +15,7 @@ export const createImageSlice: StateCreator<
   setImages: (updater) =>
     set(
       (state) => ({
-        images:
-          typeof updater === "function"
-            ? updater(state.images)
-            : updater,
+        images: typeof updater === "function" ? updater(state.images) : updater,
       }),
       false,
       "images/setImages",

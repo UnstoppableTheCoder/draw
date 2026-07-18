@@ -5,14 +5,16 @@ import { Hero } from "./components/hero";
 import { useDashboard } from "./hooks/use-dashboard";
 import { Sidebar } from "./components/sidebar";
 import { UpcomingCall } from "./components/upcoming-call";
-import { BoardList } from "./components/board/list";
 import { ActivityFeed } from "./components/activity-feed";
 import Templates from "./components/templates";
 import { CreateBoardDialog } from "./components/create-board-dialog";
+import { useState } from "react";
+import { Board } from "@/types/board";
+import { useAuth } from "../auth/store/selectors";
+import { BoardList } from "./components/board-list/list";
 
 export default function DashboardPage() {
   const {
-    boards,
     collapsed,
     query,
     filter,
@@ -42,9 +44,8 @@ export default function DashboardPage() {
           <div className="flex-1 overflow-y-auto">
             <div className="mx-auto flex max-w-[1500px] flex-col gap-8 p-5 lg:p-8">
               <Hero />
-              <Templates />
+              <Templates onCreateBoard={() => setCreateBoardOpen(true)} />
               <BoardList
-                boards={boards}
                 filter={filter}
                 onFilterChange={setFilter}
                 listView={listView}

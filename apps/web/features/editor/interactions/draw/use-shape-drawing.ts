@@ -18,6 +18,9 @@ import { usePointerState } from "../../pointer/use-pointer-state";
 import { createShape } from "./create-shape";
 import { DrawableTool, Shape } from "../../types";
 import { getNextZIndex } from "../../utils/z-index";
+import { createShapes as createShapeApi } from "../../networking/api/shape-api";
+import { useParams } from "next/navigation";
+import { useUser } from "@/features/auth/store/selectors";
 
 type UseDrawingArgs = {
   sceneCanvasRef: RefObject<HTMLCanvasElement | null>;
@@ -31,6 +34,8 @@ export default function useShapeDrawing({
   pointerRefs,
 }: UseDrawingArgs) {
   const { drawingStartRef, drawingPointsRef } = pointerRefs;
+  const { pageId } = useParams<{ pageId: string }>();
+  const user = useUser();
 
   const setShapes = store.useSetShapes();
   const shapes = store.useShapes();
@@ -78,6 +83,8 @@ export default function useShapeDrawing({
         roundness,
         opacity,
       },
+      pageId,
+      createdById: user!.id,
     });
   }
 
@@ -135,7 +142,7 @@ export default function useShapeDrawing({
   }
 
   // Saves the Shapes
-  function onPointerUpDrawing(e: PointerEvent<HTMLCanvasElement>) {
+  async function onPointerUpDrawing(e: PointerEvent<HTMLCanvasElement>) {
     const interaction = pointerRefs.interactionRef.current;
     if (interaction.type !== "draw") return;
 
@@ -166,6 +173,13 @@ export default function useShapeDrawing({
         previewShapes: [shape],
         selectedShapesIds: new Set(selectedShapesIds),
       };
+
+      const data = await createShapeApi(pageId, [shape]);
+      console.log(data.shapes);
+      if (!data.shapes) {
+        setShapes((prev) => prev.splice(-1, 1));
+        setSelectedShapesIds((prev) => prev.splice(-1, 1));
+      }
     }
 
     drawingPointsRef.current = [];

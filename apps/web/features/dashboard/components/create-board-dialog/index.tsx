@@ -1,18 +1,30 @@
 "use client";
 
 import DialogHeader from "./dialog-header";
-import DialogContent from "./dialog-content";
-import DialogFooter from "./dialog-footer";
+import { Dispatch, SetStateAction } from "react";
+import { Board } from "@/types/board";
+import DialogInput from "./dialog-input";
+import { createBoard } from "@/features/board/api/board-api";
+import { useRouter } from "next/navigation";
+import { createPage } from "@/features/page/api/page-api";
+import { useAuth } from "@/features/auth/store/selectors";
 
 interface CreateBoardDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
+export type BoardPayload = Pick<
+  Board,
+  "name" | "description" | "thumbnail" | "favorite" | "isPublic" | "ownerId"
+>;
+
 export function CreateBoardDialog({
   open,
   onOpenChange,
 }: CreateBoardDialogProps) {
+  const router = useRouter();
+
   if (!open) {
     return null;
   }
@@ -30,8 +42,7 @@ export function CreateBoardDialog({
         onClick={(e) => e.stopPropagation()}
       >
         <DialogHeader onClose={() => onOpenChange(false)} />
-        <DialogContent />
-        <DialogFooter onCancel={() => onOpenChange(false)} />
+        <DialogInput />
       </div>
     </div>
   );

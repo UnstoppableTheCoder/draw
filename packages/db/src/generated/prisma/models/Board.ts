@@ -27,10 +27,10 @@ export type AggregateBoard = {
 export type BoardMinAggregateOutputType = {
   id: string | null
   name: string | null
-  slug: string | null
   description: string | null
   thumbnail: string | null
   isPublic: boolean | null
+  favorite: boolean | null
   ownerId: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -39,10 +39,10 @@ export type BoardMinAggregateOutputType = {
 export type BoardMaxAggregateOutputType = {
   id: string | null
   name: string | null
-  slug: string | null
   description: string | null
   thumbnail: string | null
   isPublic: boolean | null
+  favorite: boolean | null
   ownerId: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -51,10 +51,10 @@ export type BoardMaxAggregateOutputType = {
 export type BoardCountAggregateOutputType = {
   id: number
   name: number
-  slug: number
   description: number
   thumbnail: number
   isPublic: number
+  favorite: number
   ownerId: number
   createdAt: number
   updatedAt: number
@@ -65,10 +65,10 @@ export type BoardCountAggregateOutputType = {
 export type BoardMinAggregateInputType = {
   id?: true
   name?: true
-  slug?: true
   description?: true
   thumbnail?: true
   isPublic?: true
+  favorite?: true
   ownerId?: true
   createdAt?: true
   updatedAt?: true
@@ -77,10 +77,10 @@ export type BoardMinAggregateInputType = {
 export type BoardMaxAggregateInputType = {
   id?: true
   name?: true
-  slug?: true
   description?: true
   thumbnail?: true
   isPublic?: true
+  favorite?: true
   ownerId?: true
   createdAt?: true
   updatedAt?: true
@@ -89,10 +89,10 @@ export type BoardMaxAggregateInputType = {
 export type BoardCountAggregateInputType = {
   id?: true
   name?: true
-  slug?: true
   description?: true
   thumbnail?: true
   isPublic?: true
+  favorite?: true
   ownerId?: true
   createdAt?: true
   updatedAt?: true
@@ -174,10 +174,10 @@ export type BoardGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
 export type BoardGroupByOutputType = {
   id: string
   name: string
-  slug: string
   description: string | null
   thumbnail: string | null
   isPublic: boolean
+  favorite: boolean
   ownerId: string
   createdAt: Date
   updatedAt: Date
@@ -207,10 +207,10 @@ export type BoardWhereInput = {
   NOT?: Prisma.BoardWhereInput | Prisma.BoardWhereInput[]
   id?: Prisma.StringFilter<"Board"> | string
   name?: Prisma.StringFilter<"Board"> | string
-  slug?: Prisma.StringFilter<"Board"> | string
   description?: Prisma.StringNullableFilter<"Board"> | string | null
   thumbnail?: Prisma.StringNullableFilter<"Board"> | string | null
   isPublic?: Prisma.BoolFilter<"Board"> | boolean
+  favorite?: Prisma.BoolFilter<"Board"> | boolean
   ownerId?: Prisma.StringFilter<"Board"> | string
   createdAt?: Prisma.DateTimeFilter<"Board"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Board"> | Date | string
@@ -228,10 +228,10 @@ export type BoardWhereInput = {
 export type BoardOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
-  slug?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   thumbnail?: Prisma.SortOrderInput | Prisma.SortOrder
   isPublic?: Prisma.SortOrder
+  favorite?: Prisma.SortOrder
   ownerId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -248,7 +248,6 @@ export type BoardOrderByWithRelationInput = {
 
 export type BoardWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  slug?: string
   AND?: Prisma.BoardWhereInput | Prisma.BoardWhereInput[]
   OR?: Prisma.BoardWhereInput[]
   NOT?: Prisma.BoardWhereInput | Prisma.BoardWhereInput[]
@@ -256,6 +255,7 @@ export type BoardWhereUniqueInput = Prisma.AtLeast<{
   description?: Prisma.StringNullableFilter<"Board"> | string | null
   thumbnail?: Prisma.StringNullableFilter<"Board"> | string | null
   isPublic?: Prisma.BoolFilter<"Board"> | boolean
+  favorite?: Prisma.BoolFilter<"Board"> | boolean
   ownerId?: Prisma.StringFilter<"Board"> | string
   createdAt?: Prisma.DateTimeFilter<"Board"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Board"> | Date | string
@@ -268,15 +268,15 @@ export type BoardWhereUniqueInput = Prisma.AtLeast<{
   versions?: Prisma.BoardVersionListRelationFilter
   invites?: Prisma.InviteListRelationFilter
   activityLogs?: Prisma.ActivityLogListRelationFilter
-}, "id" | "slug">
+}, "id">
 
 export type BoardOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
-  slug?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   thumbnail?: Prisma.SortOrderInput | Prisma.SortOrder
   isPublic?: Prisma.SortOrder
+  favorite?: Prisma.SortOrder
   ownerId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -291,10 +291,10 @@ export type BoardScalarWhereWithAggregatesInput = {
   NOT?: Prisma.BoardScalarWhereWithAggregatesInput | Prisma.BoardScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Board"> | string
   name?: Prisma.StringWithAggregatesFilter<"Board"> | string
-  slug?: Prisma.StringWithAggregatesFilter<"Board"> | string
   description?: Prisma.StringNullableWithAggregatesFilter<"Board"> | string | null
   thumbnail?: Prisma.StringNullableWithAggregatesFilter<"Board"> | string | null
   isPublic?: Prisma.BoolWithAggregatesFilter<"Board"> | boolean
+  favorite?: Prisma.BoolWithAggregatesFilter<"Board"> | boolean
   ownerId?: Prisma.StringWithAggregatesFilter<"Board"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Board"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Board"> | Date | string
@@ -303,10 +303,10 @@ export type BoardScalarWhereWithAggregatesInput = {
 export type BoardCreateInput = {
   id?: string
   name: string
-  slug: string
   description?: string | null
   thumbnail?: string | null
   isPublic?: boolean
+  favorite?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   owner: Prisma.UserCreateNestedOneWithoutOwnedBoardsInput
@@ -323,10 +323,10 @@ export type BoardCreateInput = {
 export type BoardUncheckedCreateInput = {
   id?: string
   name: string
-  slug: string
   description?: string | null
   thumbnail?: string | null
   isPublic?: boolean
+  favorite?: boolean
   ownerId: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -343,10 +343,10 @@ export type BoardUncheckedCreateInput = {
 export type BoardUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  favorite?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   owner?: Prisma.UserUpdateOneRequiredWithoutOwnedBoardsNestedInput
@@ -363,10 +363,10 @@ export type BoardUpdateInput = {
 export type BoardUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  favorite?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ownerId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -383,10 +383,10 @@ export type BoardUncheckedUpdateInput = {
 export type BoardCreateManyInput = {
   id?: string
   name: string
-  slug: string
   description?: string | null
   thumbnail?: string | null
   isPublic?: boolean
+  favorite?: boolean
   ownerId: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -395,10 +395,10 @@ export type BoardCreateManyInput = {
 export type BoardUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  favorite?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -406,10 +406,10 @@ export type BoardUpdateManyMutationInput = {
 export type BoardUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  favorite?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ownerId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -423,10 +423,10 @@ export type BoardScalarRelationFilter = {
 export type BoardCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
-  slug?: Prisma.SortOrder
   description?: Prisma.SortOrder
   thumbnail?: Prisma.SortOrder
   isPublic?: Prisma.SortOrder
+  favorite?: Prisma.SortOrder
   ownerId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -435,10 +435,10 @@ export type BoardCountOrderByAggregateInput = {
 export type BoardMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
-  slug?: Prisma.SortOrder
   description?: Prisma.SortOrder
   thumbnail?: Prisma.SortOrder
   isPublic?: Prisma.SortOrder
+  favorite?: Prisma.SortOrder
   ownerId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -447,10 +447,10 @@ export type BoardMaxOrderByAggregateInput = {
 export type BoardMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
-  slug?: Prisma.SortOrder
   description?: Prisma.SortOrder
   thumbnail?: Prisma.SortOrder
   isPublic?: Prisma.SortOrder
+  favorite?: Prisma.SortOrder
   ownerId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -627,10 +627,10 @@ export type BoardUpdateOneRequiredWithoutVersionsNestedInput = {
 export type BoardCreateWithoutActivityLogsInput = {
   id?: string
   name: string
-  slug: string
   description?: string | null
   thumbnail?: string | null
   isPublic?: boolean
+  favorite?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   owner: Prisma.UserCreateNestedOneWithoutOwnedBoardsInput
@@ -646,10 +646,10 @@ export type BoardCreateWithoutActivityLogsInput = {
 export type BoardUncheckedCreateWithoutActivityLogsInput = {
   id?: string
   name: string
-  slug: string
   description?: string | null
   thumbnail?: string | null
   isPublic?: boolean
+  favorite?: boolean
   ownerId: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -681,10 +681,10 @@ export type BoardUpdateToOneWithWhereWithoutActivityLogsInput = {
 export type BoardUpdateWithoutActivityLogsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  favorite?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   owner?: Prisma.UserUpdateOneRequiredWithoutOwnedBoardsNestedInput
@@ -700,10 +700,10 @@ export type BoardUpdateWithoutActivityLogsInput = {
 export type BoardUncheckedUpdateWithoutActivityLogsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  favorite?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ownerId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -719,10 +719,10 @@ export type BoardUncheckedUpdateWithoutActivityLogsInput = {
 export type BoardCreateWithoutMembersInput = {
   id?: string
   name: string
-  slug: string
   description?: string | null
   thumbnail?: string | null
   isPublic?: boolean
+  favorite?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   owner: Prisma.UserCreateNestedOneWithoutOwnedBoardsInput
@@ -738,10 +738,10 @@ export type BoardCreateWithoutMembersInput = {
 export type BoardUncheckedCreateWithoutMembersInput = {
   id?: string
   name: string
-  slug: string
   description?: string | null
   thumbnail?: string | null
   isPublic?: boolean
+  favorite?: boolean
   ownerId: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -773,10 +773,10 @@ export type BoardUpdateToOneWithWhereWithoutMembersInput = {
 export type BoardUpdateWithoutMembersInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  favorite?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   owner?: Prisma.UserUpdateOneRequiredWithoutOwnedBoardsNestedInput
@@ -792,10 +792,10 @@ export type BoardUpdateWithoutMembersInput = {
 export type BoardUncheckedUpdateWithoutMembersInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  favorite?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ownerId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -811,10 +811,10 @@ export type BoardUncheckedUpdateWithoutMembersInput = {
 export type BoardCreateWithoutCallsInput = {
   id?: string
   name: string
-  slug: string
   description?: string | null
   thumbnail?: string | null
   isPublic?: boolean
+  favorite?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   owner: Prisma.UserCreateNestedOneWithoutOwnedBoardsInput
@@ -830,10 +830,10 @@ export type BoardCreateWithoutCallsInput = {
 export type BoardUncheckedCreateWithoutCallsInput = {
   id?: string
   name: string
-  slug: string
   description?: string | null
   thumbnail?: string | null
   isPublic?: boolean
+  favorite?: boolean
   ownerId: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -865,10 +865,10 @@ export type BoardUpdateToOneWithWhereWithoutCallsInput = {
 export type BoardUpdateWithoutCallsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  favorite?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   owner?: Prisma.UserUpdateOneRequiredWithoutOwnedBoardsNestedInput
@@ -884,10 +884,10 @@ export type BoardUpdateWithoutCallsInput = {
 export type BoardUncheckedUpdateWithoutCallsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  favorite?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ownerId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -903,10 +903,10 @@ export type BoardUncheckedUpdateWithoutCallsInput = {
 export type BoardCreateWithoutChatMessagesInput = {
   id?: string
   name: string
-  slug: string
   description?: string | null
   thumbnail?: string | null
   isPublic?: boolean
+  favorite?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   owner: Prisma.UserCreateNestedOneWithoutOwnedBoardsInput
@@ -922,10 +922,10 @@ export type BoardCreateWithoutChatMessagesInput = {
 export type BoardUncheckedCreateWithoutChatMessagesInput = {
   id?: string
   name: string
-  slug: string
   description?: string | null
   thumbnail?: string | null
   isPublic?: boolean
+  favorite?: boolean
   ownerId: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -957,10 +957,10 @@ export type BoardUpdateToOneWithWhereWithoutChatMessagesInput = {
 export type BoardUpdateWithoutChatMessagesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  favorite?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   owner?: Prisma.UserUpdateOneRequiredWithoutOwnedBoardsNestedInput
@@ -976,10 +976,10 @@ export type BoardUpdateWithoutChatMessagesInput = {
 export type BoardUncheckedUpdateWithoutChatMessagesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  favorite?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ownerId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -995,10 +995,10 @@ export type BoardUncheckedUpdateWithoutChatMessagesInput = {
 export type BoardCreateWithoutImageAssetsInput = {
   id?: string
   name: string
-  slug: string
   description?: string | null
   thumbnail?: string | null
   isPublic?: boolean
+  favorite?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   owner: Prisma.UserCreateNestedOneWithoutOwnedBoardsInput
@@ -1014,10 +1014,10 @@ export type BoardCreateWithoutImageAssetsInput = {
 export type BoardUncheckedCreateWithoutImageAssetsInput = {
   id?: string
   name: string
-  slug: string
   description?: string | null
   thumbnail?: string | null
   isPublic?: boolean
+  favorite?: boolean
   ownerId: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1049,10 +1049,10 @@ export type BoardUpdateToOneWithWhereWithoutImageAssetsInput = {
 export type BoardUpdateWithoutImageAssetsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  favorite?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   owner?: Prisma.UserUpdateOneRequiredWithoutOwnedBoardsNestedInput
@@ -1068,10 +1068,10 @@ export type BoardUpdateWithoutImageAssetsInput = {
 export type BoardUncheckedUpdateWithoutImageAssetsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  favorite?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ownerId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1087,10 +1087,10 @@ export type BoardUncheckedUpdateWithoutImageAssetsInput = {
 export type BoardCreateWithoutInvitesInput = {
   id?: string
   name: string
-  slug: string
   description?: string | null
   thumbnail?: string | null
   isPublic?: boolean
+  favorite?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   owner: Prisma.UserCreateNestedOneWithoutOwnedBoardsInput
@@ -1106,10 +1106,10 @@ export type BoardCreateWithoutInvitesInput = {
 export type BoardUncheckedCreateWithoutInvitesInput = {
   id?: string
   name: string
-  slug: string
   description?: string | null
   thumbnail?: string | null
   isPublic?: boolean
+  favorite?: boolean
   ownerId: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1141,10 +1141,10 @@ export type BoardUpdateToOneWithWhereWithoutInvitesInput = {
 export type BoardUpdateWithoutInvitesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  favorite?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   owner?: Prisma.UserUpdateOneRequiredWithoutOwnedBoardsNestedInput
@@ -1160,10 +1160,10 @@ export type BoardUpdateWithoutInvitesInput = {
 export type BoardUncheckedUpdateWithoutInvitesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  favorite?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ownerId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1179,10 +1179,10 @@ export type BoardUncheckedUpdateWithoutInvitesInput = {
 export type BoardCreateWithoutPagesInput = {
   id?: string
   name: string
-  slug: string
   description?: string | null
   thumbnail?: string | null
   isPublic?: boolean
+  favorite?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   owner: Prisma.UserCreateNestedOneWithoutOwnedBoardsInput
@@ -1198,10 +1198,10 @@ export type BoardCreateWithoutPagesInput = {
 export type BoardUncheckedCreateWithoutPagesInput = {
   id?: string
   name: string
-  slug: string
   description?: string | null
   thumbnail?: string | null
   isPublic?: boolean
+  favorite?: boolean
   ownerId: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1233,10 +1233,10 @@ export type BoardUpdateToOneWithWhereWithoutPagesInput = {
 export type BoardUpdateWithoutPagesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  favorite?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   owner?: Prisma.UserUpdateOneRequiredWithoutOwnedBoardsNestedInput
@@ -1252,10 +1252,10 @@ export type BoardUpdateWithoutPagesInput = {
 export type BoardUncheckedUpdateWithoutPagesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  favorite?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ownerId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1271,10 +1271,10 @@ export type BoardUncheckedUpdateWithoutPagesInput = {
 export type BoardCreateWithoutOwnerInput = {
   id?: string
   name: string
-  slug: string
   description?: string | null
   thumbnail?: string | null
   isPublic?: boolean
+  favorite?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   members?: Prisma.BoardMemberCreateNestedManyWithoutBoardInput
@@ -1290,10 +1290,10 @@ export type BoardCreateWithoutOwnerInput = {
 export type BoardUncheckedCreateWithoutOwnerInput = {
   id?: string
   name: string
-  slug: string
   description?: string | null
   thumbnail?: string | null
   isPublic?: boolean
+  favorite?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   members?: Prisma.BoardMemberUncheckedCreateNestedManyWithoutBoardInput
@@ -1338,10 +1338,10 @@ export type BoardScalarWhereInput = {
   NOT?: Prisma.BoardScalarWhereInput | Prisma.BoardScalarWhereInput[]
   id?: Prisma.StringFilter<"Board"> | string
   name?: Prisma.StringFilter<"Board"> | string
-  slug?: Prisma.StringFilter<"Board"> | string
   description?: Prisma.StringNullableFilter<"Board"> | string | null
   thumbnail?: Prisma.StringNullableFilter<"Board"> | string | null
   isPublic?: Prisma.BoolFilter<"Board"> | boolean
+  favorite?: Prisma.BoolFilter<"Board"> | boolean
   ownerId?: Prisma.StringFilter<"Board"> | string
   createdAt?: Prisma.DateTimeFilter<"Board"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Board"> | Date | string
@@ -1350,10 +1350,10 @@ export type BoardScalarWhereInput = {
 export type BoardCreateWithoutVersionsInput = {
   id?: string
   name: string
-  slug: string
   description?: string | null
   thumbnail?: string | null
   isPublic?: boolean
+  favorite?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   owner: Prisma.UserCreateNestedOneWithoutOwnedBoardsInput
@@ -1369,10 +1369,10 @@ export type BoardCreateWithoutVersionsInput = {
 export type BoardUncheckedCreateWithoutVersionsInput = {
   id?: string
   name: string
-  slug: string
   description?: string | null
   thumbnail?: string | null
   isPublic?: boolean
+  favorite?: boolean
   ownerId: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1404,10 +1404,10 @@ export type BoardUpdateToOneWithWhereWithoutVersionsInput = {
 export type BoardUpdateWithoutVersionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  favorite?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   owner?: Prisma.UserUpdateOneRequiredWithoutOwnedBoardsNestedInput
@@ -1423,10 +1423,10 @@ export type BoardUpdateWithoutVersionsInput = {
 export type BoardUncheckedUpdateWithoutVersionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  favorite?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ownerId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1442,10 +1442,10 @@ export type BoardUncheckedUpdateWithoutVersionsInput = {
 export type BoardCreateManyOwnerInput = {
   id?: string
   name: string
-  slug: string
   description?: string | null
   thumbnail?: string | null
   isPublic?: boolean
+  favorite?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -1453,10 +1453,10 @@ export type BoardCreateManyOwnerInput = {
 export type BoardUpdateWithoutOwnerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  favorite?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   members?: Prisma.BoardMemberUpdateManyWithoutBoardNestedInput
@@ -1472,10 +1472,10 @@ export type BoardUpdateWithoutOwnerInput = {
 export type BoardUncheckedUpdateWithoutOwnerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  favorite?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   members?: Prisma.BoardMemberUncheckedUpdateManyWithoutBoardNestedInput
@@ -1491,10 +1491,10 @@ export type BoardUncheckedUpdateWithoutOwnerInput = {
 export type BoardUncheckedUpdateManyWithoutOwnerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   thumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  favorite?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1596,10 +1596,10 @@ export type BoardCountOutputTypeCountActivityLogsArgs<ExtArgs extends runtime.Ty
 export type BoardSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
-  slug?: boolean
   description?: boolean
   thumbnail?: boolean
   isPublic?: boolean
+  favorite?: boolean
   ownerId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1618,10 +1618,10 @@ export type BoardSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
 export type BoardSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
-  slug?: boolean
   description?: boolean
   thumbnail?: boolean
   isPublic?: boolean
+  favorite?: boolean
   ownerId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1631,10 +1631,10 @@ export type BoardSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
 export type BoardSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
-  slug?: boolean
   description?: boolean
   thumbnail?: boolean
   isPublic?: boolean
+  favorite?: boolean
   ownerId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1644,16 +1644,16 @@ export type BoardSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
 export type BoardSelectScalar = {
   id?: boolean
   name?: boolean
-  slug?: boolean
   description?: boolean
   thumbnail?: boolean
   isPublic?: boolean
+  favorite?: boolean
   ownerId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type BoardOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "description" | "thumbnail" | "isPublic" | "ownerId" | "createdAt" | "updatedAt", ExtArgs["result"]["board"]>
+export type BoardOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "thumbnail" | "isPublic" | "favorite" | "ownerId" | "createdAt" | "updatedAt", ExtArgs["result"]["board"]>
 export type BoardInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   owner?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   members?: boolean | Prisma.Board$membersArgs<ExtArgs>
@@ -1689,10 +1689,10 @@ export type $BoardPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     name: string
-    slug: string
     description: string | null
     thumbnail: string | null
     isPublic: boolean
+    favorite: boolean
     ownerId: string
     createdAt: Date
     updatedAt: Date
@@ -2130,10 +2130,10 @@ export interface Prisma__BoardClient<T, Null = never, ExtArgs extends runtime.Ty
 export interface BoardFieldRefs {
   readonly id: Prisma.FieldRef<"Board", 'String'>
   readonly name: Prisma.FieldRef<"Board", 'String'>
-  readonly slug: Prisma.FieldRef<"Board", 'String'>
   readonly description: Prisma.FieldRef<"Board", 'String'>
   readonly thumbnail: Prisma.FieldRef<"Board", 'String'>
   readonly isPublic: Prisma.FieldRef<"Board", 'Boolean'>
+  readonly favorite: Prisma.FieldRef<"Board", 'Boolean'>
   readonly ownerId: Prisma.FieldRef<"Board", 'String'>
   readonly createdAt: Prisma.FieldRef<"Board", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Board", 'DateTime'>

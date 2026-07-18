@@ -1,4 +1,4 @@
-import { Button } from "@/features/editor/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { HelpCircle } from "lucide-react";
 
 export default function HelpButton() {

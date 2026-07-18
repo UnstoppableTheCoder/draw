@@ -49,7 +49,7 @@ export type ImageAssetMinAggregateOutputType = {
   fileSize: bigint | null
   naturalWidth: number | null
   naturalHeight: number | null
-  status: $Enums.ImageStatus | null
+  status: string | null
   createdAt: Date | null
 }
 
@@ -64,7 +64,7 @@ export type ImageAssetMaxAggregateOutputType = {
   fileSize: bigint | null
   naturalWidth: number | null
   naturalHeight: number | null
-  status: $Enums.ImageStatus | null
+  status: string | null
   createdAt: Date | null
 }
 
@@ -240,7 +240,7 @@ export type ImageAssetGroupByOutputType = {
   fileSize: bigint | null
   naturalWidth: number
   naturalHeight: number
-  status: $Enums.ImageStatus
+  status: string
   createdAt: Date
   _count: ImageAssetCountAggregateOutputType | null
   _avg: ImageAssetAvgAggregateOutputType | null
@@ -278,7 +278,7 @@ export type ImageAssetWhereInput = {
   fileSize?: Prisma.BigIntNullableFilter<"ImageAsset"> | bigint | number | null
   naturalWidth?: Prisma.IntFilter<"ImageAsset"> | number
   naturalHeight?: Prisma.IntFilter<"ImageAsset"> | number
-  status?: Prisma.EnumImageStatusFilter<"ImageAsset"> | $Enums.ImageStatus
+  status?: Prisma.StringFilter<"ImageAsset"> | string
   createdAt?: Prisma.DateTimeFilter<"ImageAsset"> | Date | string
   board?: Prisma.XOR<Prisma.BoardScalarRelationFilter, Prisma.BoardWhereInput>
   uploadedBy?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -315,7 +315,7 @@ export type ImageAssetWhereUniqueInput = Prisma.AtLeast<{
   fileSize?: Prisma.BigIntNullableFilter<"ImageAsset"> | bigint | number | null
   naturalWidth?: Prisma.IntFilter<"ImageAsset"> | number
   naturalHeight?: Prisma.IntFilter<"ImageAsset"> | number
-  status?: Prisma.EnumImageStatusFilter<"ImageAsset"> | $Enums.ImageStatus
+  status?: Prisma.StringFilter<"ImageAsset"> | string
   createdAt?: Prisma.DateTimeFilter<"ImageAsset"> | Date | string
   board?: Prisma.XOR<Prisma.BoardScalarRelationFilter, Prisma.BoardWhereInput>
   uploadedBy?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -355,7 +355,7 @@ export type ImageAssetScalarWhereWithAggregatesInput = {
   fileSize?: Prisma.BigIntNullableWithAggregatesFilter<"ImageAsset"> | bigint | number | null
   naturalWidth?: Prisma.IntWithAggregatesFilter<"ImageAsset"> | number
   naturalHeight?: Prisma.IntWithAggregatesFilter<"ImageAsset"> | number
-  status?: Prisma.EnumImageStatusWithAggregatesFilter<"ImageAsset"> | $Enums.ImageStatus
+  status?: Prisma.StringWithAggregatesFilter<"ImageAsset"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"ImageAsset"> | Date | string
 }
 
@@ -368,7 +368,7 @@ export type ImageAssetCreateInput = {
   fileSize?: bigint | number | null
   naturalWidth: number
   naturalHeight: number
-  status?: $Enums.ImageStatus
+  status: string
   createdAt?: Date | string
   board: Prisma.BoardCreateNestedOneWithoutImageAssetsInput
   uploadedBy: Prisma.UserCreateNestedOneWithoutUploadedAssetsInput
@@ -385,7 +385,7 @@ export type ImageAssetUncheckedCreateInput = {
   fileSize?: bigint | number | null
   naturalWidth: number
   naturalHeight: number
-  status?: $Enums.ImageStatus
+  status: string
   createdAt?: Date | string
 }
 
@@ -398,7 +398,7 @@ export type ImageAssetUpdateInput = {
   fileSize?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   naturalWidth?: Prisma.IntFieldUpdateOperationsInput | number
   naturalHeight?: Prisma.IntFieldUpdateOperationsInput | number
-  status?: Prisma.EnumImageStatusFieldUpdateOperationsInput | $Enums.ImageStatus
+  status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   board?: Prisma.BoardUpdateOneRequiredWithoutImageAssetsNestedInput
   uploadedBy?: Prisma.UserUpdateOneRequiredWithoutUploadedAssetsNestedInput
@@ -415,7 +415,7 @@ export type ImageAssetUncheckedUpdateInput = {
   fileSize?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   naturalWidth?: Prisma.IntFieldUpdateOperationsInput | number
   naturalHeight?: Prisma.IntFieldUpdateOperationsInput | number
-  status?: Prisma.EnumImageStatusFieldUpdateOperationsInput | $Enums.ImageStatus
+  status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -430,7 +430,7 @@ export type ImageAssetCreateManyInput = {
   fileSize?: bigint | number | null
   naturalWidth: number
   naturalHeight: number
-  status?: $Enums.ImageStatus
+  status: string
   createdAt?: Date | string
 }
 
@@ -443,7 +443,7 @@ export type ImageAssetUpdateManyMutationInput = {
   fileSize?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   naturalWidth?: Prisma.IntFieldUpdateOperationsInput | number
   naturalHeight?: Prisma.IntFieldUpdateOperationsInput | number
-  status?: Prisma.EnumImageStatusFieldUpdateOperationsInput | $Enums.ImageStatus
+  status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -458,7 +458,7 @@ export type ImageAssetUncheckedUpdateManyInput = {
   fileSize?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   naturalWidth?: Prisma.IntFieldUpdateOperationsInput | number
   naturalHeight?: Prisma.IntFieldUpdateOperationsInput | number
-  status?: Prisma.EnumImageStatusFieldUpdateOperationsInput | $Enums.ImageStatus
+  status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -587,10 +587,6 @@ export type IntFieldUpdateOperationsInput = {
   divide?: number
 }
 
-export type EnumImageStatusFieldUpdateOperationsInput = {
-  set?: $Enums.ImageStatus
-}
-
 export type ImageAssetCreateNestedManyWithoutUploadedByInput = {
   create?: Prisma.XOR<Prisma.ImageAssetCreateWithoutUploadedByInput, Prisma.ImageAssetUncheckedCreateWithoutUploadedByInput> | Prisma.ImageAssetCreateWithoutUploadedByInput[] | Prisma.ImageAssetUncheckedCreateWithoutUploadedByInput[]
   connectOrCreate?: Prisma.ImageAssetCreateOrConnectWithoutUploadedByInput | Prisma.ImageAssetCreateOrConnectWithoutUploadedByInput[]
@@ -642,7 +638,7 @@ export type ImageAssetCreateWithoutBoardInput = {
   fileSize?: bigint | number | null
   naturalWidth: number
   naturalHeight: number
-  status?: $Enums.ImageStatus
+  status: string
   createdAt?: Date | string
   uploadedBy: Prisma.UserCreateNestedOneWithoutUploadedAssetsInput
 }
@@ -657,7 +653,7 @@ export type ImageAssetUncheckedCreateWithoutBoardInput = {
   fileSize?: bigint | number | null
   naturalWidth: number
   naturalHeight: number
-  status?: $Enums.ImageStatus
+  status: string
   createdAt?: Date | string
 }
 
@@ -701,7 +697,7 @@ export type ImageAssetScalarWhereInput = {
   fileSize?: Prisma.BigIntNullableFilter<"ImageAsset"> | bigint | number | null
   naturalWidth?: Prisma.IntFilter<"ImageAsset"> | number
   naturalHeight?: Prisma.IntFilter<"ImageAsset"> | number
-  status?: Prisma.EnumImageStatusFilter<"ImageAsset"> | $Enums.ImageStatus
+  status?: Prisma.StringFilter<"ImageAsset"> | string
   createdAt?: Prisma.DateTimeFilter<"ImageAsset"> | Date | string
 }
 
@@ -714,7 +710,7 @@ export type ImageAssetCreateWithoutUploadedByInput = {
   fileSize?: bigint | number | null
   naturalWidth: number
   naturalHeight: number
-  status?: $Enums.ImageStatus
+  status: string
   createdAt?: Date | string
   board: Prisma.BoardCreateNestedOneWithoutImageAssetsInput
 }
@@ -729,7 +725,7 @@ export type ImageAssetUncheckedCreateWithoutUploadedByInput = {
   fileSize?: bigint | number | null
   naturalWidth: number
   naturalHeight: number
-  status?: $Enums.ImageStatus
+  status: string
   createdAt?: Date | string
 }
 
@@ -769,7 +765,7 @@ export type ImageAssetCreateManyBoardInput = {
   fileSize?: bigint | number | null
   naturalWidth: number
   naturalHeight: number
-  status?: $Enums.ImageStatus
+  status: string
   createdAt?: Date | string
 }
 
@@ -782,7 +778,7 @@ export type ImageAssetUpdateWithoutBoardInput = {
   fileSize?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   naturalWidth?: Prisma.IntFieldUpdateOperationsInput | number
   naturalHeight?: Prisma.IntFieldUpdateOperationsInput | number
-  status?: Prisma.EnumImageStatusFieldUpdateOperationsInput | $Enums.ImageStatus
+  status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   uploadedBy?: Prisma.UserUpdateOneRequiredWithoutUploadedAssetsNestedInput
 }
@@ -797,7 +793,7 @@ export type ImageAssetUncheckedUpdateWithoutBoardInput = {
   fileSize?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   naturalWidth?: Prisma.IntFieldUpdateOperationsInput | number
   naturalHeight?: Prisma.IntFieldUpdateOperationsInput | number
-  status?: Prisma.EnumImageStatusFieldUpdateOperationsInput | $Enums.ImageStatus
+  status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -811,7 +807,7 @@ export type ImageAssetUncheckedUpdateManyWithoutBoardInput = {
   fileSize?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   naturalWidth?: Prisma.IntFieldUpdateOperationsInput | number
   naturalHeight?: Prisma.IntFieldUpdateOperationsInput | number
-  status?: Prisma.EnumImageStatusFieldUpdateOperationsInput | $Enums.ImageStatus
+  status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -825,7 +821,7 @@ export type ImageAssetCreateManyUploadedByInput = {
   fileSize?: bigint | number | null
   naturalWidth: number
   naturalHeight: number
-  status?: $Enums.ImageStatus
+  status: string
   createdAt?: Date | string
 }
 
@@ -838,7 +834,7 @@ export type ImageAssetUpdateWithoutUploadedByInput = {
   fileSize?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   naturalWidth?: Prisma.IntFieldUpdateOperationsInput | number
   naturalHeight?: Prisma.IntFieldUpdateOperationsInput | number
-  status?: Prisma.EnumImageStatusFieldUpdateOperationsInput | $Enums.ImageStatus
+  status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   board?: Prisma.BoardUpdateOneRequiredWithoutImageAssetsNestedInput
 }
@@ -853,7 +849,7 @@ export type ImageAssetUncheckedUpdateWithoutUploadedByInput = {
   fileSize?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   naturalWidth?: Prisma.IntFieldUpdateOperationsInput | number
   naturalHeight?: Prisma.IntFieldUpdateOperationsInput | number
-  status?: Prisma.EnumImageStatusFieldUpdateOperationsInput | $Enums.ImageStatus
+  status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -867,7 +863,7 @@ export type ImageAssetUncheckedUpdateManyWithoutUploadedByInput = {
   fileSize?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   naturalWidth?: Prisma.IntFieldUpdateOperationsInput | number
   naturalHeight?: Prisma.IntFieldUpdateOperationsInput | number
-  status?: Prisma.EnumImageStatusFieldUpdateOperationsInput | $Enums.ImageStatus
+  status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -970,7 +966,7 @@ export type $ImageAssetPayload<ExtArgs extends runtime.Types.Extensions.Internal
     fileSize: bigint | null
     naturalWidth: number
     naturalHeight: number
-    status: $Enums.ImageStatus
+    status: string
     createdAt: Date
   }, ExtArgs["result"]["imageAsset"]>
   composites: {}
@@ -1407,7 +1403,7 @@ export interface ImageAssetFieldRefs {
   readonly fileSize: Prisma.FieldRef<"ImageAsset", 'BigInt'>
   readonly naturalWidth: Prisma.FieldRef<"ImageAsset", 'Int'>
   readonly naturalHeight: Prisma.FieldRef<"ImageAsset", 'Int'>
-  readonly status: Prisma.FieldRef<"ImageAsset", 'ImageStatus'>
+  readonly status: Prisma.FieldRef<"ImageAsset", 'String'>
   readonly createdAt: Prisma.FieldRef<"ImageAsset", 'DateTime'>
 }
     

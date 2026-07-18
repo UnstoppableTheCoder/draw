@@ -1,9 +1,9 @@
 model ImageAsset {
-    id            String      @id
+    id            String   @id
     boardId       String
-    board         Board       @relation(fields: [boardId], references: [id], onDelete: Cascade)
+    board         Board    @relation(fields: [boardId], references: [id], onDelete: Cascade)
     uploadedById  String
-    uploadedBy    User        @relation(fields: [uploadedById], references: [id])
+    uploadedBy    User     @relation(fields: [uploadedById], references: [id])
     s3Key         String?
     renderUrl     String
     publicUrl     String?
@@ -11,8 +11,9 @@ model ImageAsset {
     fileSize      BigInt?
     naturalWidth  Int
     naturalHeight Int
-    status        ImageStatus @default(UPLOADING)
-    createdAt     DateTime    @default(now())
+    // status        ImageStatus @default(UPLOADING)
+    status        String
+    createdAt     DateTime @default(now())
 
     @@index([boardId, createdAt])
     @@index([uploadedById])

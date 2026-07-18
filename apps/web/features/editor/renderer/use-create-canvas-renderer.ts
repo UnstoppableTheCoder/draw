@@ -18,12 +18,14 @@ import { EditorRefs, Shape } from "@/features/editor/types";
 import drawGrid from "../drawing/background/draw-line-grid";
 import drawDotGrid from "../drawing/background/draw-dot-grid";
 import drawLineGrid from "../drawing/background/draw-line-grid";
+import { useImageManager } from "../interactions/manager/image-manager";
 
 export default function useCreateCanvasRenderer({
   backgroundCanvasRef,
   sceneCanvasRef,
   overlayCanvasRef,
   pointerRefs,
+  imageManager,
 }: EditorRefs) {
   const frameIdRef = useRef<number | null>(null);
   const backgroundDirtyRef = useRef(false);
@@ -166,6 +168,7 @@ export default function useCreateCanvasRenderer({
       skipShapeIds,
       hoveredFrameId,
       frameEditingState,
+      imageManager,
     });
 
     ctx.restore();
@@ -228,6 +231,7 @@ export default function useCreateCanvasRenderer({
           images,
           scale,
           frameEditingState,
+          imageManager,
         });
       }
 
@@ -339,35 +343,53 @@ export default function useCreateCanvasRenderer({
     frameIdRef.current = requestAnimationFrame(flushRender);
   }, [flushRender]);
 
-  const invalidateBackground = useCallback(() => {
-    backgroundDirtyRef.current = true;
-    scheduleRender();
-  }, [scheduleRender]);
+  // const invalidateBackground = useCallback(() => {
+  //   backgroundDirtyRef.current = true;
+  //   scheduleRender();
+  // }, [scheduleRender]);
 
-  const invalidateScene = useCallback(() => {
-    sceneDirtyRef.current = true;
-    scheduleRender();
-  }, [scheduleRender]);
+  // const invalidateScene = useCallback(() => {
+  //   sceneDirtyRef.current = true;
+  //   scheduleRender();
+  // }, [scheduleRender]);
 
-  const invalidateOverlay = useCallback(() => {
-    overlayDirtyRef.current = true;
-    scheduleRender();
-  }, [scheduleRender]);
+  // const invalidateOverlay = useCallback(() => {
+  //   overlayDirtyRef.current = true;
+  //   scheduleRender();
+  // }, [scheduleRender]);
 
-  const invalidate = useCallback(() => {
-    backgroundDirtyRef.current = true;
-    sceneDirtyRef.current = true;
-    overlayDirtyRef.current = true;
-    scheduleRender();
-  }, [scheduleRender]);
+  // const invalidate = useCallback(() => {
+  //   backgroundDirtyRef.current = true;
+  //   sceneDirtyRef.current = true;
+  //   overlayDirtyRef.current = true;
+  //   scheduleRender();
+  // }, [scheduleRender]);
 
-  useEffect(() => {
-    return () => {
-      if (frameIdRef.current !== null) {
-        cancelAnimationFrame(frameIdRef.current);
-      }
-    };
-  }, []);
+  const invalidateOverlay = () => {
+    renderOverlay();
+  };
+
+  const invalidateScene = () => {
+    renderScene();
+  };
+
+  const invalidateBackground = () => {
+    renderBackground();
+  };
+
+  const invalidate = () => {
+    renderBackground();
+    renderScene();
+    renderOverlay();
+  };
+
+  // useEffect(() => {
+  //   return () => {
+  //     if (frameIdRef.current !== null) {
+  //       cancelAnimationFrame(frameIdRef.current);
+  //     }
+  //   };
+  // }, []);
 
   return {
     invalidate,

@@ -8,12 +8,13 @@ model Shape {
     createdBy   User   @relation(fields: [createdById], references: [id])
 
     // Geometry
-    type   ShapeType
+    // type   ShapeType
+    type   String
     x      Float
     y      Float
     width  Float
     height Float
-    angle  Float     @default(0)
+    angle  Float  @default(0)
 
     // Appearance
     appearance Json
@@ -25,7 +26,6 @@ model Shape {
     seed         Int
     version      Int     @default(1)
     versionNonce Int
-    updated      BigInt
     isDeleted    Boolean @default(false)
     locked       Boolean @default(false)
     link         String?

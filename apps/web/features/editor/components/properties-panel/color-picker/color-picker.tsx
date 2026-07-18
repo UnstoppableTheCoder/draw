@@ -1,12 +1,12 @@
 import React from "react";
 import { ColorItem } from "./color-item";
 import { PropertiesPanelItemWrapper } from "../properties-panel-item-wrapper";
-import { Separator } from "../../ui/separator";
 import { COLOR_PALETTE } from "@/features/editor/constants/colors";
 import {
   useBackgroundColor,
   useStrokeColor,
 } from "@/features/editor/store/properties/selectors";
+import { Separator } from "@/components/ui/separator";
 
 type ColorPickerProps = {
   title: "Stroke" | "Background";

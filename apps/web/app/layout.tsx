@@ -3,7 +3,8 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
-import { TooltipProvider } from "@/features/editor/components/ui/tooltip";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { AuthProvider } from "@/features/auth/components/auth-provider";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -27,9 +28,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={cn("font-sans", geist.variable, "dark")} >
+    <html lang="en" className={cn("font-sans", geist.variable, "dark")}>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <TooltipProvider>{children}</TooltipProvider>
+        <TooltipProvider>
+          <AuthProvider>{children}</AuthProvider>
+        </TooltipProvider>
       </body>
     </html>
   );

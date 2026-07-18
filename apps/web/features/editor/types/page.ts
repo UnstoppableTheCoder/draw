@@ -4,8 +4,8 @@ export interface Page {
   id: string;
   boardId: string;
   name: string;
-  index: number;
-  backgroundColor: string | null;
+  orderKey: string;
+  backgroundColor: string | undefined;
   createdById: string;
   createdAt: string;
   updatedAt: string;

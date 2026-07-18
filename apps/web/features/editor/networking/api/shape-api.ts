@@ -1,20 +1,37 @@
 import { axiosClient } from "@/config/axios";
-import { Shape } from "../../types";
+import { ImageAsset, Shape } from "../../types";
+
+type GetShapesResponse = {
+  page: {
+    shapes: Shape[];
+  };
+  imageAssets: ImageAsset;
+};
+
+type CreateShapesResponse = {
+  shapes: Shape[];
+};
+
+type updateShapeResponse = {
+  shapes: Shape[];
+};
 
 export const createShapes = async (
   pageId: string,
   shapes: Shape[],
-): Promise<Shape[]> => {
-  const { data } = await axiosClient.post<Shape[]>(
+): Promise<CreateShapesResponse> => {
+  const { data } = await axiosClient.post<CreateShapesResponse>(
     `/pages/${pageId}/shapes`,
-    shapes,
+    { shapes },
   );
 
   return data;
 };
 
-export const getShapes = async (pageId: string): Promise<Shape[]> => {
-  const { data } = await axiosClient.get<Shape[]>(`/pages/${pageId}/shapes`);
+export const getShapes = async (pageId: string): Promise<GetShapesResponse> => {
+  const { data } = await axiosClient.get<GetShapesResponse>(
+    `/pages/${pageId}/shapes`,
+  );
 
   return data;
 };
@@ -22,8 +39,8 @@ export const getShapes = async (pageId: string): Promise<Shape[]> => {
 export const updateShapes = async (
   pageId: string,
   shapes: Shape[],
-): Promise<Shape[]> => {
-  const { data } = await axiosClient.patch<Shape[]>(
+): Promise<updateShapeResponse> => {
+  const { data } = await axiosClient.patch<updateShapeResponse>(
     `/pages/${pageId}/shapes`,
     shapes,
   );

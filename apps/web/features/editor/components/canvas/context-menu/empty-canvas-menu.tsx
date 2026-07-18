@@ -1,7 +1,7 @@
 import { MouseEvent, RefObject } from "react";
 import MenuButton from "./menu-button";
 import { ContextMenuType } from "../../types";
-import { Separator } from "../../ui/separator";
+import { Separator } from "@/components/ui/separator";
 
 export default function EmptyCanvasMenu({
   contextMenu: {

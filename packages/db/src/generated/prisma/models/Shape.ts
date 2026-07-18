@@ -35,7 +35,6 @@ export type ShapeAvgAggregateOutputType = {
   seed: number | null
   version: number | null
   versionNonce: number | null
-  updated: number | null
 }
 
 export type ShapeSumAggregateOutputType = {
@@ -47,14 +46,13 @@ export type ShapeSumAggregateOutputType = {
   seed: number | null
   version: number | null
   versionNonce: number | null
-  updated: bigint | null
 }
 
 export type ShapeMinAggregateOutputType = {
   id: string | null
   pageId: string | null
   createdById: string | null
-  type: $Enums.ShapeType | null
+  type: string | null
   x: number | null
   y: number | null
   width: number | null
@@ -66,7 +64,6 @@ export type ShapeMinAggregateOutputType = {
   seed: number | null
   version: number | null
   versionNonce: number | null
-  updated: bigint | null
   isDeleted: boolean | null
   locked: boolean | null
   link: string | null
@@ -78,7 +75,7 @@ export type ShapeMaxAggregateOutputType = {
   id: string | null
   pageId: string | null
   createdById: string | null
-  type: $Enums.ShapeType | null
+  type: string | null
   x: number | null
   y: number | null
   width: number | null
@@ -90,7 +87,6 @@ export type ShapeMaxAggregateOutputType = {
   seed: number | null
   version: number | null
   versionNonce: number | null
-  updated: bigint | null
   isDeleted: boolean | null
   locked: boolean | null
   link: string | null
@@ -115,7 +111,6 @@ export type ShapeCountAggregateOutputType = {
   seed: number
   version: number
   versionNonce: number
-  updated: number
   isDeleted: number
   locked: number
   link: number
@@ -135,7 +130,6 @@ export type ShapeAvgAggregateInputType = {
   seed?: true
   version?: true
   versionNonce?: true
-  updated?: true
 }
 
 export type ShapeSumAggregateInputType = {
@@ -147,7 +141,6 @@ export type ShapeSumAggregateInputType = {
   seed?: true
   version?: true
   versionNonce?: true
-  updated?: true
 }
 
 export type ShapeMinAggregateInputType = {
@@ -166,7 +159,6 @@ export type ShapeMinAggregateInputType = {
   seed?: true
   version?: true
   versionNonce?: true
-  updated?: true
   isDeleted?: true
   locked?: true
   link?: true
@@ -190,7 +182,6 @@ export type ShapeMaxAggregateInputType = {
   seed?: true
   version?: true
   versionNonce?: true
-  updated?: true
   isDeleted?: true
   locked?: true
   link?: true
@@ -215,7 +206,6 @@ export type ShapeCountAggregateInputType = {
   seed?: true
   version?: true
   versionNonce?: true
-  updated?: true
   isDeleted?: true
   locked?: true
   link?: true
@@ -315,7 +305,7 @@ export type ShapeGroupByOutputType = {
   id: string
   pageId: string
   createdById: string
-  type: $Enums.ShapeType
+  type: string
   x: number
   y: number
   width: number
@@ -328,7 +318,6 @@ export type ShapeGroupByOutputType = {
   seed: number
   version: number
   versionNonce: number
-  updated: bigint
   isDeleted: boolean
   locked: boolean
   link: string | null
@@ -364,7 +353,7 @@ export type ShapeWhereInput = {
   id?: Prisma.StringFilter<"Shape"> | string
   pageId?: Prisma.StringFilter<"Shape"> | string
   createdById?: Prisma.StringFilter<"Shape"> | string
-  type?: Prisma.EnumShapeTypeFilter<"Shape"> | $Enums.ShapeType
+  type?: Prisma.StringFilter<"Shape"> | string
   x?: Prisma.FloatFilter<"Shape"> | number
   y?: Prisma.FloatFilter<"Shape"> | number
   width?: Prisma.FloatFilter<"Shape"> | number
@@ -377,7 +366,6 @@ export type ShapeWhereInput = {
   seed?: Prisma.IntFilter<"Shape"> | number
   version?: Prisma.IntFilter<"Shape"> | number
   versionNonce?: Prisma.IntFilter<"Shape"> | number
-  updated?: Prisma.BigIntFilter<"Shape"> | bigint | number
   isDeleted?: Prisma.BoolFilter<"Shape"> | boolean
   locked?: Prisma.BoolFilter<"Shape"> | boolean
   link?: Prisma.StringNullableFilter<"Shape"> | string | null
@@ -406,7 +394,6 @@ export type ShapeOrderByWithRelationInput = {
   seed?: Prisma.SortOrder
   version?: Prisma.SortOrder
   versionNonce?: Prisma.SortOrder
-  updated?: Prisma.SortOrder
   isDeleted?: Prisma.SortOrder
   locked?: Prisma.SortOrder
   link?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -425,7 +412,7 @@ export type ShapeWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.ShapeWhereInput | Prisma.ShapeWhereInput[]
   pageId?: Prisma.StringFilter<"Shape"> | string
   createdById?: Prisma.StringFilter<"Shape"> | string
-  type?: Prisma.EnumShapeTypeFilter<"Shape"> | $Enums.ShapeType
+  type?: Prisma.StringFilter<"Shape"> | string
   x?: Prisma.FloatFilter<"Shape"> | number
   y?: Prisma.FloatFilter<"Shape"> | number
   width?: Prisma.FloatFilter<"Shape"> | number
@@ -438,7 +425,6 @@ export type ShapeWhereUniqueInput = Prisma.AtLeast<{
   seed?: Prisma.IntFilter<"Shape"> | number
   version?: Prisma.IntFilter<"Shape"> | number
   versionNonce?: Prisma.IntFilter<"Shape"> | number
-  updated?: Prisma.BigIntFilter<"Shape"> | bigint | number
   isDeleted?: Prisma.BoolFilter<"Shape"> | boolean
   locked?: Prisma.BoolFilter<"Shape"> | boolean
   link?: Prisma.StringNullableFilter<"Shape"> | string | null
@@ -467,7 +453,6 @@ export type ShapeOrderByWithAggregationInput = {
   seed?: Prisma.SortOrder
   version?: Prisma.SortOrder
   versionNonce?: Prisma.SortOrder
-  updated?: Prisma.SortOrder
   isDeleted?: Prisma.SortOrder
   locked?: Prisma.SortOrder
   link?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -488,7 +473,7 @@ export type ShapeScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"Shape"> | string
   pageId?: Prisma.StringWithAggregatesFilter<"Shape"> | string
   createdById?: Prisma.StringWithAggregatesFilter<"Shape"> | string
-  type?: Prisma.EnumShapeTypeWithAggregatesFilter<"Shape"> | $Enums.ShapeType
+  type?: Prisma.StringWithAggregatesFilter<"Shape"> | string
   x?: Prisma.FloatWithAggregatesFilter<"Shape"> | number
   y?: Prisma.FloatWithAggregatesFilter<"Shape"> | number
   width?: Prisma.FloatWithAggregatesFilter<"Shape"> | number
@@ -501,7 +486,6 @@ export type ShapeScalarWhereWithAggregatesInput = {
   seed?: Prisma.IntWithAggregatesFilter<"Shape"> | number
   version?: Prisma.IntWithAggregatesFilter<"Shape"> | number
   versionNonce?: Prisma.IntWithAggregatesFilter<"Shape"> | number
-  updated?: Prisma.BigIntWithAggregatesFilter<"Shape"> | bigint | number
   isDeleted?: Prisma.BoolWithAggregatesFilter<"Shape"> | boolean
   locked?: Prisma.BoolWithAggregatesFilter<"Shape"> | boolean
   link?: Prisma.StringNullableWithAggregatesFilter<"Shape"> | string | null
@@ -512,7 +496,7 @@ export type ShapeScalarWhereWithAggregatesInput = {
 
 export type ShapeCreateInput = {
   id: string
-  type: $Enums.ShapeType
+  type: string
   x: number
   y: number
   width: number
@@ -525,7 +509,6 @@ export type ShapeCreateInput = {
   seed: number
   version?: number
   versionNonce: number
-  updated: bigint | number
   isDeleted?: boolean
   locked?: boolean
   link?: string | null
@@ -541,7 +524,7 @@ export type ShapeUncheckedCreateInput = {
   id: string
   pageId: string
   createdById: string
-  type: $Enums.ShapeType
+  type: string
   x: number
   y: number
   width: number
@@ -554,7 +537,6 @@ export type ShapeUncheckedCreateInput = {
   seed: number
   version?: number
   versionNonce: number
-  updated: bigint | number
   isDeleted?: boolean
   locked?: boolean
   link?: string | null
@@ -566,7 +548,7 @@ export type ShapeUncheckedCreateInput = {
 
 export type ShapeUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  type?: Prisma.EnumShapeTypeFieldUpdateOperationsInput | $Enums.ShapeType
+  type?: Prisma.StringFieldUpdateOperationsInput | string
   x?: Prisma.FloatFieldUpdateOperationsInput | number
   y?: Prisma.FloatFieldUpdateOperationsInput | number
   width?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -579,7 +561,6 @@ export type ShapeUpdateInput = {
   seed?: Prisma.IntFieldUpdateOperationsInput | number
   version?: Prisma.IntFieldUpdateOperationsInput | number
   versionNonce?: Prisma.IntFieldUpdateOperationsInput | number
-  updated?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   link?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -595,7 +576,7 @@ export type ShapeUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   pageId?: Prisma.StringFieldUpdateOperationsInput | string
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
-  type?: Prisma.EnumShapeTypeFieldUpdateOperationsInput | $Enums.ShapeType
+  type?: Prisma.StringFieldUpdateOperationsInput | string
   x?: Prisma.FloatFieldUpdateOperationsInput | number
   y?: Prisma.FloatFieldUpdateOperationsInput | number
   width?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -608,7 +589,6 @@ export type ShapeUncheckedUpdateInput = {
   seed?: Prisma.IntFieldUpdateOperationsInput | number
   version?: Prisma.IntFieldUpdateOperationsInput | number
   versionNonce?: Prisma.IntFieldUpdateOperationsInput | number
-  updated?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   link?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -622,7 +602,7 @@ export type ShapeCreateManyInput = {
   id: string
   pageId: string
   createdById: string
-  type: $Enums.ShapeType
+  type: string
   x: number
   y: number
   width: number
@@ -635,7 +615,6 @@ export type ShapeCreateManyInput = {
   seed: number
   version?: number
   versionNonce: number
-  updated: bigint | number
   isDeleted?: boolean
   locked?: boolean
   link?: string | null
@@ -646,7 +625,7 @@ export type ShapeCreateManyInput = {
 
 export type ShapeUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  type?: Prisma.EnumShapeTypeFieldUpdateOperationsInput | $Enums.ShapeType
+  type?: Prisma.StringFieldUpdateOperationsInput | string
   x?: Prisma.FloatFieldUpdateOperationsInput | number
   y?: Prisma.FloatFieldUpdateOperationsInput | number
   width?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -659,7 +638,6 @@ export type ShapeUpdateManyMutationInput = {
   seed?: Prisma.IntFieldUpdateOperationsInput | number
   version?: Prisma.IntFieldUpdateOperationsInput | number
   versionNonce?: Prisma.IntFieldUpdateOperationsInput | number
-  updated?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   link?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -672,7 +650,7 @@ export type ShapeUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   pageId?: Prisma.StringFieldUpdateOperationsInput | string
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
-  type?: Prisma.EnumShapeTypeFieldUpdateOperationsInput | $Enums.ShapeType
+  type?: Prisma.StringFieldUpdateOperationsInput | string
   x?: Prisma.FloatFieldUpdateOperationsInput | number
   y?: Prisma.FloatFieldUpdateOperationsInput | number
   width?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -685,7 +663,6 @@ export type ShapeUncheckedUpdateManyInput = {
   seed?: Prisma.IntFieldUpdateOperationsInput | number
   version?: Prisma.IntFieldUpdateOperationsInput | number
   versionNonce?: Prisma.IntFieldUpdateOperationsInput | number
-  updated?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   link?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -726,7 +703,6 @@ export type ShapeCountOrderByAggregateInput = {
   seed?: Prisma.SortOrder
   version?: Prisma.SortOrder
   versionNonce?: Prisma.SortOrder
-  updated?: Prisma.SortOrder
   isDeleted?: Prisma.SortOrder
   locked?: Prisma.SortOrder
   link?: Prisma.SortOrder
@@ -744,7 +720,6 @@ export type ShapeAvgOrderByAggregateInput = {
   seed?: Prisma.SortOrder
   version?: Prisma.SortOrder
   versionNonce?: Prisma.SortOrder
-  updated?: Prisma.SortOrder
 }
 
 export type ShapeMaxOrderByAggregateInput = {
@@ -763,7 +738,6 @@ export type ShapeMaxOrderByAggregateInput = {
   seed?: Prisma.SortOrder
   version?: Prisma.SortOrder
   versionNonce?: Prisma.SortOrder
-  updated?: Prisma.SortOrder
   isDeleted?: Prisma.SortOrder
   locked?: Prisma.SortOrder
   link?: Prisma.SortOrder
@@ -787,7 +761,6 @@ export type ShapeMinOrderByAggregateInput = {
   seed?: Prisma.SortOrder
   version?: Prisma.SortOrder
   versionNonce?: Prisma.SortOrder
-  updated?: Prisma.SortOrder
   isDeleted?: Prisma.SortOrder
   locked?: Prisma.SortOrder
   link?: Prisma.SortOrder
@@ -804,7 +777,6 @@ export type ShapeSumOrderByAggregateInput = {
   seed?: Prisma.SortOrder
   version?: Prisma.SortOrder
   versionNonce?: Prisma.SortOrder
-  updated?: Prisma.SortOrder
 }
 
 export type ShapeCreateNestedOneWithoutCommentsInput = {
@@ -865,18 +837,6 @@ export type ShapeUncheckedUpdateManyWithoutPageNestedInput = {
   deleteMany?: Prisma.ShapeScalarWhereInput | Prisma.ShapeScalarWhereInput[]
 }
 
-export type EnumShapeTypeFieldUpdateOperationsInput = {
-  set?: $Enums.ShapeType
-}
-
-export type BigIntFieldUpdateOperationsInput = {
-  set?: bigint | number
-  increment?: bigint | number
-  decrement?: bigint | number
-  multiply?: bigint | number
-  divide?: bigint | number
-}
-
 export type ShapeCreateNestedManyWithoutCreatedByInput = {
   create?: Prisma.XOR<Prisma.ShapeCreateWithoutCreatedByInput, Prisma.ShapeUncheckedCreateWithoutCreatedByInput> | Prisma.ShapeCreateWithoutCreatedByInput[] | Prisma.ShapeUncheckedCreateWithoutCreatedByInput[]
   connectOrCreate?: Prisma.ShapeCreateOrConnectWithoutCreatedByInput | Prisma.ShapeCreateOrConnectWithoutCreatedByInput[]
@@ -921,7 +881,7 @@ export type ShapeUncheckedUpdateManyWithoutCreatedByNestedInput = {
 
 export type ShapeCreateWithoutCommentsInput = {
   id: string
-  type: $Enums.ShapeType
+  type: string
   x: number
   y: number
   width: number
@@ -934,7 +894,6 @@ export type ShapeCreateWithoutCommentsInput = {
   seed: number
   version?: number
   versionNonce: number
-  updated: bigint | number
   isDeleted?: boolean
   locked?: boolean
   link?: string | null
@@ -949,7 +908,7 @@ export type ShapeUncheckedCreateWithoutCommentsInput = {
   id: string
   pageId: string
   createdById: string
-  type: $Enums.ShapeType
+  type: string
   x: number
   y: number
   width: number
@@ -962,7 +921,6 @@ export type ShapeUncheckedCreateWithoutCommentsInput = {
   seed: number
   version?: number
   versionNonce: number
-  updated: bigint | number
   isDeleted?: boolean
   locked?: boolean
   link?: string | null
@@ -989,7 +947,7 @@ export type ShapeUpdateToOneWithWhereWithoutCommentsInput = {
 
 export type ShapeUpdateWithoutCommentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  type?: Prisma.EnumShapeTypeFieldUpdateOperationsInput | $Enums.ShapeType
+  type?: Prisma.StringFieldUpdateOperationsInput | string
   x?: Prisma.FloatFieldUpdateOperationsInput | number
   y?: Prisma.FloatFieldUpdateOperationsInput | number
   width?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -1002,7 +960,6 @@ export type ShapeUpdateWithoutCommentsInput = {
   seed?: Prisma.IntFieldUpdateOperationsInput | number
   version?: Prisma.IntFieldUpdateOperationsInput | number
   versionNonce?: Prisma.IntFieldUpdateOperationsInput | number
-  updated?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   link?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1017,7 +974,7 @@ export type ShapeUncheckedUpdateWithoutCommentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   pageId?: Prisma.StringFieldUpdateOperationsInput | string
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
-  type?: Prisma.EnumShapeTypeFieldUpdateOperationsInput | $Enums.ShapeType
+  type?: Prisma.StringFieldUpdateOperationsInput | string
   x?: Prisma.FloatFieldUpdateOperationsInput | number
   y?: Prisma.FloatFieldUpdateOperationsInput | number
   width?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -1030,7 +987,6 @@ export type ShapeUncheckedUpdateWithoutCommentsInput = {
   seed?: Prisma.IntFieldUpdateOperationsInput | number
   version?: Prisma.IntFieldUpdateOperationsInput | number
   versionNonce?: Prisma.IntFieldUpdateOperationsInput | number
-  updated?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   link?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1041,7 +997,7 @@ export type ShapeUncheckedUpdateWithoutCommentsInput = {
 
 export type ShapeCreateWithoutPageInput = {
   id: string
-  type: $Enums.ShapeType
+  type: string
   x: number
   y: number
   width: number
@@ -1054,7 +1010,6 @@ export type ShapeCreateWithoutPageInput = {
   seed: number
   version?: number
   versionNonce: number
-  updated: bigint | number
   isDeleted?: boolean
   locked?: boolean
   link?: string | null
@@ -1068,7 +1023,7 @@ export type ShapeCreateWithoutPageInput = {
 export type ShapeUncheckedCreateWithoutPageInput = {
   id: string
   createdById: string
-  type: $Enums.ShapeType
+  type: string
   x: number
   y: number
   width: number
@@ -1081,7 +1036,6 @@ export type ShapeUncheckedCreateWithoutPageInput = {
   seed: number
   version?: number
   versionNonce: number
-  updated: bigint | number
   isDeleted?: boolean
   locked?: boolean
   link?: string | null
@@ -1124,7 +1078,7 @@ export type ShapeScalarWhereInput = {
   id?: Prisma.StringFilter<"Shape"> | string
   pageId?: Prisma.StringFilter<"Shape"> | string
   createdById?: Prisma.StringFilter<"Shape"> | string
-  type?: Prisma.EnumShapeTypeFilter<"Shape"> | $Enums.ShapeType
+  type?: Prisma.StringFilter<"Shape"> | string
   x?: Prisma.FloatFilter<"Shape"> | number
   y?: Prisma.FloatFilter<"Shape"> | number
   width?: Prisma.FloatFilter<"Shape"> | number
@@ -1137,7 +1091,6 @@ export type ShapeScalarWhereInput = {
   seed?: Prisma.IntFilter<"Shape"> | number
   version?: Prisma.IntFilter<"Shape"> | number
   versionNonce?: Prisma.IntFilter<"Shape"> | number
-  updated?: Prisma.BigIntFilter<"Shape"> | bigint | number
   isDeleted?: Prisma.BoolFilter<"Shape"> | boolean
   locked?: Prisma.BoolFilter<"Shape"> | boolean
   link?: Prisma.StringNullableFilter<"Shape"> | string | null
@@ -1148,7 +1101,7 @@ export type ShapeScalarWhereInput = {
 
 export type ShapeCreateWithoutCreatedByInput = {
   id: string
-  type: $Enums.ShapeType
+  type: string
   x: number
   y: number
   width: number
@@ -1161,7 +1114,6 @@ export type ShapeCreateWithoutCreatedByInput = {
   seed: number
   version?: number
   versionNonce: number
-  updated: bigint | number
   isDeleted?: boolean
   locked?: boolean
   link?: string | null
@@ -1175,7 +1127,7 @@ export type ShapeCreateWithoutCreatedByInput = {
 export type ShapeUncheckedCreateWithoutCreatedByInput = {
   id: string
   pageId: string
-  type: $Enums.ShapeType
+  type: string
   x: number
   y: number
   width: number
@@ -1188,7 +1140,6 @@ export type ShapeUncheckedCreateWithoutCreatedByInput = {
   seed: number
   version?: number
   versionNonce: number
-  updated: bigint | number
   isDeleted?: boolean
   locked?: boolean
   link?: string | null
@@ -1227,7 +1178,7 @@ export type ShapeUpdateManyWithWhereWithoutCreatedByInput = {
 export type ShapeCreateManyPageInput = {
   id: string
   createdById: string
-  type: $Enums.ShapeType
+  type: string
   x: number
   y: number
   width: number
@@ -1240,7 +1191,6 @@ export type ShapeCreateManyPageInput = {
   seed: number
   version?: number
   versionNonce: number
-  updated: bigint | number
   isDeleted?: boolean
   locked?: boolean
   link?: string | null
@@ -1251,7 +1201,7 @@ export type ShapeCreateManyPageInput = {
 
 export type ShapeUpdateWithoutPageInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  type?: Prisma.EnumShapeTypeFieldUpdateOperationsInput | $Enums.ShapeType
+  type?: Prisma.StringFieldUpdateOperationsInput | string
   x?: Prisma.FloatFieldUpdateOperationsInput | number
   y?: Prisma.FloatFieldUpdateOperationsInput | number
   width?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -1264,7 +1214,6 @@ export type ShapeUpdateWithoutPageInput = {
   seed?: Prisma.IntFieldUpdateOperationsInput | number
   version?: Prisma.IntFieldUpdateOperationsInput | number
   versionNonce?: Prisma.IntFieldUpdateOperationsInput | number
-  updated?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   link?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1278,7 +1227,7 @@ export type ShapeUpdateWithoutPageInput = {
 export type ShapeUncheckedUpdateWithoutPageInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
-  type?: Prisma.EnumShapeTypeFieldUpdateOperationsInput | $Enums.ShapeType
+  type?: Prisma.StringFieldUpdateOperationsInput | string
   x?: Prisma.FloatFieldUpdateOperationsInput | number
   y?: Prisma.FloatFieldUpdateOperationsInput | number
   width?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -1291,7 +1240,6 @@ export type ShapeUncheckedUpdateWithoutPageInput = {
   seed?: Prisma.IntFieldUpdateOperationsInput | number
   version?: Prisma.IntFieldUpdateOperationsInput | number
   versionNonce?: Prisma.IntFieldUpdateOperationsInput | number
-  updated?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   link?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1304,7 +1252,7 @@ export type ShapeUncheckedUpdateWithoutPageInput = {
 export type ShapeUncheckedUpdateManyWithoutPageInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
-  type?: Prisma.EnumShapeTypeFieldUpdateOperationsInput | $Enums.ShapeType
+  type?: Prisma.StringFieldUpdateOperationsInput | string
   x?: Prisma.FloatFieldUpdateOperationsInput | number
   y?: Prisma.FloatFieldUpdateOperationsInput | number
   width?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -1317,7 +1265,6 @@ export type ShapeUncheckedUpdateManyWithoutPageInput = {
   seed?: Prisma.IntFieldUpdateOperationsInput | number
   version?: Prisma.IntFieldUpdateOperationsInput | number
   versionNonce?: Prisma.IntFieldUpdateOperationsInput | number
-  updated?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   link?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1329,7 +1276,7 @@ export type ShapeUncheckedUpdateManyWithoutPageInput = {
 export type ShapeCreateManyCreatedByInput = {
   id: string
   pageId: string
-  type: $Enums.ShapeType
+  type: string
   x: number
   y: number
   width: number
@@ -1342,7 +1289,6 @@ export type ShapeCreateManyCreatedByInput = {
   seed: number
   version?: number
   versionNonce: number
-  updated: bigint | number
   isDeleted?: boolean
   locked?: boolean
   link?: string | null
@@ -1353,7 +1299,7 @@ export type ShapeCreateManyCreatedByInput = {
 
 export type ShapeUpdateWithoutCreatedByInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  type?: Prisma.EnumShapeTypeFieldUpdateOperationsInput | $Enums.ShapeType
+  type?: Prisma.StringFieldUpdateOperationsInput | string
   x?: Prisma.FloatFieldUpdateOperationsInput | number
   y?: Prisma.FloatFieldUpdateOperationsInput | number
   width?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -1366,7 +1312,6 @@ export type ShapeUpdateWithoutCreatedByInput = {
   seed?: Prisma.IntFieldUpdateOperationsInput | number
   version?: Prisma.IntFieldUpdateOperationsInput | number
   versionNonce?: Prisma.IntFieldUpdateOperationsInput | number
-  updated?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   link?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1380,7 +1325,7 @@ export type ShapeUpdateWithoutCreatedByInput = {
 export type ShapeUncheckedUpdateWithoutCreatedByInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   pageId?: Prisma.StringFieldUpdateOperationsInput | string
-  type?: Prisma.EnumShapeTypeFieldUpdateOperationsInput | $Enums.ShapeType
+  type?: Prisma.StringFieldUpdateOperationsInput | string
   x?: Prisma.FloatFieldUpdateOperationsInput | number
   y?: Prisma.FloatFieldUpdateOperationsInput | number
   width?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -1393,7 +1338,6 @@ export type ShapeUncheckedUpdateWithoutCreatedByInput = {
   seed?: Prisma.IntFieldUpdateOperationsInput | number
   version?: Prisma.IntFieldUpdateOperationsInput | number
   versionNonce?: Prisma.IntFieldUpdateOperationsInput | number
-  updated?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   link?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1406,7 +1350,7 @@ export type ShapeUncheckedUpdateWithoutCreatedByInput = {
 export type ShapeUncheckedUpdateManyWithoutCreatedByInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   pageId?: Prisma.StringFieldUpdateOperationsInput | string
-  type?: Prisma.EnumShapeTypeFieldUpdateOperationsInput | $Enums.ShapeType
+  type?: Prisma.StringFieldUpdateOperationsInput | string
   x?: Prisma.FloatFieldUpdateOperationsInput | number
   y?: Prisma.FloatFieldUpdateOperationsInput | number
   width?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -1419,7 +1363,6 @@ export type ShapeUncheckedUpdateManyWithoutCreatedByInput = {
   seed?: Prisma.IntFieldUpdateOperationsInput | number
   version?: Prisma.IntFieldUpdateOperationsInput | number
   versionNonce?: Prisma.IntFieldUpdateOperationsInput | number
-  updated?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   link?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1476,7 +1419,6 @@ export type ShapeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   seed?: boolean
   version?: boolean
   versionNonce?: boolean
-  updated?: boolean
   isDeleted?: boolean
   locked?: boolean
   link?: boolean
@@ -1506,7 +1448,6 @@ export type ShapeSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   seed?: boolean
   version?: boolean
   versionNonce?: boolean
-  updated?: boolean
   isDeleted?: boolean
   locked?: boolean
   link?: boolean
@@ -1534,7 +1475,6 @@ export type ShapeSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   seed?: boolean
   version?: boolean
   versionNonce?: boolean
-  updated?: boolean
   isDeleted?: boolean
   locked?: boolean
   link?: boolean
@@ -1562,7 +1502,6 @@ export type ShapeSelectScalar = {
   seed?: boolean
   version?: boolean
   versionNonce?: boolean
-  updated?: boolean
   isDeleted?: boolean
   locked?: boolean
   link?: boolean
@@ -1571,7 +1510,7 @@ export type ShapeSelectScalar = {
   updatedAt?: boolean
 }
 
-export type ShapeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "pageId" | "createdById" | "type" | "x" | "y" | "width" | "height" | "angle" | "appearance" | "groupId" | "frameId" | "zIndex" | "seed" | "version" | "versionNonce" | "updated" | "isDeleted" | "locked" | "link" | "data" | "createdAt" | "updatedAt", ExtArgs["result"]["shape"]>
+export type ShapeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "pageId" | "createdById" | "type" | "x" | "y" | "width" | "height" | "angle" | "appearance" | "groupId" | "frameId" | "zIndex" | "seed" | "version" | "versionNonce" | "isDeleted" | "locked" | "link" | "data" | "createdAt" | "updatedAt", ExtArgs["result"]["shape"]>
 export type ShapeInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   page?: boolean | Prisma.PageDefaultArgs<ExtArgs>
   createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -1598,7 +1537,7 @@ export type $ShapePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     id: string
     pageId: string
     createdById: string
-    type: $Enums.ShapeType
+    type: string
     x: number
     y: number
     width: number
@@ -1611,7 +1550,6 @@ export type $ShapePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     seed: number
     version: number
     versionNonce: number
-    updated: bigint
     isDeleted: boolean
     locked: boolean
     link: string | null
@@ -2047,7 +1985,7 @@ export interface ShapeFieldRefs {
   readonly id: Prisma.FieldRef<"Shape", 'String'>
   readonly pageId: Prisma.FieldRef<"Shape", 'String'>
   readonly createdById: Prisma.FieldRef<"Shape", 'String'>
-  readonly type: Prisma.FieldRef<"Shape", 'ShapeType'>
+  readonly type: Prisma.FieldRef<"Shape", 'String'>
   readonly x: Prisma.FieldRef<"Shape", 'Float'>
   readonly y: Prisma.FieldRef<"Shape", 'Float'>
   readonly width: Prisma.FieldRef<"Shape", 'Float'>
@@ -2060,7 +1998,6 @@ export interface ShapeFieldRefs {
   readonly seed: Prisma.FieldRef<"Shape", 'Int'>
   readonly version: Prisma.FieldRef<"Shape", 'Int'>
   readonly versionNonce: Prisma.FieldRef<"Shape", 'Int'>
-  readonly updated: Prisma.FieldRef<"Shape", 'BigInt'>
   readonly isDeleted: Prisma.FieldRef<"Shape", 'Boolean'>
   readonly locked: Prisma.FieldRef<"Shape", 'Boolean'>
   readonly link: Prisma.FieldRef<"Shape", 'String'>

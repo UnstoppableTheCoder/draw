@@ -20,13 +20,15 @@ import {
   ShapeType,
 } from "../../types";
 
-export interface CreateShapeParams {
+interface CreateShapeParams {
   tool: DrawableTool;
-  zIndex: string;
   startPoint: Point;
   endPoint: Point;
   points: PointTuple[];
-  appearance?: Partial<ShapeAppearance>;
+  zIndex: string;
+  appearance: Partial<ShapeAppearance>;
+  pageId: string;
+  createdById: string;
 }
 
 type CreateFrameShapeParams = {
@@ -39,6 +41,8 @@ type CreateFrameShapeParams = {
   text: FrameData["text"];
   zIndex: string;
   appearance?: Partial<ShapeAppearance>;
+  pageId: string;
+  createdById: string;
 };
 
 const DEFAULT_DRAWABLE_APPEARANCE: ShapeAppearance = {
@@ -119,44 +123,54 @@ export const DEFAULT_APPEARANCE = Object.freeze({
 
 export const createBaseShape = <TType extends ShapeType, TData extends object>(
   type: TType,
-  geometry: Pick<BaseShape<any>, "x" | "y" | "width" | "height">,
+  geometry: Pick<BaseShape<any, any>, "x" | "y" | "width" | "height">,
   data: TData,
   appearance: ShapeAppearance,
   zIndex: string,
-): BaseShape<TType, TData> => ({
-  id: uuidv4(),
-  type,
+  pageId: string,
+  createdById: string,
+): BaseShape<TType, TData> => {
+  const now = new Date().toISOString();
 
-  // Geometry
-  ...geometry,
-  angle: 0,
+  return {
+    // Identity
+    id: uuidv4(),
+    pageId,
+    createdById,
 
-  // Appearance
-  appearance,
+    // Shape
+    type,
 
-  // Hierarchy
-  groupId: null,
-  frameId: null,
+    // Geometry
+    ...geometry,
+    angle: 0,
 
-  // Ordering
-  zIndex,
+    // Appearance
+    appearance,
 
-  // Collaboration
-  seed: Math.floor(Math.random() * 2 ** 31),
-  version: 1,
-  versionNonce: Math.floor(Math.random() * 2 ** 31),
-  updated: Date.now(),
+    // Metadata
+    groupId: null,
+    frameId: null,
+    zIndex,
+    seed: Math.floor(Math.random() * 2 ** 31),
+    version: 1,
+    versionNonce: Math.floor(Math.random() * 2 ** 31),
 
-  // State
-  isDeleted: false,
-  locked: false,
+    // State
+    isDeleted: false,
+    locked: false,
 
-  // Misc
-  link: null,
+    // Misc
+    link: null,
 
-  // Shape-specific
-  data,
-});
+    // Shape-specific
+    data,
+
+    // Audit
+    createdAt: now,
+    updatedAt: now,
+  };
+};
 
 // Rectangle
 export const createRectangleShape = (
@@ -164,6 +178,8 @@ export const createRectangleShape = (
   end: Point,
   appearance: ShapeAppearance,
   zIndex: string,
+  pageId: string,
+  createdById: string,
 ): RectangleShape =>
   createBaseShape(
     "rectangle",
@@ -171,6 +187,8 @@ export const createRectangleShape = (
     {},
     appearance,
     zIndex,
+    pageId,
+    createdById,
   );
 
 // Diamond
@@ -179,8 +197,18 @@ export const createDiamondShape = (
   end: Point,
   appearance: ShapeAppearance,
   zIndex: string,
+  pageId: string,
+  createdById: string,
 ): DiamondShape =>
-  createBaseShape("diamond", normalizeRect(start, end), {}, appearance, zIndex);
+  createBaseShape(
+    "diamond",
+    normalizeRect(start, end),
+    {},
+    appearance,
+    zIndex,
+    pageId,
+    createdById,
+  );
 
 // Ellipse
 export const createEllipseShape = (
@@ -188,8 +216,18 @@ export const createEllipseShape = (
   end: Point,
   appearance: ShapeAppearance,
   zIndex: string,
+  pageId: string,
+  createdById: string,
 ): EllipseShape =>
-  createBaseShape("ellipse", normalizeRect(start, end), {}, appearance, zIndex);
+  createBaseShape(
+    "ellipse",
+    normalizeRect(start, end),
+    {},
+    appearance,
+    zIndex,
+    pageId,
+    createdById,
+  );
 
 // Arrow
 export const createArrowShape = (
@@ -197,6 +235,8 @@ export const createArrowShape = (
   points: PointTuple[],
   appearance: ShapeAppearance,
   zIndex: string,
+  pageId: string,
+  createdById: string,
 ): ArrowShape =>
   createBaseShape(
     "arrow",
@@ -214,6 +254,8 @@ export const createArrowShape = (
     },
     appearance,
     zIndex,
+    pageId,
+    createdById,
   );
 
 // Line
@@ -222,6 +264,8 @@ export const createLineShape = (
   points: PointTuple[],
   appearance: ShapeAppearance,
   zIndex: string,
+  pageId: string,
+  createdById: string,
 ): LineShape =>
   createBaseShape(
     "line",
@@ -238,6 +282,8 @@ export const createLineShape = (
     },
     appearance,
     zIndex,
+    pageId,
+    createdById,
   );
 
 // Free Draw
@@ -246,6 +292,8 @@ export const createFreeDrawShape = (
   points: PointTuple[],
   appearance: ShapeAppearance,
   zIndex: string,
+  pageId: string,
+  createdById: string,
 ): FreeDrawShape =>
   createBaseShape(
     "freedraw",
@@ -260,20 +308,33 @@ export const createFreeDrawShape = (
     },
     appearance,
     zIndex,
+    pageId,
+    createdById,
   );
 
+// Frame
 export const createFrameShape = ({
   rect,
   text,
   zIndex,
   appearance,
+  pageId,
+  createdById,
 }: CreateFrameShapeParams): FrameShape => {
   const shapeAppearance: ShapeAppearance = {
-    ...DEFAULT_APPEARANCE["frame"],
+    ...DEFAULT_APPEARANCE.frame,
     ...appearance,
   };
 
-  return createBaseShape("frame", rect, { text }, shapeAppearance, zIndex);
+  return createBaseShape(
+    "frame",
+    rect,
+    { text },
+    shapeAppearance,
+    zIndex,
+    pageId,
+    createdById,
+  );
 };
 
 // Shape Factory
@@ -284,6 +345,8 @@ export const createShape = ({
   points,
   zIndex,
   appearance,
+  pageId,
+  createdById,
 }: CreateShapeParams): Shape | null => {
   const shapeAppearance = {
     ...DEFAULT_APPEARANCE[tool],
@@ -297,22 +360,59 @@ export const createShape = ({
         endPoint,
         shapeAppearance,
         zIndex,
+        pageId,
+        createdById,
       );
 
     case "diamond":
-      return createDiamondShape(startPoint, endPoint, shapeAppearance, zIndex);
+      return createDiamondShape(
+        startPoint,
+        endPoint,
+        shapeAppearance,
+        zIndex,
+        pageId,
+        createdById,
+      );
 
     case "ellipse":
-      return createEllipseShape(startPoint, endPoint, shapeAppearance, zIndex);
+      return createEllipseShape(
+        startPoint,
+        endPoint,
+        shapeAppearance,
+        zIndex,
+        pageId,
+        createdById,
+      );
 
     case "arrow":
-      return createArrowShape(startPoint, points, shapeAppearance, zIndex);
+      return createArrowShape(
+        startPoint,
+        points,
+        shapeAppearance,
+        zIndex,
+        pageId,
+        createdById,
+      );
 
     case "line":
-      return createLineShape(startPoint, points, shapeAppearance, zIndex);
+      return createLineShape(
+        startPoint,
+        points,
+        shapeAppearance,
+        zIndex,
+        pageId,
+        createdById,
+      );
 
     case "freedraw":
-      return createFreeDrawShape(startPoint, points, shapeAppearance, zIndex);
+      return createFreeDrawShape(
+        startPoint,
+        points,
+        shapeAppearance,
+        zIndex,
+        pageId,
+        createdById,
+      );
 
     default:
       return null;

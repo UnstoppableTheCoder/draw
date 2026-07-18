@@ -7,23 +7,33 @@ import { createImageShape } from "./create-image-shape";
 import { usePointerState } from "../../pointer/use-pointer-state";
 import { loadImageAssets } from "./image-loader";
 import { getNextZIndex } from "../../utils/z-index";
+import { createImageAssets } from "../../networking/api/image-api";
+import { useParams } from "next/navigation";
+import { useUser } from "@/features/auth/store/selectors";
+import { createShapes } from "../../networking/api/shape-api";
+import { useImageManager } from "../manager/image-manager";
 
 export default function useImageUpload({
   sceneCanvasRef,
   overlayCanvasRef,
   pointerRefs,
   imageInputRef,
+  imageManager,
 }: {
   sceneCanvasRef: RefObject<HTMLCanvasElement | null>;
   overlayCanvasRef: RefObject<HTMLCanvasElement | null>;
   imageInputRef: RefObject<HTMLInputElement | null>;
   pointerRefs: ReturnType<typeof usePointerState>;
+  imageManager: ReturnType<typeof useImageManager>;
 }) {
   const selectedTool = store.useSelectedTool();
   const setSelectedTool = store.useSetSelectedTool();
   const setShapes = store.useSetShapes();
   const setSelectedShapesIds = store.useSetSelectedShapesIds();
   const addImage = store.useAddImage();
+  const shapes = store.useShapes();
+  const { boardId, pageId } = useParams<{ boardId: string; pageId: string }>();
+  const user = useUser();
 
   const { invalidate } = useCanvasRenderer();
   const { clientToCanvas } = useViewportHelpers(sceneCanvasRef);
@@ -43,16 +53,10 @@ export default function useImageUpload({
     const canvas = sceneCanvasRef.current;
     if (!canvas) return;
 
-    const { assets, upload } = await loadImageAssets(files);
+    const { assets, upload } = await loadImageAssets(files, boardId, user!.id);
 
     // Cache uploaded assets
     assets.forEach(addImage);
-
-    upload.then((res) => {
-      // invalidate();
-      console.log("Uploaded");
-      console.log(res);
-    });
 
     const { rows, cols } = getGridSize(assets.length);
     const CELL_SIZE = MAX_IMAGE_SIZE + IMAGE_GAP;
@@ -69,12 +73,17 @@ export default function useImageUpload({
     const startX = centerX - gridWidth / 2;
     const startY = centerY - gridHeight / 2;
 
-    const shapes = assets.map((image, index) => {
+    const imageShapes = assets.map((image, index) => {
       const row = Math.floor(index / cols);
       const col = index % cols;
 
       const zIndex = getNextZIndex(shapes);
-      const shape = createImageShape(image, zIndex);
+      const shape = createImageShape({
+        image,
+        zIndex,
+        pageId,
+        createdById: user!.id,
+      });
 
       shape.x = startX + col * CELL_SIZE + (MAX_IMAGE_SIZE - shape.width) / 2;
       shape.y = startY + row * CELL_SIZE + (MAX_IMAGE_SIZE - shape.height) / 2;
@@ -82,21 +91,35 @@ export default function useImageUpload({
       return shape;
     });
 
-    setShapes((prev) => [...prev, ...shapes]);
+    const imageMap = Object.fromEntries(
+      assets.map((image) => [image.id, image]),
+    );
+
+    imageManager.preload(imageMap);
+
+    setShapes((prev) => [...prev, ...imageShapes]);
     setSelectedTool("select");
 
-    setSelectedShapesIds(shapes.map((shape) => shape.id));
+    setSelectedShapesIds(imageShapes.map((shape) => shape.id));
 
     pointerRefs.interactionRef.current = {
       type: "select",
-      previewShapes: shapes,
-      selectedShapesIds: new Set(shapes.map((shape) => shape.id)),
+      previewShapes: imageShapes,
+      selectedShapesIds: new Set(imageShapes.map((shape) => shape.id)),
     };
 
     invalidate();
 
     // Allow selecting the same file again
     e.target.value = "";
+
+    // Save Image Shape
+    await createShapes(pageId, imageShapes);
+
+    upload.then(async (imageAssets) => {
+      console.log(imageAssets);
+      await createImageAssets(boardId, imageAssets);
+    });
   };
 
   // Clicks image input if tool is image

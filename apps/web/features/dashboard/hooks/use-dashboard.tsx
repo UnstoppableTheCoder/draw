@@ -1,6 +1,7 @@
-import { useMemo, useState } from "react";
-
-import { BOARDS } from "../data";
+import { getBoards } from "@/features/board/api/board-api";
+import { useSetBoards } from "@/features/board/store/selectors";
+import { useEffect, useState } from "react";
+import { Preview } from "../components/preview";
 
 export function useDashboard() {
   const [collapsed, setCollapsed] = useState(false);
@@ -9,21 +10,17 @@ export function useDashboard() {
   const [listView, setListView] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [createBoardOpen, setCreateBoardOpen] = useState(false);
+  const setBoards = useSetBoards();
 
-  const boards = useMemo(() => {
-    return BOARDS.filter((board) => {
-      const matchesFilter = filter === "recent" || board.favorite;
+  useEffect(() => {
+    (async () => {
+      const { boards } = await getBoards();
 
-      const matchesSearch = `${board.title} ${board.project}`
-        .toLowerCase()
-        .includes(query.toLowerCase());
-
-      return matchesFilter && matchesSearch;
-    });
-  }, [filter, query]);
+      setBoards((prev) => [...prev, ...boards]);
+    })();
+  }, []);
 
   return {
-    boards,
     collapsed,
     setCollapsed,
     query,

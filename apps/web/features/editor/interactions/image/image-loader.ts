@@ -4,9 +4,13 @@ import axios from "axios";
 import { ImageAsset } from "../../types";
 
 type Upload = {
-  key: string;
   uploadUrl: string;
   publicUrl: string;
+};
+
+type UploadImageResponse = {
+  success: boolean;
+  uploads: Upload[];
 };
 
 export function loadImage(src: string): Promise<HTMLImageElement> {
@@ -19,21 +23,26 @@ export function loadImage(src: string): Promise<HTMLImageElement> {
   });
 }
 
-export async function loadImageAssets(files: FileList): Promise<{
+export async function loadImageAssets(
+  files: FileList,
+  boardId: string,
+  uploadedById: string,
+): Promise<{
   assets: ImageAsset[];
-  upload: Promise<void>;
+  upload: Promise<ImageAsset[]>;
 }> {
   const fileArray = Array.from(files);
 
-  // Create local assets immediately
-  const assets: ImageAsset[] = await Promise.all(
+  const assets = await Promise.all(
     fileArray.map(async (file) => {
-      const blobUrl = URL.createObjectURL(file);
-      const image = await loadImage(blobUrl);
+      const renderUrl = URL.createObjectURL(file);
+      const image = await loadImage(renderUrl);
 
       return {
         id: uuidv4(),
-        renderUrl: blobUrl,
+        renderUrl,
+        boardId,
+        uploadedById,
         naturalWidth: image.naturalWidth,
         naturalHeight: image.naturalHeight,
         status: "uploading" as const,
@@ -41,21 +50,22 @@ export async function loadImageAssets(files: FileList): Promise<{
     }),
   );
 
-  // Upload in background
   const upload = (async () => {
-    const { data } = await axios.post<{
-      success: boolean;
-      uploads: Upload[];
-    }>(`${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/presign`, {
-      files: fileArray.map(({ name, type, size }) => ({
-        name,
-        type,
-        size,
-      })),
-    });
+    // Get presign url
+    const { data } = await axios.post<UploadImageResponse>(
+      `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/presign`,
+      {
+        files: fileArray.map(({ name, type, size }) => ({
+          name,
+          type,
+          size,
+        })),
+      },
+    );
 
-    await Promise.all(
-      data.uploads.map(async ({ key, uploadUrl, publicUrl }, index) => {
+    return Promise.all(
+      // Presign
+      data.uploads.map(async ({ uploadUrl, publicUrl }, index) => {
         const file = fileArray[index]!;
         const asset = assets[index]!;
 
@@ -65,11 +75,14 @@ export async function loadImageAssets(files: FileList): Promise<{
           },
         });
 
-        asset.key = key;
-        asset.publicUrl = publicUrl;
-        asset.status = "uploaded";
-
         URL.revokeObjectURL(asset.renderUrl);
+
+        return {
+          ...asset,
+          publicUrl,
+          renderUrl: "",
+          status: "uploaded" as const,
+        };
       }),
     );
   })();

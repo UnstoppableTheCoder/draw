@@ -1,17 +1,3 @@
-// features/dashboard/types.ts
-
-export type BoardKind = "flow" | "notes" | "map" | "wireframe";
-
-export interface Board {
-  id: string;
-  title: string;
-  project: string;
-  updated: string;
-  favorite: boolean;
-  kind: BoardKind;
-  people: string[];
-}
-
 export interface NavItem {
   label: string;
   icon: React.ElementType;

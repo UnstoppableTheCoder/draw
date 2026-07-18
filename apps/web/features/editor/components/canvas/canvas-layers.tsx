@@ -21,7 +21,7 @@ export default function CanvasLayers({
     <>
       <canvas
         ref={backgroundCanvasRef}
-        className="absolute inset-0 h-full w-full"
+        className="absolute inset-0 h-full w-full "
         style={{ zIndex: 0 }}
       />
 

@@ -1,4 +1,4 @@
-import { Button } from "@/features/editor/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Bell, X } from "lucide-react";
 
 interface NotificationsProps {

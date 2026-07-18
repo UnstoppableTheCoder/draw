@@ -2,11 +2,19 @@ import { ImageAsset, ImageShape, ShapeAppearance } from "../../types";
 import { MAX_IMAGE_SIZE } from "../../constants/image";
 import { createBaseShape, DEFAULT_APPEARANCE } from "../draw/create-shape";
 
-export const createImageShape = (
-  image: ImageAsset,
-  zIndex: string,
-  appearance?: Partial<ShapeAppearance>,
-): ImageShape => {
+export const createImageShape = ({
+  image,
+  zIndex,
+  appearance,
+  pageId,
+  createdById,
+}: {
+  image: ImageAsset;
+  zIndex: string;
+  appearance?: Partial<ShapeAppearance>;
+  pageId: string;
+  createdById: string;
+}): ImageShape => {
   const ratio = Math.min(
     1,
     MAX_IMAGE_SIZE / Math.max(image.naturalWidth, image.naturalHeight),
@@ -35,5 +43,7 @@ export const createImageShape = (
     },
     shapeAppearance,
     zIndex,
+    pageId,
+    createdById,
   );
 };

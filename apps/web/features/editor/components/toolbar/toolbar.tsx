@@ -2,7 +2,7 @@ import React from "react";
 import ToolbarItems from "./toolbar-items";
 import LockButton from "./lock-button";
 import MoreTools from "./more-tools";
-import { Separator } from "../ui/separator";
+import { Separator } from "@/components/ui/separator";
 
 const Toolbar = () => {
   return (

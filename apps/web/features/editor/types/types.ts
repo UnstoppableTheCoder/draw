@@ -1,4 +1,4 @@
-import { TextShape } from "./shape";
+import { ShapeAppearance, TextData, TextShape } from "./shape";
 
 export type Point = {
   x: number;
@@ -42,8 +42,41 @@ export type DrawableTool =
   | "text"
   | "image";
 
-export type TextEditingState = Omit<TextShape, "id"> & {
+export type TextEditingState = {
+  // Identity
   id?: string;
+  pageId: string;
+  createdById: string;
+
+  // Shape
+  type: "text";
+
+  // Geometry
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  angle: number;
+
+  // Appearance
+  appearance: ShapeAppearance;
+
+  // Metadata
+  groupId: string | null;
+  frameId: string | null;
+  seed: number;
+  version: number;
+  versionNonce: number;
+
+  // State
+  isDeleted: boolean;
+  locked: boolean;
+
+  // Misc
+  link: string | null;
+
+  // Shape-specific
+  data: TextData;
 };
 
 export type SelectedBounds = {

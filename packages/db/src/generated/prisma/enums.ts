@@ -11,7 +11,6 @@
 
 export const BoardRole = {
   OWNER: 'OWNER',
-  ADMIN: 'ADMIN',
   EDITOR: 'EDITOR',
   VIEWER: 'VIEWER'
 } as const

@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 
 import { RendererContext } from "./renderer-context";
 import useCreateCanvasRenderer from "../renderer/use-create-canvas-renderer";
@@ -16,6 +16,7 @@ export default function RendererProvider({
     sceneCanvasRef,
     overlayCanvasRef,
     pointerRefs,
+    imageManager,
   },
 }: RendererProviderProps) {
   const renderer = useCreateCanvasRenderer({
@@ -23,6 +24,7 @@ export default function RendererProvider({
     sceneCanvasRef,
     overlayCanvasRef,
     pointerRefs,
+    imageManager,
   });
 
   return (

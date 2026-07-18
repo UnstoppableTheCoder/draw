@@ -72,11 +72,11 @@ export const updateShapes = async (req: Request, res: Response) => {
             id,
           },
           data,
-        }); 
+        });
       }),
     );
 
-    return res.status(200).json(updatedShapes);
+    return res.status(200).json({ shapes: updatedShapes });
   } catch (error) {
     console.error(error);
 

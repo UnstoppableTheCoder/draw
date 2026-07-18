@@ -12,7 +12,10 @@ import {
 
 export type ShapeType = DrawableTool | "frame";
 
+// ----------------------------------------
 // Shared Shape Types
+// ----------------------------------------
+
 export interface ShapeAppearance {
   strokeColor: string;
   backgroundColor: string;
@@ -24,10 +27,16 @@ export interface ShapeAppearance {
   roundness: number | null;
 }
 
+// ----------------------------------------
 // Shape Data
+// ----------------------------------------
+
 export interface RectangleData {}
+
 export interface DiamondData {}
+
 export interface EllipseData {}
+
 export interface ArrowData {
   points: PointTuple[];
   routing?: ArrowRouting;
@@ -39,11 +48,11 @@ export interface ArrowData {
 
 export interface LineData {
   points: PointTuple[];
+  polygon?: boolean;
   startBinding?: Binding | null;
   endBinding?: Binding | null;
   startArrowhead?: Arrowhead;
   endArrowhead?: Arrowhead;
-  polygon?: boolean;
 }
 
 export interface FreeDrawData {
@@ -80,9 +89,17 @@ export interface FrameData {
   };
 }
 
+// ----------------------------------------
 // Base Shape
-export interface BaseShape<TType extends ShapeType, TData = unknown> {
+// ----------------------------------------
+
+export interface BaseShape<TType extends ShapeType, TData> {
+  // Identity
   id: string;
+  pageId: string;
+  createdById: string;
+
+  // Shape
   type: TType;
 
   // Geometry
@@ -95,18 +112,13 @@ export interface BaseShape<TType extends ShapeType, TData = unknown> {
   // Appearance
   appearance: ShapeAppearance;
 
-  // Hierarchy
+  // Metadata
   groupId: string | null;
   frameId: string | null;
-
-  // Ordering
   zIndex: string;
-
-  // Collaboration
   seed: number;
   version: number;
   versionNonce: number;
-  updated: number;
 
   // State
   isDeleted: boolean;
@@ -117,20 +129,38 @@ export interface BaseShape<TType extends ShapeType, TData = unknown> {
 
   // Shape-specific
   data: TData;
+
+  // Audit
+  createdAt: string;
+  updatedAt: string;
 }
 
+// ----------------------------------------
 // Shapes
+// ----------------------------------------
+
 export type RectangleShape = BaseShape<"rectangle", RectangleData>;
+
 export type DiamondShape = BaseShape<"diamond", DiamondData>;
+
 export type EllipseShape = BaseShape<"ellipse", EllipseData>;
+
 export type ArrowShape = BaseShape<"arrow", ArrowData>;
+
 export type LineShape = BaseShape<"line", LineData>;
+
 export type FreeDrawShape = BaseShape<"freedraw", FreeDrawData>;
+
 export type TextShape = BaseShape<"text", TextData>;
+
 export type ImageShape = BaseShape<"image", ImageData>;
+
 export type FrameShape = BaseShape<"frame", FrameData>;
 
+// ----------------------------------------
 // Union
+// ----------------------------------------
+
 export type Shape =
   | RectangleShape
   | DiamondShape

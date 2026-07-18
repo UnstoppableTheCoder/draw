@@ -1,9 +1,9 @@
 "use client";
 
 import { ReactNode } from "react";
-import { Button } from "../ui/button";
 import Hint from "../hint";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 type CanvasButtonProps = {
   children: ReactNode;

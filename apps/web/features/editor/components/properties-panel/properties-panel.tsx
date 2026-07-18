@@ -18,6 +18,7 @@ import OpacityPicker from "./opacity-picker/opacity-picker";
 import { StrokeStylePicker } from "./stroke-style-picker/stroke-style-picker";
 import { StrokeWidthPicker } from "./stroke-width-picker/stroke-width-picker";
 import { usePointerState } from "../../pointer/use-pointer-state";
+import { cn } from "@/lib/utils";
 
 type PropertiesPanelRef = {
   editorRefs: {
@@ -25,9 +26,13 @@ type PropertiesPanelRef = {
     overlayCanvasRef: RefObject<HTMLCanvasElement | null>;
     pointerRefs: ReturnType<typeof usePointerState>;
   };
+  isSidebarOpen: boolean;
 };
 
-export const PropertiesPanel = ({ editorRefs }: PropertiesPanelRef) => {
+export const PropertiesPanel = ({
+  editorRefs,
+  isSidebarOpen,
+}: PropertiesPanelRef) => {
   const { sceneCanvasRef, overlayCanvasRef, pointerRefs } = editorRefs;
 
   const selectedTool = useSelectedTool();
@@ -59,7 +64,12 @@ export const PropertiesPanel = ({ editorRefs }: PropertiesPanelRef) => {
   }
 
   return (
-    <div className="w-[202px] select-none h-fit z-50 bg-white dark:bg-[#212121] cursor-default rounded-md shadow-spread p-3 space-y-4 absolute top-20 left-5 border">
+    <div
+      className={cn(
+        "w-[202px] select-none h-fit z-50 bg-white dark:bg-[#212121] cursor-default rounded-md shadow-spread p-3 space-y-4 absolute top-20 border",
+        isSidebarOpen ? "left-60" : "left-5",
+      )}
+    >
       {/* Rendering Style Pickers Conditionally */}
       {selectedTool !== "image" &&
         (selectedShapes.length !== 1 || !selectedShapesTypes.has("image")) && (

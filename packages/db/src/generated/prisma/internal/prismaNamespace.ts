@@ -1583,10 +1583,10 @@ export type ActivityLogScalarFieldEnum = (typeof ActivityLogScalarFieldEnum)[key
 export const BoardScalarFieldEnum = {
   id: 'id',
   name: 'name',
-  slug: 'slug',
   description: 'description',
   thumbnail: 'thumbnail',
   isPublic: 'isPublic',
+  favorite: 'favorite',
   ownerId: 'ownerId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -1718,7 +1718,7 @@ export const PageScalarFieldEnum = {
   id: 'id',
   boardId: 'boardId',
   name: 'name',
-  index: 'index',
+  orderKey: 'orderKey',
   backgroundColor: 'backgroundColor',
   createdById: 'createdById',
   createdAt: 'createdAt',
@@ -1745,7 +1745,6 @@ export const ShapeScalarFieldEnum = {
   seed: 'seed',
   version: 'version',
   versionNonce: 'versionNonce',
-  updated: 'updated',
   isDeleted: 'isDeleted',
   locked: 'locked',
   link: 'link',
@@ -1759,7 +1758,6 @@ export type ShapeScalarFieldEnum = (typeof ShapeScalarFieldEnum)[keyof typeof Sh
 
 export const UserScalarFieldEnum = {
   id: 'id',
-  username: 'username',
   email: 'email',
   passwordHash: 'passwordHash',
   name: 'name',
@@ -1959,20 +1957,6 @@ export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel,
 
 
 /**
- * Reference to a field of type 'ImageStatus'
- */
-export type EnumImageStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ImageStatus'>
-    
-
-
-/**
- * Reference to a field of type 'ImageStatus[]'
- */
-export type ListEnumImageStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ImageStatus[]'>
-    
-
-
-/**
  * Reference to a field of type 'NotificationType'
  */
 export type EnumNotificationTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'NotificationType'>
@@ -1983,20 +1967,6 @@ export type EnumNotificationTypeFieldRefInput<$PrismaModel> = FieldRefInputType<
  * Reference to a field of type 'NotificationType[]'
  */
 export type ListEnumNotificationTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'NotificationType[]'>
-    
-
-
-/**
- * Reference to a field of type 'ShapeType'
- */
-export type EnumShapeTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ShapeType'>
-    
-
-
-/**
- * Reference to a field of type 'ShapeType[]'
- */
-export type ListEnumShapeTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ShapeType[]'>
     
 
 /**

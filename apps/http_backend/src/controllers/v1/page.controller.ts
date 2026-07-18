@@ -12,7 +12,7 @@ export const createPage = async (req: Request, res: Response) => {
       },
     });
 
-    return res.status(201).json(page);
+    return res.status(201).json({ page });
   } catch (error) {
     console.error(error);
 
@@ -32,7 +32,7 @@ export const getPages = async (req: Request, res: Response) => {
       },
     });
 
-    return res.json(pages);
+    return res.json({ pages });
   } catch (error) {
     console.error(error);
 
@@ -68,7 +68,7 @@ export const getPage = async (req: Request, res: Response) => {
       });
     }
 
-    const imageAssets = await prisma.imageAsset.findMany({
+    const imageAssetsData = await prisma.imageAsset.findMany({
       where: {
         boardId: page.boardId as string,
       },
@@ -77,13 +77,12 @@ export const getPage = async (req: Request, res: Response) => {
       },
     });
 
+    const imageAssets = Object.fromEntries(
+      imageAssetsData.map((image) => [image.id, image]),
+    );
+
     return res.json({
-      page: {
-        id: page.id,
-        name: page.name,
-        boardId: page.boardId,
-      },
-      shapes: page.shapes,
+      page,
       imageAssets,
     });
   } catch (error) {
@@ -96,6 +95,7 @@ export const getPage = async (req: Request, res: Response) => {
 };
 
 export const updatePage = async (req: Request, res: Response) => {
+  console.log("Updating the page");
   try {
     const { pageId } = req.params;
 
@@ -106,7 +106,7 @@ export const updatePage = async (req: Request, res: Response) => {
       data: req.body,
     });
 
-    return res.json(page);
+    return res.json({ page });
   } catch (error) {
     console.error(error);
 
@@ -132,6 +132,36 @@ export const deletePage = async (req: Request, res: Response) => {
 
     return res.status(500).json({
       message: "Failed to delete page.",
+    });
+  }
+};
+
+export const createShapes = async (req: Request, res: Response) => {
+  try {
+    const { pageId } = req.params;
+    const { shapes } = req.body;
+
+    if (!Array.isArray(shapes) || shapes.length === 0) {
+      return res.status(400).json({
+        message: "Shapes array is required.",
+      });
+    }
+
+    const createdShapes = await prisma.shape.createManyAndReturn({
+      data: shapes.map((shape) => ({
+        ...shape,
+        pageId,
+      })),
+    });
+
+    return res.status(201).json({
+      shapes: createdShapes,
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      message: "Failed to create shapes.",
     });
   }
 };

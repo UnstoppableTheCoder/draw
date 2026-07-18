@@ -7,11 +7,46 @@ type BoardParams = {
 
 export const createBoard = async (req: Request, res: Response) => {
   try {
-    const board = await prisma.board.create({
-      data: req.body,
+    const { backgroundColor } = req.body;
+
+    // Assuming auth middleware sets req.user
+    const userId = req.user.id;
+
+    const board = await prisma.$transaction(async (tx) => {
+      // Create board
+      const board = await tx.board.create({
+        data: req.body,
+      });
+
+      // Add creator as owner
+      await tx.boardMember.create({
+        data: {
+          boardId: board.id,
+          userId,
+          role: req.role,
+        },
+      });
+
+      // Create first page
+      const page = await tx.page.create({
+        data: {
+          boardId: board.id,
+          name: "Page 1",
+          orderKey: "a0",
+          backgroundColor: backgroundColor ?? null,
+          createdById: userId,
+        },
+      });
+
+      return {
+        ...board,
+        pages: [page],
+      };
     });
 
-    return res.status(201).json(board);
+    return res.status(201).json({
+      board,
+    });
   } catch (error) {
     console.error(error);
 
@@ -38,7 +73,7 @@ export const getBoards = async (req: Request, res: Response) => {
       },
     });
 
-    return res.json(boards);
+    return res.json({ boards });
   } catch (error) {
     console.error(error);
 
@@ -76,11 +111,14 @@ export const getBoard = async (req: Request<BoardParams>, res: Response) => {
       });
     }
 
+    const imageMap = Object.fromEntries(
+      board.imageAssets.map((image) => [image.id, image]),
+    );
+
     return res.json({
       board: {
         id: board.id,
         name: board.name,
-        slug: board.slug,
         description: board.description,
         thumbnail: board.thumbnail,
         isPublic: board.isPublic,
@@ -89,7 +127,7 @@ export const getBoard = async (req: Request<BoardParams>, res: Response) => {
         updatedAt: board.updatedAt,
       },
       pages: board.pages,
-      imageAssets: board.imageAssets,
+      imageMap,
     });
   } catch (error) {
     console.error(error);
@@ -111,7 +149,7 @@ export const updateBoard = async (req: Request, res: Response) => {
       data: req.body,
     });
 
-    return res.json(board);
+    return res.json({ board });
   } catch (error) {
     console.error(error);
 

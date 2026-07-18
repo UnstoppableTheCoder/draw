@@ -1,5 +1,5 @@
+import { Slider } from "@/components/ui/slider";
 import { RefObject, useState } from "react";
-import { Slider } from "../ui/slider";
 
 export default function PropertyRangeSlider({
   maxRange,

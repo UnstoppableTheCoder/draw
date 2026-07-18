@@ -19,14 +19,24 @@ import {
 import { useCanvasRenderer } from "../../context/use-renderer";
 import useViewportHelpers from "../viewport/use-viewport-helpers";
 import { getFrameAtPosition } from "../shared/get-frame-at-position";
-import { Point, Shape } from "../../types";
+import { Point, Shape, TextShape } from "../../types";
 import { createBaseShape, DEFAULT_APPEARANCE } from "../draw/create-shape";
 import { getNextZIndex } from "../../utils/z-index";
+import { useParams } from "next/navigation";
+import { useUser } from "@/features/auth/store/selectors";
+import {
+  createShapes,
+  deleteShapes,
+  updateShapes,
+} from "../../networking/api/shape-api";
 
 export default function useTextEditing(
   canvasRef: RefObject<HTMLCanvasElement | null>,
   textareaRef: RefObject<HTMLTextAreaElement | null>,
 ) {
+  const { pageId } = useParams<{ pageId: string }>();
+  const user = useUser();
+
   const setSelectedTool = store.useSetSelectedTool();
   const setShapes = store.useSetShapes();
   const shapes = store.useShapes();
@@ -36,6 +46,7 @@ export default function useTextEditing(
   const selectedTool = store.useSelectedTool();
   const setHoveredFrameId = store.useSetHoveredFrameId();
   const hoveredFrameId = store.useHoveredFrameId();
+  const pushHistory = store.usePushHistory();
 
   // Styles
   const fontSize = useFontSize();
@@ -62,7 +73,7 @@ export default function useTextEditing(
     setHoveredFrameId(hoveredFrame?.id ?? null);
   }
 
-  const saveTextShape = () => {
+  const saveTextShape = async () => {
     if (!textEditingState) return;
 
     const text = textEditingState.data.text.trim();
@@ -70,27 +81,73 @@ export default function useTextEditing(
     const ctx = canvasRef.current?.getContext("2d");
     if (!ctx) return;
 
-    setShapes((prevShapes) => {
-      // Editing an existing text shape
+    const previousShapes = shapes;
+    let nextShapes = previousShapes;
+
+    try {
+      // Editing an existing shape
       if (textEditingState.id) {
-        // Delete the shape if text becomes empty
         if (!text) {
-          return prevShapes.filter((shape) => shape.id !== textEditingState.id);
+          nextShapes = previousShapes.filter(
+            (shape) => shape.id !== textEditingState.id,
+          );
+
+          setShapes(nextShapes);
+          pushHistory();
+
+          finishTextEditing();
+          invalidate();
+
+          await deleteShapes(pageId, [textEditingState.id]);
+          return;
         }
 
-        return updateTextShape(prevShapes, textEditingState.id, text, ctx);
+        const updatedShape = buildUpdatedTextShape(
+          previousShapes,
+          textEditingState.id,
+          text,
+          ctx,
+        );
+
+        if (!updatedShape) return;
+
+        nextShapes = previousShapes.map((shape) =>
+          shape.id === updatedShape.id ? updatedShape : shape,
+        );
+
+        setShapes(nextShapes);
+        pushHistory();
+
+        finishTextEditing();
+        invalidate();
+
+        await updateShapes(pageId, [updatedShape]);
+        return;
       }
 
-      // Creating a new text shape
+      // Creating a new shape
       if (!text) {
-        return prevShapes;
+        finishTextEditing();
+        return;
       }
 
-      return createTextShape(prevShapes, textEditingState, text, ctx);
-    });
+      const newShape = createTextShape(textEditingState, text, ctx);
+      nextShapes = [...previousShapes, newShape];
 
-    finishTextEditing();
-    invalidate();
+      setShapes(nextShapes);
+      pushHistory();
+
+      finishTextEditing();
+      invalidate();
+
+      await createShapes(pageId, [newShape]);
+    } catch (error) {
+      console.error(error);
+
+      // Roll back optimistic update
+      setShapes(previousShapes);
+      invalidate();
+    }
   };
 
   function finishTextEditing() {
@@ -98,39 +155,38 @@ export default function useTextEditing(
     setSelectedTool("select");
   }
 
-  function updateTextShape(
+  function buildUpdatedTextShape(
     shapes: Shape[],
     id: string,
     text: string,
     ctx: CanvasRenderingContext2D,
-  ): Shape[] {
-    return shapes.map((shape) => {
-      if (shape.id !== id || shape.type !== "text") {
-        return shape;
-      }
+  ): TextShape | null {
+    const shape = shapes.find(
+      (shape): shape is TextShape => shape.id === id && shape.type === "text",
+    );
 
-      return {
-        ...shape,
-        data: {
-          ...shape.data,
-          text,
-        },
-        ...getTextDimensions({
-          ctx,
-          text,
-          fontSize: shape.data.fontSize,
-          fontFamily: shape.data.fontFamily,
-        }),
-      };
-    });
+    if (!shape) return null;
+
+    return {
+      ...shape,
+      data: {
+        ...shape.data,
+        text,
+      },
+      ...getTextDimensions({
+        ctx,
+        text,
+        fontSize: shape.data.fontSize,
+        fontFamily: shape.data.fontFamily,
+      }),
+    };
   }
 
   function createTextShape(
-    shapes: Shape[],
     editingState: NonNullable<typeof textEditingState>,
     text: string,
     ctx: CanvasRenderingContext2D,
-  ): Shape[] {
+  ): TextShape {
     const { width, height } = getTextDimensions({
       ctx,
       text,
@@ -140,30 +196,29 @@ export default function useTextEditing(
 
     const zIndex = getNextZIndex(shapes);
 
-    return [
-      ...shapes,
-      createBaseShape(
-        "text",
-        {
-          x: editingState.x,
-          y: editingState.y,
-          width: width / scale,
-          height: height / scale,
-        },
-        {
-          text,
-          fontSize: fontSize / scale,
-          fontFamily,
-          textAlign,
-          lineHeight: lineHeightMultiplier,
-        },
-        {
-          ...DEFAULT_APPEARANCE.text,
-          strokeColor,
-        },
-        zIndex,
-      ),
-    ];
+    return createBaseShape(
+      "text",
+      {
+        x: editingState.x,
+        y: editingState.y,
+        width: width / scale,
+        height: height / scale,
+      },
+      {
+        text,
+        fontSize: fontSize / scale,
+        fontFamily,
+        textAlign,
+        lineHeight: lineHeightMultiplier,
+      },
+      {
+        ...DEFAULT_APPEARANCE.text,
+        strokeColor,
+      },
+      zIndex,
+      pageId,
+      user!.id,
+    );
   }
 
   // Saves the text - if Escape clicked
@@ -214,14 +269,14 @@ export default function useTextEditing(
 
       groupId: null,
       frameId: hoveredFrameId,
-      zIndex: "",
       seed: 0,
       version: 0,
       versionNonce: 0,
-      updated: 0,
       isDeleted: false,
       locked: false,
       link: null,
+      pageId,
+      createdById: user!.id,
     });
   }
 

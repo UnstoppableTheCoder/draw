@@ -2,8 +2,8 @@
 
 import { cn } from "@/lib/utils";
 import Hint from "../hint";
-import { Button } from "../ui/button";
 import { MoreHorizontal } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function MoreTools() {
   const handleMoreToolsClick = () => {};

@@ -1,8 +1,8 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { useIsLocked, useSetIsLocked } from "../../store/editor/selectors";
 import Hint from "../hint";
-import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
 import { Lock, LockOpen } from "lucide-react";
 
