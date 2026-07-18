@@ -5,6 +5,9 @@ import { useCanvasRenderer } from "../../context/use-renderer";
 import { getPointInShape } from "../../geometry/hit-test/get-point-in-shape";
 import { usePointerState } from "../../pointer/use-pointer-state";
 import { Point } from "../../types";
+import { deleteShapes as deleteShapesApi } from "../../networking/api/shape-api";
+import { useParams } from "next/navigation";
+import { array } from "zod";
 
 const ERASER_TRAIL_DURATION = 100;
 export default function useShapeEraser({
@@ -16,12 +19,13 @@ export default function useShapeEraser({
   overlayCanvasRef: RefObject<HTMLCanvasElement | null>;
   pointerRefs: ReturnType<typeof usePointerState>;
 }) {
+  const { pageId } = useParams<{ pageId: string }>();
+
   const shapes = store.useShapes();
   const setShapes = store.useSetShapes();
   const scale = store.useScale();
 
-  const { invalidate, invalidateOverlay, invalidateScene } =
-    useCanvasRenderer();
+  const { invalidate } = useCanvasRenderer();
 
   const eraserTrailRef = pointerRefs.eraserTrailRef;
 
@@ -52,13 +56,20 @@ export default function useShapeEraser({
     if (hitIds.size > 0) {
       setShapes((prev) => prev.filter((shape) => !hitIds.has(shape.id)));
     }
+
+    return hitIds;
   }
 
-  function onPointerMoveErase(point: Point) {
+  async function onPointerMoveErase(point: Point) {
     addTrailPoint(point);
-    deleteShapes(point);
-
+    const deletedShapesIdsSet = deleteShapes(point);
     invalidate();
+
+    try {
+      await deleteShapesApi(pageId, Array.from(deletedShapesIdsSet));
+    } catch (error) {
+      console.log("error: ", error);
+    }
   }
 
   return {

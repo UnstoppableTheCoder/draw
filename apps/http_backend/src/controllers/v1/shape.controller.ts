@@ -67,6 +67,8 @@ export const updateShapes = async (req: Request, res: Response) => {
           ...data
         } = shape;
 
+        console.log("=========> ", data);
+
         return prisma.shape.update({
           where: {
             id,

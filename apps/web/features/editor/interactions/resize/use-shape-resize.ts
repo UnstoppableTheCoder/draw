@@ -18,6 +18,10 @@ import {
 } from "./scale-shape-in-group";
 import { useCanvasRenderer } from "../../context/use-renderer";
 import { usePointerState } from "../../pointer/use-pointer-state";
+import { updateShapes } from "../../networking/api/shape-api";
+import { useParams } from "next/navigation";
+import { Shape } from "../../types";
+import { useEditorStore } from "../../store/editor/editor-store";
 
 function isLineEndpointHandle(
   handle: string | null,
@@ -29,6 +33,8 @@ export default function useShapeResize(
   overlayCanvasRef: RefObject<HTMLCanvasElement | null>,
   pointerRefs: ReturnType<typeof usePointerState>,
 ) {
+  const { pageId } = useParams<{ pageId: string }>();
+
   const pushHistory = usePushHistory();
   const setShapes = useSetShapes();
   const shapes = useShapes();
@@ -113,10 +119,12 @@ export default function useShapeResize(
             ...shape,
             x: start.x,
             y: start.y,
-            points: [
-              [0, 0],
-              [end.x - start.x, end.y - start.y],
-            ] as PointTuple[],
+            data: {
+              points: [
+                [0, 0],
+                [end.x - start.x, end.y - start.y],
+              ] as PointTuple[],
+            },
           };
         }
 
@@ -195,27 +203,38 @@ export default function useShapeResize(
     invalidateOverlay();
   };
 
-  const onPointerUp = () => {
+  const onPointerUp = async () => {
     const interaction = pointerRefs.interactionRef.current;
+    const currentShapes = useEditorStore.getState().shapes;
 
     if (interaction.type !== "resize") return;
 
-    pushHistory();
-
-    const previewMap = new Map(
+    const resizeShapesMap = new Map(
       interaction.previewShapes.map((shape) => [shape.id, shape]),
     );
 
-    setShapes((prev) => prev.map((shape) => previewMap.get(shape.id) ?? shape));
+    const finalShapes: Shape[] = currentShapes.map(
+      (shape) => resizeShapesMap.get(shape.id) ?? shape,
+    );
+
+    setShapes(finalShapes);
+    pushHistory();
 
     pointerRefs.interactionRef.current = {
-      ...pointerRefs.interactionRef.current,
+      ...interaction,
       type: "select",
       previewShapes: interaction.previewShapes,
       selectedShapesIds: new Set(selectedShapesIds),
     };
 
     invalidateScene();
+
+    try {
+      await updateShapes(pageId, interaction.previewShapes);
+    } catch {
+      // Rollback
+      setShapes(currentShapes);
+    }
   };
 
   return {

@@ -2,6 +2,7 @@ import {
   usePushHistory,
   useSetHoveredFrameId,
   useSetShapes,
+  useShapes,
 } from "../../store/editor/selectors";
 import { RefObject } from "react";
 import { useCanvasRenderer } from "../../context/use-renderer";
@@ -9,15 +10,22 @@ import { getBoundingBox } from "../../geometry/bounding-box/get-bounding-box";
 import { checkIsInsideFrame, getGroupBounds } from "../selection/use-selection";
 import { usePointerState } from "../../pointer/use-pointer-state";
 import { FrameShape, Point, Shape } from "../../types";
+import { updateShapes } from "../../networking/api/shape-api";
+import { useParams } from "next/navigation";
 
 export default function useShapeMove(
   sceneCanvasRef: RefObject<HTMLCanvasElement | null>,
   overlayCanvasRef: RefObject<HTMLCanvasElement | null>,
   pointerRefs: ReturnType<typeof usePointerState>,
 ) {
+  const { pageId } = useParams<{ pageId: string }>();
+
   const setShapes = useSetShapes();
+  const shapes = useShapes();
   const pushHistory = usePushHistory();
   const setHoveredFrameId = useSetHoveredFrameId();
+
+  const interaction = pointerRefs.interactionRef.current;
 
   const { invalidate, invalidateScene } = useCanvasRenderer();
 
@@ -47,6 +55,7 @@ export default function useShapeMove(
     // frameId -> children
     const childrenByFrame = new Map<string, Shape[]>();
 
+    // Mapping frameId with its children
     for (const shape of shapes) {
       if (!shape.frameId) continue;
 
@@ -69,7 +78,7 @@ export default function useShapeMove(
       }
     }
 
-    // Start with all top-level shapes
+    // Start with all top-level shapes (frames)
     for (const shape of shapes) {
       if (shape.frameId) continue;
 
@@ -113,56 +122,53 @@ export default function useShapeMove(
     invalidate();
   }
 
-  function onPointerUp() {
+  function computeMovedShapes(
+    currentShapes: Shape[],
+    previewShapes: Shape[],
+  ): Shape[] {
+    const movedShapesMap = new Map(
+      previewShapes.map((shape) => [shape.id, shape]),
+    );
+
+    // Apply moved positions.
+    const updatedShapes = currentShapes.map((shape) => {
+      const moved = movedShapesMap.get(shape.id);
+      return moved ?? shape;
+    });
+
+    const frames = updatedShapes.filter(
+      (shape): shape is FrameShape => shape.type === "frame",
+    );
+
+    const frameIds = new Set(frames.map((frame) => frame.id));
+
+    // Recompute frame membership.
+    for (const shape of updatedShapes) {
+      // Skip frames themselves.
+      if (shape.type === "frame") continue;
+
+      // Keep existing frame if it still exists.
+      if (shape.frameId && frameIds.has(shape.frameId)) {
+        continue;
+      }
+
+      const parentFrame = findContainingFrame(
+        shape,
+        frames.filter((frame) => frame.id !== shape.id),
+      );
+
+      shape.frameId = parentFrame?.id ?? null;
+    }
+
+    return reorderShapesByFrame(updatedShapes);
+  }
+
+  async function onPointerUp() {
     const interaction = pointerRefs.interactionRef.current;
     if (interaction.type !== "move") return;
 
-    const movedShapes = new Map(
-      interaction.previewShapes.map((shape) => [shape.id, shape]),
-    );
-
-    setShapes((prevShapes) => {
-      // Apply moved positions.
-      const updatedShapes = prevShapes.map((shape) => {
-        const moved = movedShapes.get(shape.id);
-        return moved ?? shape;
-      });
-
-      const frames = updatedShapes.filter(
-        (shape): shape is FrameShape => shape.type === "frame",
-      );
-
-      const frameIds = new Set(frames.map((frame) => frame.id));
-
-      // Recompute frame membership.
-      for (const shape of updatedShapes) {
-        // If this shape already belongs to a frame that still exists,
-        // and it's not itself a frame, keep its current parent.
-        if (
-          shape.type !== "frame" &&
-          shape.frameId &&
-          frameIds.has(shape.frameId)
-        ) {
-          continue;
-        }
-
-        const parentFrame = findContainingFrame(
-          shape,
-          frames.filter((frame) => frame.id !== shape.id),
-        );
-
-        if (!parentFrame) {
-          shape.frameId = null;
-          continue;
-        }
-
-        shape.frameId = parentFrame.id;
-      }
-
-      return reorderShapesByFrame(updatedShapes);
-    });
-
-    pushHistory();
+    const previewShapes = interaction.previewShapes;
+    const finalShapes = computeMovedShapes(shapes, previewShapes);
 
     const selectedPreviewShapes = interaction.previewShapes.filter((shape) =>
       interaction.selectedShapesIds.has(shape.id),
@@ -175,9 +181,22 @@ export default function useShapeMove(
       ...interaction,
       type: "select",
     };
-
     setHoveredFrameId(null);
-    invalidateScene();
+
+    // Optimistic update.
+    setShapes(finalShapes);
+    pushHistory();
+    // invalidateScene();
+    invalidate();
+
+    try {
+      await updateShapes(pageId, interaction.previewShapes);
+    } catch (error) {
+      console.error(error);
+      // Optional rollback.
+      setShapes(shapes);
+      return;
+    }
   }
 
   return {

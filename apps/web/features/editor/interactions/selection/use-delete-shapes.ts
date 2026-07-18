@@ -6,16 +6,20 @@ import {
   useSetSelectedShapesIds,
   useSetShapes,
 } from "../../store/editor/selectors";
+import { deleteShapes as deleteShapesApi } from "../../networking/api/shape-api";
+import { useParams } from "next/navigation";
 
 export default function useDeleteShapes(
   pointerRefs: ReturnType<typeof usePointerState>,
 ) {
+  const { pageId } = useParams<{ pageId: string }>();
+
   const setShapes = useSetShapes();
   const setSelectedShapesIds = useSetSelectedShapesIds();
   // const frameEditingState = useFrameEditingState();
   const { invalidate } = useCanvasRenderer();
 
-  const deleteShapes = () => {
+  const deleteShapes = async () => {
     const { selectedShapesIds } = useEditorStore.getState();
     const selected = new Set(selectedShapesIds);
     const { frameEditingState } = useEditorStore.getState();
@@ -33,6 +37,12 @@ export default function useDeleteShapes(
     };
 
     invalidate();
+
+    try {
+      await deleteShapesApi(pageId, selectedShapesIds);
+    } catch (error) {
+      console.log("Error deleting the shape: ", error);
+    }
   };
 
   return { deleteShapes };

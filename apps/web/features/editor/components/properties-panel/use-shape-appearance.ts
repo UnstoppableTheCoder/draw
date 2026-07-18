@@ -27,10 +27,15 @@ import {
   TextAlign,
   TextShape,
 } from "../../types";
+import { useParams } from "next/navigation";
+import { useEditorStore } from "../../store/editor/editor-store";
+import { updateShapes } from "../../networking/api/shape-api";
 
 export default function useShapeAppearance(
   canvasRef: RefObject<HTMLCanvasElement | null>,
 ) {
+  const { pageId } = useParams<{ pageId: string }>();
+
   const selectedShapesIds = useSelectedShapesIds();
   const setShapes = useSetShapes();
 
@@ -51,7 +56,7 @@ export default function useShapeAppearance(
   const pushHistory = usePushHistory();
 
   const updateSelectedShapes = useCallback(
-    ({
+    async ({
       appearance,
       data,
     }: {
@@ -63,43 +68,48 @@ export default function useShapeAppearance(
 
       if (selectedShapesIds.length === 0) return;
 
+      const currentShapes = useEditorStore.getState().shapes;
       const selected = new Set(selectedShapesIds);
 
-      setShapes((prevShapes) =>
-        prevShapes.map((shape) => {
-          if (!selected.has(shape.id)) {
-            return shape;
-          }
+      const updatedShapes: Shape[] = [];
+      const changedShapes: Shape[] = [];
 
-          if (shape.type === "text") {
-            const updatedData = data
+      for (const shape of currentShapes) {
+        if (!selected.has(shape.id)) {
+          updatedShapes.push(shape);
+          continue;
+        }
+
+        let updatedShape: Shape;
+
+        if (shape.type === "text") {
+          const updatedData = data
+            ? {
+                ...shape.data,
+                ...data,
+              }
+            : shape.data;
+
+          const dimensions = getTextDimensions({
+            ctx,
+            text: updatedData.text,
+            fontSize: updatedData.fontSize,
+            fontFamily: updatedData.fontFamily,
+          });
+
+          updatedShape = {
+            ...shape,
+            appearance: appearance
               ? {
-                  ...shape.data,
-                  ...data,
+                  ...shape.appearance,
+                  ...appearance,
                 }
-              : shape.data;
-
-            const dimensions = getTextDimensions({
-              ctx,
-              text: updatedData.text,
-              fontSize: updatedData.fontSize,
-              fontFamily: updatedData.fontFamily,
-            });
-
-            return {
-              ...shape,
-              appearance: appearance
-                ? {
-                    ...shape.appearance,
-                    ...appearance,
-                  }
-                : shape.appearance,
-              data: updatedData,
-              ...dimensions,
-            };
-          }
-
-          return {
+              : shape.appearance,
+            data: updatedData,
+            ...dimensions,
+          };
+        } else {
+          updatedShape = {
             ...shape,
             appearance: appearance
               ? {
@@ -108,13 +118,26 @@ export default function useShapeAppearance(
                 }
               : shape.appearance,
           };
-        }),
-      );
+        }
 
+        updatedShapes.push(updatedShape);
+        changedShapes.push(updatedShape);
+      }
+
+      setShapes(updatedShapes);
       pushHistory();
       invalidate();
+
+      try {
+        await updateShapes(pageId, changedShapes);
+      } catch (error) {
+        console.error(error);
+
+        // Optional rollback
+        // setShapes(currentShapes);
+      }
     },
-    [canvasRef, invalidate, pushHistory, selectedShapesIds, setShapes],
+    [canvasRef, invalidate, pageId, pushHistory, selectedShapesIds, setShapes],
   );
 
   function setStrokeColor(strokeColor: string) {

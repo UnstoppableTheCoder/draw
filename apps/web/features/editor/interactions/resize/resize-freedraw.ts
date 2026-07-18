@@ -48,6 +48,9 @@ export function resizeFreeDrawShape({
     ...shape,
     x: newMinX,
     y: newMinY,
-    points: scaledPoints,
+    data: {
+      ...shape.data,
+      points: scaledPoints,
+    },
   };
 }
