@@ -23,8 +23,6 @@ import { Switch } from "@/components/ui/switch";
 
 import { useAuth } from "@/features/auth/store/selectors";
 import { createBoard } from "@/features/board/api/board-api";
-import { useSetBoards } from "@/features/board/store/selectors";
-import { useSetPages } from "@/features/page/store/selectors";
 import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
@@ -45,8 +43,6 @@ type FormValues = z.infer<typeof formSchema>;
 
 export default function DialogInput() {
   const auth = useAuth();
-  const setBoards = useSetBoards();
-  const setPages = useSetPages();
 
   const router = useRouter();
 

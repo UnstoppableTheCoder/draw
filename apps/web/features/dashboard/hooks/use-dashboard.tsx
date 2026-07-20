@@ -15,8 +15,7 @@ export function useDashboard() {
   useEffect(() => {
     (async () => {
       const { boards } = await getBoards();
-
-      setBoards((prev) => [...prev, ...boards]);
+      setBoards(boards);
     })();
   }, []);
 

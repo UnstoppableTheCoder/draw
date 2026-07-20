@@ -21,7 +21,7 @@ import useViewportHelpers from "../viewport/use-viewport-helpers";
 import { getFrameAtPosition } from "../shared/get-frame-at-position";
 import { Point, Shape, TextShape } from "../../types";
 import { createBaseShape, DEFAULT_APPEARANCE } from "../draw/create-shape";
-import { getNextZIndex } from "../../utils/z-index";
+import { getNextZIndex } from "../../utils/shape-z-index";
 import { useParams } from "next/navigation";
 import { useUser } from "@/features/auth/store/selectors";
 import {
@@ -194,7 +194,8 @@ export default function useTextEditing(
       fontFamily,
     });
 
-    const zIndex = getNextZIndex(shapes);
+    const lastShapeZIndex = shapes.at(-1)?.zIndex!;
+    const zIndex = getNextZIndex(lastShapeZIndex);
 
     return createBaseShape(
       "text",

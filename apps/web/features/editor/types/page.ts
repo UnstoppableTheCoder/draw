@@ -5,7 +5,7 @@ export interface Page {
   boardId: string;
   name: string;
   orderKey: string;
-  backgroundColor: string | undefined;
+  backgroundColor?: string;
   createdById: string;
   createdAt: string;
   updatedAt: string;

@@ -6,7 +6,7 @@ import { IMAGE_GAP, MAX_IMAGE_SIZE } from "../../constants/image";
 import { createImageShape } from "./create-image-shape";
 import { usePointerState } from "../../pointer/use-pointer-state";
 import { loadImageAssets } from "./image-loader";
-import { getNextZIndex } from "../../utils/z-index";
+import { getNextZIndex } from "../../utils/shape-z-index";
 import { createImageAssets } from "../../networking/api/image-api";
 import { useParams } from "next/navigation";
 import { useUser } from "@/features/auth/store/selectors";
@@ -77,7 +77,8 @@ export default function useImageUpload({
       const row = Math.floor(index / cols);
       const col = index % cols;
 
-      const zIndex = getNextZIndex(shapes);
+      const lastShapeZIndex = shapes.at(-1)?.zIndex!;
+      const zIndex = getNextZIndex(lastShapeZIndex);
       const shape = createImageShape({
         image,
         zIndex,
