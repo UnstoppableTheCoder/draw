@@ -1,29 +1,40 @@
+import { useParams } from "next/navigation";
+import { generateKeyBetween } from "fractional-indexing";
+import { v4 as uuidv4 } from "uuid";
+
 import { useUser } from "@/features/auth/store/selectors";
+
 import { TOLERANCE } from "@/features/editor/constants/canvas";
 import { useCanvasRenderer } from "@/features/editor/context/use-renderer";
+
 import { getGroupBounds } from "@/features/editor/geometry/bounding-box/get-group-bounds";
 import { normalizeRect } from "@/features/editor/geometry/normalize-rect";
 import getTextDimensions from "@/features/editor/geometry/text/get-text-dimensions";
-import { compareByZIndex } from "@/features/editor/interactions/move/use-shape-move";
-import { updateShapes } from "@/features/editor/networking/api/shape-api";
+
+import { createFrameShape } from "@/features/editor/interactions/draw/create-shape";
+
+import {
+  createShapes as createShapesApi,
+  deleteShapesApi,
+  updateShapesApi,
+} from "@/features/editor/networking/api/shape-api";
+
 import {
   usePushHistory,
   useSelectedShapesIds,
   useSetShapes,
   useShapes,
 } from "@/features/editor/store/editor/selectors";
+
 import { Shape } from "@/features/editor/types";
-import {
-  getNextZIndex,
-  getPreviousZIndex,
-} from "@/features/editor/utils/shape-z-index";
-import { useParams } from "next/navigation";
-import { v4 as uuidv4 } from "uuid";
-import {
-  createShapes as createShapesApi,
-  updateShapes as updateShapesApi,
-} from "../../../networking/api/shape-api";
-import { createFrameShape } from "@/features/editor/interactions/draw/create-shape";
+
+function compareStrings(a: string, b: string): number {
+  return a < b ? -1 : a > b ? 1 : 0;
+}
+
+export function compareByZIndex(a: Shape, b: Shape): number {
+  return compareStrings(a.zIndex, b.zIndex) || compareStrings(a.id, b.id);
+}
 
 export default function useSelectionMenuActions({
   overlayCanvasRef,
@@ -31,50 +42,130 @@ export default function useSelectionMenuActions({
 }: any) {
   const { pageId } = useParams<{ pageId: string }>();
 
-  const setShapes = useSetShapes();
-  const shapes = useShapes();
-  const selectedShapesIds = useSelectedShapesIds();
-  const { invalidate } = useCanvasRenderer();
   const user = useUser();
-  const pushHistory = usePushHistory();
 
-  const group = () => {
+  const shapes = useShapes();
+  const setShapes = useSetShapes();
+  const selectedShapesIds = useSelectedShapesIds();
+
+  const pushHistory = usePushHistory();
+  const { invalidate } = useCanvasRenderer();
+
+  const group = async () => {
     const selected = new Set(selectedShapesIds);
     const groupId = uuidv4();
 
-    setShapes((prevShapes) =>
-      prevShapes.map((prevShape) =>
-        selected.has(prevShape.id) ? { ...prevShape, groupId } : prevShape,
-      ),
+    const previousShapes = shapes;
+    const changedShapes: Shape[] = [];
+
+    const nextShapes = previousShapes.map((shape) => {
+      if (!selected.has(shape.id)) {
+        return shape;
+      }
+
+      const updatedShape = {
+        ...shape,
+        groupId,
+      };
+
+      changedShapes.push(updatedShape);
+      return updatedShape;
+    });
+
+    setShapes(nextShapes);
+    pushHistory();
+    invalidate();
+
+    try {
+      await updateShapesApi(pageId, changedShapes);
+    } catch (error) {
+      console.error("Failed to group shapes", error);
+
+      setShapes(previousShapes);
+      invalidate();
+    }
+  };
+
+  const unGroup = async () => {
+    const selected = new Set(selectedShapesIds);
+
+    const selectedGroups = new Set(
+      shapes
+        .filter(
+          (shape) =>
+            selected.has(shape.id) &&
+            shape.groupId !== null &&
+            shape.groupId !== undefined,
+        )
+        .map((shape) => shape.groupId!),
     );
 
+    if (selectedGroups.size === 0) {
+      return;
+    }
+
+    const previousShapes = shapes;
+    const changedShapes: Shape[] = [];
+
+    const nextShapes = previousShapes.map((shape) => {
+      if (!shape.groupId || !selectedGroups.has(shape.groupId)) {
+        return shape;
+      }
+
+      const updatedShape = {
+        ...shape,
+        groupId: null,
+      };
+
+      changedShapes.push(updatedShape);
+      return updatedShape;
+    });
+
+    setShapes(nextShapes);
+    pushHistory();
     invalidate();
+
+    try {
+      await updateShapesApi(pageId, changedShapes);
+    } catch (error) {
+      console.error("Failed to ungroup shapes", error);
+
+      setShapes(previousShapes);
+      invalidate();
+    }
   };
 
   const wrapInFrame = async () => {
     const ctx = overlayCanvasRef.current?.getContext("2d");
-    if (!ctx) return;
-
-    const scaledTolerance = 5 * TOLERANCE;
+    if (!ctx) {
+      return;
+    }
 
     const selected = new Set(selectedShapesIds);
 
-    const selectedShapes = shapes.filter((shape) => selected.has(shape.id));
+    const wrappableShapes = shapes.filter(
+      (shape) => selected.has(shape.id) && !shape.frameId,
+    );
 
-    const bounds = getGroupBounds(selectedShapes);
+    if (wrappableShapes.length === 0) {
+      return;
+    }
 
-    if (!bounds) return;
+    const bounds = getGroupBounds(wrappableShapes);
+    if (!bounds) {
+      return;
+    }
 
-    const frameId = uuidv4();
+    const tolerance = 5 * TOLERANCE;
 
     const rect = normalizeRect(
       {
-        x: bounds.minX - scaledTolerance,
-        y: bounds.minY - scaledTolerance,
+        x: bounds.minX - tolerance,
+        y: bounds.minY - tolerance,
       },
       {
-        x: bounds.maxX + scaledTolerance,
-        y: bounds.maxY + scaledTolerance,
+        x: bounds.maxX + tolerance,
+        y: bounds.maxY + tolerance,
       },
     );
 
@@ -84,9 +175,24 @@ export default function useSelectionMenuActions({
       fontFamily: "Virgil",
     };
 
-    const orderedSelectedShapes = [...selectedShapes].sort(compareByZIndex);
+    // Shapes sorted from back to front.
+    const orderedShapes = [...shapes].sort(compareByZIndex);
 
-    const firstShapeZIndex = orderedSelectedShapes[0]?.zIndex ?? null;
+    const wrappableIds = new Set(wrappableShapes.map((shape) => shape.id));
+
+    const firstShape = orderedShapes.find((shape) =>
+      wrappableIds.has(shape.id),
+    );
+
+    if (!firstShape) {
+      return;
+    }
+
+    const firstIndex = orderedShapes.indexOf(firstShape);
+
+    const lower = firstIndex > 0 ? orderedShapes[firstIndex - 1]!.zIndex : null;
+
+    const upper = firstShape.zIndex;
 
     const frame = createFrameShape({
       rect,
@@ -99,44 +205,38 @@ export default function useSelectionMenuActions({
           fontFamily: data.fontFamily,
         }),
       },
-      zIndex: getPreviousZIndex(firstShapeZIndex),
+      zIndex: generateKeyBetween(lower, upper),
       pageId,
       createdById: user!.id,
     });
 
     const previousShapes = shapes;
-
     const changedShapes: Shape[] = [];
 
     const nextShapes = previousShapes.map((shape) => {
-      if (!selected.has(shape.id)) {
-        return shape;
-      }
-
-      if (shape.frameId === frameId) {
+      if (!wrappableIds.has(shape.id)) {
         return shape;
       }
 
       const updatedShape = {
         ...shape,
-        frameId,
+        frameId: frame.id,
       };
 
       changedShapes.push(updatedShape);
-
       return updatedShape;
     });
 
-    setShapes([...nextShapes, frame]);
+    const finalShapes = [...nextShapes, frame].sort(compareByZIndex);
 
+    setShapes(finalShapes);
     pushHistory();
     invalidate();
 
     try {
       await Promise.all([
         createShapesApi(pageId, [frame]),
-        updateShapesApi
-        (pageId, changedShapes),
+        updateShapesApi(pageId, changedShapes),
       ]);
     } catch (error) {
       console.error("Failed to wrap shapes in frame", error);
@@ -146,5 +246,55 @@ export default function useSelectionMenuActions({
     }
   };
 
-  return { group, wrapInFrame };
+  const removeFrame = async () => {
+    const frame = shapes.find(
+      (shape) => selectedShapesIds.includes(shape.id) && shape.type === "frame",
+    );
+
+    if (!frame) {
+      return;
+    }
+
+    const previousShapes = shapes;
+    const changedShapes: Shape[] = [];
+
+    const nextShapes = previousShapes
+      .map((shape) => {
+        if (shape.frameId !== frame.id) {
+          return shape;
+        }
+
+        const updatedShape = {
+          ...shape,
+          frameId: frame.frameId,
+        };
+
+        changedShapes.push(updatedShape);
+        return updatedShape;
+      })
+      .filter((shape) => shape.id !== frame.id);
+
+    setShapes(nextShapes);
+    pushHistory();
+    invalidate();
+
+    try {
+      await Promise.all([
+        updateShapesApi(pageId, changedShapes),
+        deleteShapesApi(pageId, [frame.id]),
+      ]);
+    } catch (error) {
+      console.error("Failed to remove frame", error);
+
+      setShapes(previousShapes);
+      invalidate();
+    }
+  };
+
+  return {
+    group,
+    unGroup,
+    wrapInFrame,
+    removeFrame,
+  };
 }

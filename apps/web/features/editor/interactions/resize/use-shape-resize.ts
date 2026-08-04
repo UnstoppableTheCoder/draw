@@ -18,10 +18,10 @@ import {
 } from "./scale-shape-in-group";
 import { useCanvasRenderer } from "../../context/use-renderer";
 import { usePointerState } from "../../pointer/use-pointer-state";
-import { updateShapes } from "../../networking/api/shape-api";
 import { useParams } from "next/navigation";
 import { Shape } from "../../types";
 import { useEditorStore } from "../../store/editor/editor-store";
+import { updateShapesApi } from "../../networking/api/shape-api";
 
 function isLineEndpointHandle(
   handle: string | null,
@@ -230,7 +230,7 @@ export default function useShapeResize(
     invalidateScene();
 
     try {
-      await updateShapes(pageId, interaction.previewShapes);
+      await updateShapesApi(pageId, interaction.previewShapes);
     } catch {
       // Rollback
       setShapes(currentShapes);

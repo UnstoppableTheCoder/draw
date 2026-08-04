@@ -5,9 +5,8 @@ import { useCanvasRenderer } from "../../context/use-renderer";
 import { getPointInShape } from "../../geometry/hit-test/get-point-in-shape";
 import { usePointerState } from "../../pointer/use-pointer-state";
 import { Point } from "../../types";
-import { deleteShapes as deleteShapesApi } from "../../networking/api/shape-api";
 import { useParams } from "next/navigation";
-import { array } from "zod";
+import { deleteShapesApi } from "../../networking/api/shape-api";
 
 const ERASER_TRAIL_DURATION = 100;
 export default function useShapeEraser({

@@ -36,7 +36,7 @@ export const getShapes = async (pageId: string): Promise<GetShapesResponse> => {
   return data;
 };
 
-export const updateShapes = async (
+export const updateShapesApi = async (
   pageId: string,
   shapes: Shape[],
 ): Promise<updateShapeResponse> => {
@@ -48,7 +48,7 @@ export const updateShapes = async (
   return data;
 };
 
-export const deleteShapes = async (
+export const deleteShapesApi = async (
   pageId: string,
   ids: string[],
 ): Promise<void> => {

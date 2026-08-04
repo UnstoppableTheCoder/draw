@@ -6,7 +6,8 @@ import React, {
   useEffect,
   useMemo,
 } from "react";
-import { v4 as uuidv4 } from "uuid";
+import { useParams } from "next/navigation";
+
 import getTextDimensions from "../../geometry/text/get-text-dimensions";
 import * as store from "../../store/editor/selectors";
 import {
@@ -19,16 +20,18 @@ import {
 import { useCanvasRenderer } from "../../context/use-renderer";
 import useViewportHelpers from "../viewport/use-viewport-helpers";
 import { getFrameAtPosition } from "../shared/get-frame-at-position";
-import { Point, Shape, TextShape } from "../../types";
+import { FrameShape, Point, Shape, TextShape } from "../../types";
 import { createBaseShape, DEFAULT_APPEARANCE } from "../draw/create-shape";
 import { getNextZIndex } from "../../utils/shape-z-index";
-import { useParams } from "next/navigation";
 import { useUser } from "@/features/auth/store/selectors";
 import {
   createShapes,
-  deleteShapes,
-  updateShapes,
+  deleteShapesApi,
+  updateShapesApi,
 } from "../../networking/api/shape-api";
+import { getBoundingBox } from "../../geometry/bounding-box/get-bounding-box";
+import { compareByZIndex } from "../../components/canvas/context-menu/use-selection-menu-actions";
+import { checkIsInsideFrame, getGroupBounds } from "../selection/use-selection";
 
 export default function useTextEditing(
   canvasRef: RefObject<HTMLCanvasElement | null>,
@@ -73,82 +76,31 @@ export default function useTextEditing(
     setHoveredFrameId(hoveredFrame?.id ?? null);
   }
 
-  const saveTextShape = async () => {
-    if (!textEditingState) return;
+  function findDestinationFrame(
+    previewShapes: readonly Shape[],
+    movedShapeIds: ReadonlySet<string> = new Set(),
+  ): FrameShape | null {
+    const groupBounds = getGroupBounds([...previewShapes]);
+    if (!groupBounds) return null;
 
-    const text = textEditingState.data.text.trim();
+    const candidateFrames = shapes
+      .filter(
+        (shape): shape is FrameShape =>
+          shape.type === "frame" && !movedShapeIds.has(shape.id),
+      )
+      .sort(compareByZIndex);
 
-    const ctx = canvasRef.current?.getContext("2d");
-    if (!ctx) return;
+    for (let index = candidateFrames.length - 1; index >= 0; index -= 1) {
+      const frame = candidateFrames[index];
+      if (!frame) continue;
 
-    const previousShapes = shapes;
-    let nextShapes = previousShapes;
-
-    try {
-      // Editing an existing shape
-      if (textEditingState.id) {
-        if (!text) {
-          nextShapes = previousShapes.filter(
-            (shape) => shape.id !== textEditingState.id,
-          );
-
-          setShapes(nextShapes);
-          pushHistory();
-
-          finishTextEditing();
-          invalidate();
-
-          await deleteShapes(pageId, [textEditingState.id]);
-          return;
-        }
-
-        const updatedShape = buildUpdatedTextShape(
-          previousShapes,
-          textEditingState.id,
-          text,
-          ctx,
-        );
-
-        if (!updatedShape) return;
-
-        nextShapes = previousShapes.map((shape) =>
-          shape.id === updatedShape.id ? updatedShape : shape,
-        );
-
-        setShapes(nextShapes);
-        pushHistory();
-
-        finishTextEditing();
-        invalidate();
-
-        await updateShapes(pageId, [updatedShape]);
-        return;
+      if (checkIsInsideFrame(getBoundingBox(frame), groupBounds)) {
+        return frame;
       }
-
-      // Creating a new shape
-      if (!text) {
-        finishTextEditing();
-        return;
-      }
-
-      const newShape = createTextShape(textEditingState, text, ctx);
-      nextShapes = [...previousShapes, newShape];
-
-      setShapes(nextShapes);
-      pushHistory();
-
-      finishTextEditing();
-      invalidate();
-
-      await createShapes(pageId, [newShape]);
-    } catch (error) {
-      console.error(error);
-
-      // Roll back optimistic update
-      setShapes(previousShapes);
-      invalidate();
     }
-  };
+
+    return null;
+  }
 
   function finishTextEditing() {
     setTextEditingState(null);
@@ -162,7 +114,7 @@ export default function useTextEditing(
     ctx: CanvasRenderingContext2D,
   ): TextShape | null {
     const shape = shapes.find(
-      (shape): shape is TextShape => shape.id === id && shape.type === "text",
+      (s): s is TextShape => s.id === id && s.type === "text",
     );
 
     if (!shape) return null;
@@ -194,7 +146,7 @@ export default function useTextEditing(
       fontFamily,
     });
 
-    const lastShapeZIndex = shapes.at(-1)?.zIndex!;
+    const lastShapeZIndex = shapes.at(-1)?.zIndex ?? null;
     const zIndex = getNextZIndex(lastShapeZIndex);
 
     return createBaseShape(
@@ -222,26 +174,103 @@ export default function useTextEditing(
     );
   }
 
-  // Saves the text - if Escape clicked
-  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Escape") {
-      if (!textEditingState) return;
+  const saveTextShape = async () => {
+    if (!textEditingState) return;
 
-      const textarea = textareaRef.current;
-      if (!textarea) return;
+    const text = textEditingState.data.text.trim();
 
-      saveTextShape();
+    const ctx = canvasRef.current?.getContext("2d");
+    if (!ctx) return;
+
+    const previousShapes = shapes;
+    let nextShapes = previousShapes;
+
+    try {
+      // ---------------------------------------------
+      // Editing an existing shape
+      // ---------------------------------------------
+      if (textEditingState.id) {
+        if (!text) {
+          nextShapes = previousShapes.filter(
+            (shape) => shape.id !== textEditingState.id,
+          );
+
+          setShapes(nextShapes);
+          pushHistory();
+
+          finishTextEditing();
+          invalidate();
+
+          await deleteShapesApi(pageId, [textEditingState.id]);
+          return;
+        }
+
+        const updatedShape = buildUpdatedTextShape(
+          previousShapes,
+          textEditingState.id,
+          text,
+          ctx,
+        );
+
+        if (!updatedShape) return;
+
+        nextShapes = previousShapes.map((shape) =>
+          shape.id === updatedShape.id ? updatedShape : shape,
+        );
+
+        setShapes(nextShapes);
+        pushHistory();
+
+        finishTextEditing();
+        invalidate();
+
+        await updateShapesApi(pageId, [updatedShape]);
+        return;
+      }
+
+      // ---------------------------------------------
+      // Creating a new shape
+      // ---------------------------------------------
+      if (!text) {
+        finishTextEditing();
+        return;
+      }
+
+      const newShape = createTextShape(textEditingState, text, ctx);
+
+      // Find parent frame based on the new shape's bounds
+      const destinationFrame = findDestinationFrame([newShape]);
+
+      if (destinationFrame) {
+        newShape.frameId = destinationFrame.id;
+      }
+
+      nextShapes = [...previousShapes, newShape];
+
+      setShapes(nextShapes);
+      pushHistory();
+
+      finishTextEditing();
+      invalidate();
+
+      await createShapes(pageId, [newShape]);
+    } catch (error) {
+      console.error(error);
+
+      setShapes(previousShapes);
+      invalidate();
     }
   };
 
-  const handleDoubleClick = (e: React.PointerEvent<HTMLCanvasElement>) => {
-    const canvas = canvasRef.current;
-    if (!canvas || selectedTool === "eraser" || selectedTool === "pan") return;
+  // Saves the text - if Escape clicked
+  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key !== "Escape") return;
+    if (!textEditingState) return;
 
-    const point = viewportHelpers.clientToCanvas(e.clientX, e.clientY);
-    if (!point) return;
+    const textarea = textareaRef.current;
+    if (!textarea) return;
 
-    onPointerDownText(point);
+    saveTextShape();
   };
 
   function onPointerDownText(point: Point) {
@@ -281,7 +310,17 @@ export default function useTextEditing(
     });
   }
 
-  function finishEditingIfClickedOutside() {
+  const handleDoubleClick = (e: React.PointerEvent<HTMLCanvasElement>) => {
+    const canvas = canvasRef.current;
+    if (!canvas || selectedTool === "eraser" || selectedTool === "pan") return;
+
+    const point = viewportHelpers.clientToCanvas(e.clientX, e.clientY);
+    if (!point) return;
+
+    onPointerDownText(point);
+  };
+
+  const finishEditingIfClickedOutside = useCallback(() => {
     if (!textEditingState) return;
 
     const textarea = textareaRef.current;
@@ -289,7 +328,9 @@ export default function useTextEditing(
 
     saveTextShape();
     setHoveredFrameId(null);
-  }
+    // saveTextShape depends on latest state; kept stable via closure
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [textEditingState]);
 
   const handleChange = useCallback(
     (event: ChangeEvent<HTMLTextAreaElement>) => {
@@ -353,7 +394,7 @@ export default function useTextEditing(
     return () => {
       document.removeEventListener("pointerdown", handleClickOutside);
     };
-  }, [textEditingState, finishEditingIfClickedOutside]);
+  }, [textEditingState, finishEditingIfClickedOutside, textareaRef]);
 
   return {
     handleKeyDown,

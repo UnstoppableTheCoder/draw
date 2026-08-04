@@ -2,6 +2,7 @@ import {
   ChangeEvent,
   KeyboardEvent,
   RefObject,
+  useCallback,
   useEffect,
   useMemo,
   useState,
@@ -17,11 +18,15 @@ import { useCanvasRenderer } from "../../context/use-renderer";
 import getTextDimensions from "../../geometry/text/get-text-dimensions";
 import { TOLERANCE } from "../../constants/canvas";
 import useViewportHelpers from "../viewport/use-viewport-helpers";
+import { updateShapesApi } from "../../networking/api/shape-api";
+import { Shape } from "../../types";
+import { useParams } from "next/navigation";
 
 export default function useFrameNameEditor(
   frameNameInputRef: RefObject<HTMLInputElement | null>,
   overlayCanvasRef: RefObject<HTMLCanvasElement | null>,
 ) {
+  const { pageId } = useParams<{ pageId: string }>();
   const [value, setValue] = useState("");
 
   const shapes = useShapes();
@@ -54,57 +59,65 @@ export default function useFrameNameEditor(
     });
   }, [frame?.id, frameNameInputRef]);
 
-  const updateFrameName = (value: string) => {
-    if (!frame) return;
+  const updateFrameName = useCallback(async () => {
+    if (!frame || frame.type !== "frame") return;
+
+    const frameName = value.trim() || "Frame Name";
+
+    if (frame.data.text.name === frameName) {
+      return;
+    }
 
     const ctx = overlayCanvasRef.current?.getContext("2d");
     if (!ctx) return;
 
-    const frameName = value.trim() || "Frame Name";
+    const previousShapes = shapes;
 
-    setShapes((prev) =>
-      prev.map((shape) => {
-        if (shape.type !== "frame" || shape.id !== frame.id) {
-          return shape;
-        }
+    const nextFrame: Shape = {
+      ...frame,
+      data: {
+        ...frame.data,
+        text: {
+          ...frame.data.text,
+          name: frameName,
+          ...getTextDimensions({
+            ctx,
+            text: frameName,
+            fontSize: frame.data.text.fontSize,
+            fontFamily: frame.data.text.fontFamily,
+          }),
+        },
+      },
+    };
 
-        const {
-          data: { text },
-        } = shape;
-
-        return {
-          ...shape,
-          data: {
-            ...shape.data,
-            text: {
-              ...text,
-              name: frameName,
-              ...getTextDimensions({
-                ctx,
-                text: frameName,
-                fontSize: text.fontSize,
-                fontFamily: text.fontFamily,
-              }),
-            },
-          },
-        };
-      }),
+    const nextShapes = previousShapes.map((shape) =>
+      shape.id === nextFrame.id ? nextFrame : shape,
     );
 
+    setShapes(nextShapes);
     invalidate();
-  };
 
-  const finishEditing = () => {
-    updateFrameName(value);
+    try {
+      await updateShapesApi(pageId, [nextFrame]);
+    } catch (error) {
+      console.error("Failed to update frame name", error);
+
+      setShapes(previousShapes);
+      invalidate();
+    }
+  }, [frame, value, shapes, pageId, setShapes, invalidate, overlayCanvasRef]);
+
+  const finishEditing = useCallback(async () => {
+    await updateFrameName();
     setFrameEditingState(null);
-  };
+  }, [updateFrameName, setFrameEditingState]);
 
-  const cancelEditing = () => {
+  const cancelEditing = useCallback(() => {
     if (!frame || frame.type !== "frame") return;
 
     setValue(frame.data.text.name);
     setFrameEditingState(null);
-  };
+  }, [frame, setFrameEditingState]);
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setValue(event.target.value);
@@ -157,17 +170,18 @@ export default function useFrameNameEditor(
   useEffect(() => {
     if (!frameEditingState) return;
 
-    const handleFinishFrameEditing = (e: PointerEvent) => {
-      if (frameNameInputRef.current?.contains(e.target as Node)) {
+    const handlePointerDown = (event: PointerEvent) => {
+      if (frameNameInputRef.current?.contains(event.target as Node)) {
         return;
       }
 
-      finishEditing();
+      void finishEditing();
     };
 
-    document.addEventListener("pointerdown", handleFinishFrameEditing);
+    document.addEventListener("pointerdown", handlePointerDown);
+
     return () => {
-      document.removeEventListener("pointerdown", handleFinishFrameEditing);
+      document.removeEventListener("pointerdown", handlePointerDown);
     };
   }, [frameEditingState, finishEditing]);
 

@@ -1,12 +1,11 @@
 import { useCanvasRenderer } from "../../context/use-renderer";
+import { deleteShapesApi } from "../../networking/api/shape-api";
 import { usePointerState } from "../../pointer/use-pointer-state";
 import { useEditorStore } from "../../store/editor/editor-store";
 import {
-  useFrameEditingState,
   useSetSelectedShapesIds,
   useSetShapes,
 } from "../../store/editor/selectors";
-import { deleteShapes as deleteShapesApi } from "../../networking/api/shape-api";
 import { useParams } from "next/navigation";
 
 export default function useDeleteShapes(

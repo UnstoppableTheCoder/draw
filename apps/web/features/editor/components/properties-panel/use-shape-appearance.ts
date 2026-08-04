@@ -29,7 +29,7 @@ import {
 } from "../../types";
 import { useParams } from "next/navigation";
 import { useEditorStore } from "../../store/editor/editor-store";
-import { updateShapes } from "../../networking/api/shape-api";
+import { updateShapesApi } from "../../networking/api/shape-api";
 
 export default function useShapeAppearance(
   canvasRef: RefObject<HTMLCanvasElement | null>,
@@ -129,7 +129,7 @@ export default function useShapeAppearance(
       invalidate();
 
       try {
-        await updateShapes(pageId, changedShapes);
+        await updateShapesApi(pageId, changedShapes);
       } catch (error) {
         console.error(error);
 

@@ -8,7 +8,6 @@ import {
 } from "../../store/editor/selectors";
 import { v4 as uuidv4 } from "uuid";
 import { Shape } from "../../types";
-import { generateKeyBetween } from "fractional-indexing";
 import { getZIndexBetween } from "../../utils/shape-z-index";
 
 export default function useDuplicateShapes() {

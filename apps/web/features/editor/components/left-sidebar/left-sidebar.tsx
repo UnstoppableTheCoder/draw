@@ -99,10 +99,7 @@ export default function LeftSidebar({
 
   const handlePageClick = (pageId: string) => {
     router.push(`/board/${boardId}/${pageId}`);
-    // renderer.invalidate();
   };
-
-  console.log({ editingName, editingPageId });
 
   return (
     <aside className="border-r flex flex-col w-56 h-full bg-white dark:bg-[#212121]">

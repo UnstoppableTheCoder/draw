@@ -17,7 +17,6 @@ import { drawText } from "./shapes/text";
 type Props = {
   ctx: CanvasRenderingContext2D;
   shapes: Shape[];
-  images: ImageMap;
   scale: number;
   skipShapeIds?: Set<string>;
   hoveredFrameId?: string | null;
@@ -28,7 +27,6 @@ type Props = {
 export const renderShapes = ({
   ctx,
   shapes,
-  images,
   scale,
   skipShapeIds,
   hoveredFrameId,

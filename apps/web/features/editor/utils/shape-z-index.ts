@@ -1,7 +1,7 @@
 import { generateKeyBetween } from "fractional-indexing";
 
-export function getNextZIndex(lastZIndex: string) {
-  return generateKeyBetween(lastZIndex ?? null, null);
+export function getNextZIndex(lastZIndex: string | null) {
+  return generateKeyBetween(lastZIndex, null);
 }
 
 export function getPreviousZIndex(firstZIndex: string | null) {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useRef } from "react";
 import useViewportHelpers from "../interactions/viewport/use-viewport-helpers";
 import { SelectedBounds } from "../types/types";
 import { useEditorStore } from "../store/editor/editor-store";
@@ -15,10 +15,7 @@ import drawMarqueeSelection from "../drawing/selection/marquee-selection";
 import drawEraserBackground from "../drawing/eraser/background";
 import drawGroupedShapeSelection from "../drawing/selection/grouped-shapes-selection";
 import { EditorRefs, Shape } from "@/features/editor/types";
-import drawGrid from "../drawing/background/draw-line-grid";
 import drawDotGrid from "../drawing/background/draw-dot-grid";
-import drawLineGrid from "../drawing/background/draw-line-grid";
-import { useImageManager } from "../interactions/manager/image-manager";
 
 export default function useCreateCanvasRenderer({
   backgroundCanvasRef,
@@ -134,12 +131,12 @@ export default function useCreateCanvasRenderer({
 
     const {
       shapes,
-      images,
       textEditingState,
       scale,
       hoveredFrameId,
       frameEditingState,
     } = useEditorStore.getState();
+    console.log("Frame render: ", frameEditingState);
 
     const interaction = pointerRefs.interactionRef.current;
 
@@ -163,7 +160,6 @@ export default function useCreateCanvasRenderer({
     renderShapes({
       ctx,
       shapes,
-      images,
       scale,
       skipShapeIds,
       hoveredFrameId,
@@ -181,8 +177,10 @@ export default function useCreateCanvasRenderer({
     if (!ctx) return;
 
     const interaction = pointerRefs.interactionRef.current;
-    const { shapes, images, selectedShapesIds, scale, frameEditingState } =
+    const { shapes, selectedShapesIds, scale, frameEditingState } =
       useEditorStore.getState();
+
+    console.log("Frame overlay: ", frameEditingState);
 
     clearCanvas(ctx);
 
@@ -228,7 +226,6 @@ export default function useCreateCanvasRenderer({
         renderShapes({
           ctx,
           shapes: previewShapes,
-          images,
           scale,
           frameEditingState,
           imageManager,

@@ -13,7 +13,7 @@ import { getBoundingBox } from "../../geometry/bounding-box/get-bounding-box";
 import { checkIsInsideFrame, getGroupBounds } from "../selection/use-selection";
 import { usePointerState } from "../../pointer/use-pointer-state";
 import { FrameShape, Point, Shape } from "../../types";
-import { updateShapes } from "../../networking/api/shape-api";
+import { updateShapesApi } from "../../networking/api/shape-api";
 
 /**
  * Generates a fractional z-index after the supplied z-index.
@@ -39,11 +39,12 @@ export function getZIndexBetween(
   return generateKeyBetween(below, above);
 }
 
-export function compareByZIndex(a: Shape, b: Shape): number {
-  const result = a.zIndex.localeCompare(b.zIndex);
+function compareBinary(a: string, b: string): number {
+  return a < b ? -1 : a > b ? 1 : 0;
+}
 
-  // Deterministic fallback for legacy duplicate z-index values.
-  return result !== 0 ? result : a.id.localeCompare(b.id);
+function compareByZIndex(a: Shape, b: Shape): number {
+  return compareBinary(a.zIndex, b.zIndex) || compareBinary(a.id, b.id);
 }
 
 function didShapeChange(previous: Shape, next: Shape): boolean {
@@ -112,7 +113,7 @@ function buildShapeOrderIndex(
 }
 
 /**
- * Returns the selected roots of the moved forest - only the main frame
+ * Returns the selected roots of the moved forest.
  *
  * If a frame and its child are moved together, only the frame changes its
  * containing frame. The child remains inside the moved frame.
@@ -122,7 +123,6 @@ function getMovedRootIds(
   selectedShapeIds: ReadonlySet<string>,
 ): Set<string> {
   const movedShapeIds = new Set(previewShapes.map((shape) => shape.id));
-
   const movedRootIds = new Set<string>();
 
   for (const shape of previewShapes) {
@@ -172,6 +172,7 @@ function getDestinationInsertionBounds(
     orderIndex.shapesByFrameId.get(destinationFrameId) ?? [];
 
   const below = destinationChildren.at(-1)?.zIndex ?? destinationFrame.zIndex;
+
   const destinationParentId = destinationFrame.frameId ?? null;
 
   const destinationSiblings =
@@ -218,6 +219,7 @@ function computeMovedShapes({
 
   const movedShapeIds = new Set(previewShapes.map((shape) => shape.id));
   const movedRootIds = getMovedRootIds(previewShapes, selectedShapeIds);
+
   const orderIndex = buildShapeOrderIndex(currentShapes, movedShapeIds);
 
   const { below, above } = getDestinationInsertionBounds(
@@ -232,18 +234,13 @@ function computeMovedShapes({
     .map((previewShape) => {
       const currentShape = currentShapesById.get(previewShape.id);
 
-      return currentShape
-        ? {
-            ...currentShape,
-            ...previewShape,
-          }
-        : previewShape;
+      return currentShape ? { ...currentShape, ...previewShape } : previewShape;
     })
     .sort(compareByZIndex);
 
   const finalShapesById = new Map(currentShapesById);
-
   const changedShapes: Shape[] = [];
+
   let currentLowerBound = below;
 
   for (const movedShape of orderedMovedShapes) {
@@ -271,7 +268,6 @@ function computeMovedShapes({
     };
 
     finalShapesById.set(nextShape.id, nextShape);
-
     currentLowerBound = nextZIndex;
 
     if (didShapeChange(previousShape, nextShape)) {
@@ -300,9 +296,7 @@ export default function useShapeMove(
   _overlayCanvasRef: RefObject<HTMLCanvasElement | null>,
   pointerRefs: ReturnType<typeof usePointerState>,
 ) {
-  const { pageId } = useParams<{
-    pageId: string;
-  }>();
+  const { pageId } = useParams<{ pageId: string }>();
 
   const shapes = useShapes();
   const setShapes = useSetShapes();
@@ -319,6 +313,7 @@ export default function useShapeMove(
     movedShapeIds: ReadonlySet<string>,
   ): FrameShape | null {
     const groupBounds = getGroupBounds([...selectedPreviewShapes]);
+
     if (!groupBounds) {
       return null;
     }
@@ -401,10 +396,12 @@ export default function useShapeMove(
 
       setHoveredFrameId(null);
       invalidate();
+
       return;
     }
 
     const movedShapeIds = new Set(previewShapes.map((shape) => shape.id));
+
     const destinationFrame = findDestinationFrame(
       selectedPreviewShapes,
       movedShapeIds,
@@ -424,6 +421,7 @@ export default function useShapeMove(
     };
 
     setHoveredFrameId(null);
+
     if (changedShapes.length === 0) {
       invalidate();
       return;
@@ -437,7 +435,7 @@ export default function useShapeMove(
       /**
        * Persist the final coordinates, frameId, and generated zIndex values.
        */
-      await updateShapes(pageId, changedShapes);
+      await updateShapesApi(pageId, changedShapes);
     } catch (error) {
       console.error("Failed to persist moved shapes", error);
 
