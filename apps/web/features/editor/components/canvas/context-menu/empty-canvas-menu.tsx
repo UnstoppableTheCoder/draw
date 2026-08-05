@@ -1,7 +1,16 @@
-import { MouseEvent, RefObject } from "react";
+import { RefObject } from "react";
 import MenuButton from "./menu-button";
 import { ContextMenuType } from "../../types";
 import { Separator } from "@/components/ui/separator";
+import { useImageManager } from "@/features/editor/interactions/manager/image-manager";
+
+interface MenuItem {
+  label: string;
+  shortcut?: string;
+  action?: () => void;
+  divider?: boolean;
+  disabled?: boolean;
+}
 
 export default function EmptyCanvasMenu({
   contextMenu: {
@@ -9,12 +18,88 @@ export default function EmptyCanvasMenu({
     closeContextMenu,
     canvasMenuRef,
     overlayCanvasRef,
+    imageManager,
   },
 }: {
   contextMenu: ContextMenuType & {
     overlayCanvasRef: RefObject<HTMLCanvasElement | null>;
+    imageManager: ReturnType<typeof useImageManager>;
   };
 }) {
+  const menuItems: MenuItem[] = [
+    {
+      label: "Paste",
+      shortcut: "Ctrl+V",
+      action: () => {
+        // clipboard.pasteShapes();
+      },
+    },
+
+    { label: "divider", divider: true },
+
+    {
+      label: "Copy to clipboard as PNG",
+      shortcut: "Shift+Alt+C",
+      disabled: true,
+    },
+    {
+      label: "Copy to clipboard as SVG",
+      disabled: true,
+    },
+
+    { label: "divider", divider: true },
+
+    {
+      label: "Select all",
+      shortcut: "Ctrl+A",
+      action: () => {
+        // select.selectAllShapes();
+      },
+    },
+
+    { label: "divider", divider: true },
+
+    {
+      label: "Toggle grid",
+      shortcut: "Ctrl+'",
+      action: () => {
+        // toggleGrid();
+      },
+    },
+    {
+      label: "Snap to objects",
+      shortcut: "Alt+S",
+      disabled: true,
+    },
+    {
+      label: "Arrow binding",
+      disabled: true,
+    },
+    {
+      label: "Snap to midpoints",
+      disabled: true,
+    },
+    {
+      label: "Zen mode",
+      shortcut: "Alt+Z",
+      action: () => {
+        // toggleZenMode();
+      },
+    },
+    {
+      label: "View mode",
+      shortcut: "Alt+R",
+      action: () => {
+        // toggleViewMode();
+      },
+    },
+    {
+      label: "Canvas & Shape properties",
+      shortcut: "Alt+/",
+      disabled: true,
+    },
+  ];
+
   return (
     <div
       className="fixed z-50 min-w-50 rounded-md border bg-popover p-1 text-popover-foreground shadow-md"
@@ -26,26 +111,25 @@ export default function EmptyCanvasMenu({
       }}
       ref={canvasMenuRef}
     >
-      <MenuButton shortcut="Ctrl+V">Paste</MenuButton>
+      {menuItems.map((item, index) => {
+        if (item.divider) {
+          return <Separator key={`divider-${index}`} />;
+        }
 
-      <Separator />
-
-      <MenuButton shortcut="Shift+Alt+C">Copy to clipboard as PNG</MenuButton>
-      <MenuButton>Copy to clipboard as SVG</MenuButton>
-
-      <Separator />
-
-      <MenuButton shortcut="Ctrl+A">Select all</MenuButton>
-
-      <Separator />
-
-      <MenuButton shortcut="Ctrl+'">Toggle grid</MenuButton>
-      <MenuButton shortcut="Alt+S">Snap to objects</MenuButton>
-      <MenuButton>Arrow binding</MenuButton>
-      <MenuButton>Snap to midpoints</MenuButton>
-      <MenuButton shortcut="Alt+Z">Zen mode</MenuButton>
-      <MenuButton shortcut="Alt+R">View mode</MenuButton>
-      <MenuButton shortcut="Alt+/">Canvas & Shape properties</MenuButton>
+        return (
+          <MenuButton
+            key={item.label}
+            shortcut={item.shortcut}
+            disabled={item.disabled}
+            onClick={() => {
+              item.action?.();
+              closeContextMenu();
+            }}
+          >
+            {item.label}
+          </MenuButton>
+        );
+      })}
     </div>
   );
 }

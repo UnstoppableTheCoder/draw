@@ -10,7 +10,7 @@ import {
 import { useCanvasRenderer } from "@/features/editor/context/use-renderer";
 import { RefObject, useLayoutEffect, useRef, useState } from "react";
 import { usePointerState } from "@/features/editor/pointer/use-pointer-state";
-import { ChevronRight, Trash2 } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import useSelectionMenuActions from "./use-selection-menu-actions";
 
 interface MenuItem {
@@ -20,6 +20,8 @@ interface MenuItem {
   submenu?: MenuItem[];
   divider?: boolean;
   isDangerous?: boolean;
+  disabled?: boolean;
+  show?: boolean;
 }
 
 export default function SelectedShapeMenu({
@@ -36,29 +38,38 @@ export default function SelectedShapeMenu({
     pointerRefs: ReturnType<typeof usePointerState>;
   };
 }) {
-  // Use string labels instead of objects for cleaner state management
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [submenuPosition, setSubmenuPosition] = useState({ x: 0, y: 0 });
 
   const hoveredRectRef = useRef<DOMRect | null>(null);
   const submenuRef = useRef<HTMLDivElement>(null);
-  const mainMenuRef = useRef<HTMLDivElement>(null);
   const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const setShapes = useSetShapes();
   const shapes = useShapes();
   const selectedShapesIds = useSelectedShapesIds();
 
   const selected = new Set(selectedShapesIds);
-  const { invalidate } = useCanvasRenderer();
 
   const deletion = useDeleteShapes(pointerRefs);
   const duplicate = useDuplicateShapes();
   const order = useShapeOrder();
   const actions = useSelectionMenuActions({ overlayCanvasRef, pointerRefs });
 
-  const menuItems: MenuItem[] = [
+  const selectedShapes = shapes.filter((shape) => selected.has(shape.id));
+  const selectedCount = selectedShapes.length;
+
+  // Condition checks
+  const isMultipleShapes = selectedCount > 1;
+  const hasFramesIncluded = selectedShapes.some(
+    (shape) => shape.type === "frame",
+  );
+  const hasGroupedShapes = selectedShapes.some((shape) => shape.groupId);
+  const showRemoveFrame =
+    selectedShapes.some((shape) => shape.type === "frame" || shape.frameId) &&
+    !hasGroupedShapes;
+
+  const rawMenuItems: MenuItem[] = [
     { label: "Cut", shortcut: "Ctrl X", action: () => console.log("Cut") },
     { label: "Copy", shortcut: "Ctrl C", action: () => console.log("Copy") },
     { label: "Paste", shortcut: "Ctrl V", action: () => console.log("Paste") },
@@ -80,58 +91,74 @@ export default function SelectedShapeMenu({
           label: "Copy as PNG",
           shortcut: "Alt C",
           action: () => console.log("Copy as PNG"),
+          disabled: true,
         },
-        { label: "Copy as SVG", action: () => console.log("Copy as SVG") },
+        {
+          label: "Copy as SVG",
+          action: () => console.log("Copy as SVG"),
+          disabled: true,
+        },
         {
           label: "Copy link",
           shortcut: "Ctrl K",
           action: () => console.log("Copy link"),
+          disabled: true,
         },
         {
           label: "Copy Markdown embed",
           action: () => console.log("Copy Markdown embed"),
+          disabled: true,
         },
         {
           label: "Copy HTML embed",
           action: () => console.log("Copy HTML embed"),
+          disabled: true,
         },
         { label: "divider", divider: true },
         {
           label: "Paste styles",
           shortcut: "CtrlAlt V",
           action: () => console.log("Paste styles"),
+          disabled: true,
         },
       ],
+      disabled: true,
     },
     {
       label: "Export selection",
       action: () => console.log("Export selection"),
+      disabled: true,
     },
     { label: "divider", divider: true },
     {
       label: "Add comment",
       shortcut: "Ctrl M",
       action: () => console.log("Add comment"),
+      disabled: true,
     },
     {
       label: "Create Frame",
       shortcut: "F",
       action: actions.wrapInFrame,
+      show: true,
     },
     {
       label: "Remove Frame",
       shortcut: "F",
       action: actions.wrapInFrame,
+      show: showRemoveFrame,
     },
     {
       label: "Group selection",
       shortcut: "Ctrl G",
       action: actions.group,
+      show: isMultipleShapes && !hasFramesIncluded,
     },
     {
       label: "Ungroup selection",
       shortcut: "Ctrl G",
       action: () => console.log("Ungroup selection"),
+      show: hasGroupedShapes && !hasFramesIncluded,
     },
     { label: "divider", divider: true },
     {
@@ -166,44 +193,57 @@ export default function SelectedShapeMenu({
           label: "Align left",
           shortcut: "Ctrl ←",
           action: () => console.log("Align left"),
+          disabled: true,
         },
         {
           label: "Align right",
           shortcut: "Ctrl →",
           action: () => console.log("Align right"),
+          disabled: true,
         },
         {
           label: "Center horizontally",
           action: () => console.log("Center horizontally"),
+          disabled: true,
         },
         {
           label: "Distribute horizontally",
           shortcut: "Alt H",
           action: () => console.log("Distribute horizontally"),
+          disabled: true,
         },
         { label: "divider", divider: true },
         {
           label: "Align top",
           shortcut: "Ctrl ↑",
           action: () => console.log("Align top"),
+          disabled: true,
         },
         {
           label: "Align bottom",
           shortcut: "Ctrl ↓",
           action: () => console.log("Align bottom"),
+          disabled: true,
         },
         {
           label: "Center vertically",
           action: () => console.log("Center vertically"),
+          disabled: true,
         },
         {
           label: "Distribute vertically",
           shortcut: "Alt V",
           action: () => console.log("Distribute vertically"),
+          disabled: true,
         },
       ],
+      disabled: true,
     },
-    { label: "Change Shape", action: () => console.log("Change Shape") },
+    {
+      label: "Change Shape",
+      action: () => console.log("Change Shape"),
+      disabled: true,
+    },
     { label: "divider", divider: true },
     {
       label: "Delete",
@@ -211,7 +251,24 @@ export default function SelectedShapeMenu({
       isDangerous: true,
       action: deletion.deleteShapes,
     },
-  ] as const;
+  ];
+
+  // Filter out items where `show === false` and clean up consecutive/trailing/leading dividers
+  const filterDividers = (items: MenuItem[]) => {
+    const filtered = items.filter(
+      (item) => item.show === undefined || item.show === true,
+    );
+
+    return filtered.filter((item, index, arr) => {
+      if (!item.divider) return true;
+      if (index === 0) return false;
+      if (index === arr.length - 1) return false;
+      if (arr[index - 1]?.divider) return false;
+      return true;
+    });
+  };
+
+  const menuItems = filterDividers(rawMenuItems);
 
   const getSubmenuPosition = (rect: DOMRect) => {
     const padding = 10;
@@ -226,12 +283,10 @@ export default function SelectedShapeMenu({
     let submenuX = rect.right;
     let submenuY = rect.top;
 
-    // Flip horizontally if goes off right edge
     if (submenuX + submenuWidth > viewportWidth - padding) {
       submenuX = rect.left - submenuWidth;
     }
 
-    // Adjust vertically if goes off bottom edge
     if (submenuY + submenuHeight > viewportHeight - padding) {
       submenuY = Math.max(padding, viewportHeight - submenuHeight - padding);
     }
@@ -243,7 +298,6 @@ export default function SelectedShapeMenu({
     item: MenuItem,
     event: React.MouseEvent<HTMLDivElement>,
   ) => {
-    // Clear any pending close timeout
     if (closeTimeoutRef.current) {
       clearTimeout(closeTimeoutRef.current);
       closeTimeoutRef.current = null;
@@ -259,14 +313,12 @@ export default function SelectedShapeMenu({
 
   const handleMouseLeave = () => {
     setHoveredItem(null);
-    // Delay closing to allow smooth transition to submenu
     closeTimeoutRef.current = setTimeout(() => {
       setOpenSubmenu(null);
     }, 150);
   };
 
   const handleSubmenuEnter = () => {
-    // Clear timeout when entering submenu to keep it open
     if (closeTimeoutRef.current) {
       clearTimeout(closeTimeoutRef.current);
       closeTimeoutRef.current = null;
@@ -290,27 +342,32 @@ export default function SelectedShapeMenu({
         }
 
         const isHovered = hoveredItem === item.label;
+        const isDisabled = item.disabled;
+
         const baseStyle = item.isDangerous
           ? "text-red-400"
           : "text-neutral-100";
-        const bgStyle = isHovered
-          ? item.isDangerous
-            ? "bg-red-900/20"
-            : "bg-neutral-700/50"
-          : item.isDangerous
-            ? "hover:bg-red-900/20"
-            : "hover:bg-neutral-700/50";
+        const bgStyle = isDisabled
+          ? "opacity-40 cursor-not-allowed"
+          : isHovered
+            ? item.isDangerous
+              ? "bg-red-900/20 cursor-pointer"
+              : "bg-neutral-700/50 cursor-pointer"
+            : item.isDangerous
+              ? "hover:bg-red-900/20 cursor-pointer"
+              : "hover:bg-neutral-700/50 cursor-pointer";
 
         return (
           <div
             key={item.label}
-            onMouseEnter={(e) => handleMouseEnter(item, e)}
+            onMouseEnter={(e) => !isDisabled && handleMouseEnter(item, e)}
             onMouseLeave={handleMouseLeave}
             onClick={() => {
+              if (isDisabled) return;
               item.action?.();
               closeContextMenu();
             }}
-            className={`px-4 py-2 flex items-center justify-between cursor-pointer transition-colors ${baseStyle} ${bgStyle}`}
+            className={`px-4 py-2 flex items-center justify-between transition-colors ${baseStyle} ${bgStyle}`}
           >
             <span>{item.label}</span>
             <div className="flex items-center gap-2">
@@ -351,6 +408,7 @@ export default function SelectedShapeMenu({
           left: `${x}px`,
           top: `${y}px`,
         }}
+        onClick={(e) => e.stopPropagation()}
       >
         {renderMenuItems(menuItems)}
       </div>
@@ -366,6 +424,7 @@ export default function SelectedShapeMenu({
         }}
         onMouseEnter={handleSubmenuEnter}
         onMouseLeave={handleSubmenuLeave}
+        onClick={(e) => e.stopPropagation()}
       >
         {renderMenuItems(
           menuItems.find((item) => item.label === openSubmenu)?.submenu || [],

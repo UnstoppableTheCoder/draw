@@ -141,23 +141,44 @@ export default function useSelectionMenuActions({
       return;
     }
 
-    const selected = new Set(selectedShapesIds);
+    const selectedIds = new Set(selectedShapesIds);
+    const shapesById = new Map(shapes.map((shape) => [shape.id, shape]));
 
-    const wrappableShapes = shapes.filter(
-      (shape) => selected.has(shape.id) && !shape.frameId,
+    function hasSelectedAncestor(shape: Shape): boolean {
+      let parentId = shape.frameId;
+
+      while (parentId) {
+        if (selectedIds.has(parentId)) {
+          return true;
+        }
+
+        const parent = shapesById.get(parentId);
+
+        if (!parent || parent.type !== "frame") {
+          break;
+        }
+
+        parentId = parent.frameId;
+      }
+
+      return false;
+    }
+
+    // Only wrap the highest selected nodes.
+    const shapesToWrap = shapes.filter(
+      (shape) => selectedIds.has(shape.id) && !hasSelectedAncestor(shape),
     );
 
-    if (wrappableShapes.length === 0) {
+    if (shapesToWrap.length === 0) {
       return;
     }
 
-    const bounds = getGroupBounds(wrappableShapes);
+    const bounds = getGroupBounds(shapesToWrap);
     if (!bounds) {
       return;
     }
 
     const tolerance = 5 * TOLERANCE;
-
     const rect = normalizeRect(
       {
         x: bounds.minX - tolerance,
@@ -175,23 +196,21 @@ export default function useSelectionMenuActions({
       fontFamily: "Virgil",
     };
 
-    // Shapes sorted from back to front.
+    // New frame belongs to the same parent as the wrapped nodes.
+    const parentFrameId = shapesToWrap[0]!.frameId ?? null;
+
+    // Shapes sorted back -> front.
     const orderedShapes = [...shapes].sort(compareByZIndex);
 
-    const wrappableIds = new Set(wrappableShapes.map((shape) => shape.id));
-
-    const firstShape = orderedShapes.find((shape) =>
-      wrappableIds.has(shape.id),
-    );
+    const wrapIds = new Set(shapesToWrap.map((shape) => shape.id));
+    const firstShape = orderedShapes.find((shape) => wrapIds.has(shape.id));
 
     if (!firstShape) {
       return;
     }
 
     const firstIndex = orderedShapes.indexOf(firstShape);
-
     const lower = firstIndex > 0 ? orderedShapes[firstIndex - 1]!.zIndex : null;
-
     const upper = firstShape.zIndex;
 
     const frame = createFrameShape({
@@ -209,16 +228,17 @@ export default function useSelectionMenuActions({
       pageId,
       createdById: user!.id,
     });
+    frame.frameId = parentFrameId;
 
     const previousShapes = shapes;
     const changedShapes: Shape[] = [];
 
     const nextShapes = previousShapes.map((shape) => {
-      if (!wrappableIds.has(shape.id)) {
+      if (!wrapIds.has(shape.id)) {
         return shape;
       }
 
-      const updatedShape = {
+      const updatedShape: Shape = {
         ...shape,
         frameId: frame.id,
       };
@@ -247,44 +267,76 @@ export default function useSelectionMenuActions({
   };
 
   const removeFrame = async () => {
+    const previousShapes = shapes;
+    const changedShapes: Shape[] = [];
+    const selectedIds = new Set(selectedShapesIds);
+
     const frame = shapes.find(
-      (shape) => selectedShapesIds.includes(shape.id) && shape.type === "frame",
+      (shape) => selectedIds.has(shape.id) && shape.type === "frame",
     );
 
-    if (!frame) {
+    // Case 1: A frame is selected -> remove the frame.
+    if (frame) {
+      const nextShapes = previousShapes
+        .map((shape) => {
+          if (shape.frameId === frame.id) {
+            const updatedShape = {
+              ...shape,
+              frameId: frame.frameId, // Preserve nesting.
+            };
+
+            changedShapes.push(updatedShape);
+            return updatedShape;
+          }
+
+          return shape;
+        })
+        .filter((shape) => shape.id !== frame.id);
+
+      setShapes(nextShapes);
+      pushHistory();
+      invalidate();
+
+      try {
+        await Promise.all([
+          updateShapesApi(pageId, changedShapes),
+          deleteShapesApi(pageId, [frame.id]),
+        ]);
+      } catch (error) {
+        console.error("Failed to remove frame", error);
+
+        setShapes(previousShapes);
+        invalidate();
+      }
+
       return;
     }
 
-    const previousShapes = shapes;
-    const changedShapes: Shape[] = [];
-
-    const nextShapes = previousShapes
-      .map((shape) => {
-        if (shape.frameId !== frame.id) {
-          return shape;
-        }
-
+    // Case 2: Selected shapes are inside a frame -> detach them.
+    const nextShapes = previousShapes.map((shape) => {
+      if (selectedIds.has(shape.id) && shape.frameId) {
         const updatedShape = {
           ...shape,
-          frameId: frame.frameId,
+          frameId: null,
         };
 
         changedShapes.push(updatedShape);
         return updatedShape;
-      })
-      .filter((shape) => shape.id !== frame.id);
+      }
+
+      return shape;
+    });
+
+    if (changedShapes.length === 0) return;
 
     setShapes(nextShapes);
     pushHistory();
     invalidate();
 
     try {
-      await Promise.all([
-        updateShapesApi(pageId, changedShapes),
-        deleteShapesApi(pageId, [frame.id]),
-      ]);
+      await updateShapesApi(pageId, changedShapes);
     } catch (error) {
-      console.error("Failed to remove frame", error);
+      console.error("Failed to detach shapes from frame", error);
 
       setShapes(previousShapes);
       invalidate();

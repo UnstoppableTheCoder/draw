@@ -176,7 +176,6 @@ export default function useShapeDrawing({
       };
 
       const data = await createShapeApi(pageId, [shape]);
-      console.log(data.shapes);
       if (!data.shapes) {
         setShapes((prev) => prev.splice(-1, 1));
         setSelectedShapesIds((prev) => prev.splice(-1, 1));

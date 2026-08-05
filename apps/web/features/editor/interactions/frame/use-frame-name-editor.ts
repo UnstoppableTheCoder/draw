@@ -10,6 +10,7 @@ import {
 
 import {
   useFrameEditingState,
+  usePushHistory,
   useSetFrameEditingState,
   useSetShapes,
   useShapes,
@@ -31,6 +32,7 @@ export default function useFrameNameEditor(
 
   const shapes = useShapes();
   const setShapes = useSetShapes();
+  const pushHistory = usePushHistory();
 
   const frameEditingState = useFrameEditingState();
   const setFrameEditingState = useSetFrameEditingState();
@@ -47,16 +49,30 @@ export default function useFrameNameEditor(
 
   useEffect(() => {
     if (!frame || frame.type !== "frame") return;
+
     const {
       data: { text },
     } = frame;
 
     setValue(text.name);
 
-    requestAnimationFrame(() => {
-      frameNameInputRef.current?.focus();
-      frameNameInputRef.current?.select();
-    });
+    const nextShapes = shapes.map((shape) =>
+      shape.id === frame.id && shape.type === "frame"
+        ? {
+            ...shape,
+            data: {
+              ...shape.data,
+              text: {
+                ...shape.data.text,
+                name: "",
+              },
+            },
+          }
+        : shape,
+    );
+
+    setShapes(nextShapes);
+    invalidate();
   }, [frame?.id, frameNameInputRef]);
 
   const updateFrameName = useCallback(async () => {
@@ -95,6 +111,7 @@ export default function useFrameNameEditor(
     );
 
     setShapes(nextShapes);
+    pushHistory();
     invalidate();
 
     try {
@@ -108,8 +125,8 @@ export default function useFrameNameEditor(
   }, [frame, value, shapes, pageId, setShapes, invalidate, overlayCanvasRef]);
 
   const finishEditing = useCallback(async () => {
-    await updateFrameName();
     setFrameEditingState(null);
+    await updateFrameName();
   }, [updateFrameName, setFrameEditingState]);
 
   const cancelEditing = useCallback(() => {

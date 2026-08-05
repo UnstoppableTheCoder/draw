@@ -95,7 +95,6 @@ export const getPage = async (req: Request, res: Response) => {
 };
 
 export const updatePage = async (req: Request, res: Response) => {
-  console.log("Updating the page");
   try {
     const { pageId } = req.params;
 

@@ -118,7 +118,6 @@ export default function useImageUpload({
     await createShapes(pageId, imageShapes);
 
     upload.then(async (imageAssets) => {
-      console.log(imageAssets);
       await createImageAssets(boardId, imageAssets);
     });
   };

@@ -136,7 +136,6 @@ export default function useCreateCanvasRenderer({
       hoveredFrameId,
       frameEditingState,
     } = useEditorStore.getState();
-    console.log("Frame render: ", frameEditingState);
 
     const interaction = pointerRefs.interactionRef.current;
 
@@ -179,8 +178,6 @@ export default function useCreateCanvasRenderer({
     const interaction = pointerRefs.interactionRef.current;
     const { shapes, selectedShapesIds, scale, frameEditingState } =
       useEditorStore.getState();
-
-    console.log("Frame overlay: ", frameEditingState);
 
     clearCanvas(ctx);
 

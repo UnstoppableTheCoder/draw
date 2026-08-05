@@ -86,7 +86,6 @@ export default function LeftSidebar({
   };
 
   const finishEditing = async (pageId: string) => {
-    console.log("Finishing editing");
     const name = editingName.trim();
 
     const { page } = await updatePage(pageId, {

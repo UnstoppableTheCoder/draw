@@ -1,12 +1,14 @@
 export default function MenuButton({
   children,
   shortcut,
+  disabled,
   destructive = false,
   onClick,
 }: {
   children: React.ReactNode;
   shortcut?: string;
   destructive?: boolean;
+  disabled?: boolean;
   onClick?: () => void;
 }) {
   return (
@@ -17,7 +19,7 @@ export default function MenuButton({
           destructive
             ? "text-destructive hover:bg-destructive/10"
             : "hover:bg-accent hover:text-accent-foreground"
-        }`}
+        } ${disabled && "opacity-20"}`}
     >
       <span>{children}</span>
 

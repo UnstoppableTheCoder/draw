@@ -19,6 +19,7 @@ export default function FrameNameEditor({
 
   return (
     <input
+      autoFocus
       ref={frameNameInputRef}
       type="text"
       value={value}
@@ -27,6 +28,7 @@ export default function FrameNameEditor({
       onKeyDown={handleKeyDown}
       spellCheck={false}
       className="absolute rounded-md bg-gray-600 px-2 text-white outline-none z-10"
+      onFocus={(e) => e.target.select()}
     />
   );
 }
