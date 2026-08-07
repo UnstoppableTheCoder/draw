@@ -2,7 +2,7 @@ import { axiosClient } from "@/config/axios";
 import { GetBoardResponse } from "../../editor/types/board";
 import { Board } from "@/types/board";
 import { BoardPayload } from "../../dashboard/components/create-board-dialog";
-import { Page } from "../../page/types";
+import { Page } from "../../editor/store/pages/types";
 
 type CreateBoardResponse = {
   board: Board & { pages: Page[] };

@@ -8,7 +8,7 @@ import {
   useSetImages,
   useSetShapes,
 } from "../store/editor/selectors";
-import { getPageApi } from "@/features/page/api/page-api";
+import { getPageApi } from "../networking/api/page-api";
 
 export function useLoadPage(imageManager: ReturnType<typeof useImageManager>) {
   const { pageId } = useParams<{ pageId: string }>();

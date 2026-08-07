@@ -14,6 +14,7 @@ export default function useSelectAllShapes() {
     const selectedIds = shapes.map((shape) => shape.id);
 
     setSelectedShapesIds(selectedIds);
+
     invalidate();
   };
 

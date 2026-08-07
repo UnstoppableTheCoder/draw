@@ -1,6 +1,7 @@
 import { axiosClient } from "@/config/axios";
-import { CreatePagePayload, Page, UpdatePagePayload } from "../types";
 import { ImageAsset, Shape } from "@/features/editor/types";
+import { Page } from "../../types/page";
+import { CreatePagePayload, UpdatePagePayload } from "../../store/pages/types";
 
 type CreatePageResponse = {
   page: Page;
@@ -71,7 +72,8 @@ export const deletePageApi = async (pageId: string) => {
   await axiosClient.delete(`/pages/${pageId}`);
 };
 
-export const reorderPages = async (
+// Todo: Implement this later
+export const reorderPagesApi = async (
   boardId: string,
   pages: {
     id: string;

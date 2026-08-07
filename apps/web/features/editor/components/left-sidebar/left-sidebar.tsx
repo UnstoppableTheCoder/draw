@@ -13,11 +13,11 @@ import {
   useAddPage,
   usePages,
   useUpdatePage,
-} from "@/features/page/store/selectors";
+} from "@/features/editor/store/pages/selectors";
 import { useState } from "react";
 import { useUser } from "@/features/auth/store/selectors";
 import { Page } from "../../types/page";
-import { createPageApi, updatePageApi } from "@/features/page/api/page-api";
+import { createPageApi, updatePageApi } from "../../networking/api/page-api";
 
 function IconButton({
   label,

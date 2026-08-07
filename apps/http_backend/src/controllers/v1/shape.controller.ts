@@ -24,6 +24,7 @@ export const createShapes = async (req: Request, res: Response) => {
       })),
     });
 
+    console.log({ createdShapes });
     return res.status(201).json({
       shapes: createdShapes,
     });

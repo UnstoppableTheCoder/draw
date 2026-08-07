@@ -4,6 +4,7 @@ import { ContextMenuType } from "../../types";
 import { Separator } from "@/components/ui/separator";
 import { useImageManager } from "@/features/editor/interactions/manager/image-manager";
 import useSelectAllShapes from "@/features/editor/interactions/selection/use-select-all";
+import { usePointerState } from "@/features/editor/pointer/use-pointer-state";
 
 interface MenuItem {
   label: string;
@@ -19,12 +20,12 @@ export default function EmptyCanvasMenu({
     closeContextMenu,
     canvasMenuRef,
     overlayCanvasRef,
-    imageManager,
+    pointerRefs,
   },
 }: {
   contextMenu: ContextMenuType & {
     overlayCanvasRef: RefObject<HTMLCanvasElement | null>;
-    imageManager: ReturnType<typeof useImageManager>;
+    pointerRefs: ReturnType<typeof usePointerState>;
   };
 }) {
   const selection = useSelectAllShapes();

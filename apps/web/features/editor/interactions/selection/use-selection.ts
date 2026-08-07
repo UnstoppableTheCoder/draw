@@ -466,14 +466,6 @@ export default function useSelectionActions({
         pointerRefs.interactionRef.current = {
           ...interaction,
           type: "move",
-
-          // Only preview changes
-          previewShapes: interaction.previewShapes.map((shape) =>
-            interaction.selectedShapesIds.has(shape.id) &&
-            shape.type !== "frame"
-              ? { ...shape, frameId: null }
-              : shape,
-          ),
           dragStart: endPoint,
           initialPositions: getInitialPositions(shapes),
         };
@@ -481,6 +473,7 @@ export default function useSelectionActions({
         moveShapes(endPoint);
         return;
       }
+
       case "move":
         moveShapes(endPoint);
         handleShapesMoveOverFrame();
@@ -555,7 +548,11 @@ export default function useSelectionActions({
       setSelectedShapesIds([]);
     }
 
-    pointerRefs.interactionRef.current.type = "select";
+    pointerRefs.interactionRef.current = {
+      type: "select",
+      previewShapes: [],
+      selectedShapesIds: new Set([]),
+    };
   }
 
   return {

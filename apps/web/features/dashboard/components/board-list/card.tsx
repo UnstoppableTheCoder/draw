@@ -9,7 +9,7 @@ import { BoardActions } from "./actions";
 import { Preview } from "../preview";
 import { Board } from "@/types/board";
 import { getBoard } from "@/features/board/api/board-api";
-import { useSetPages } from "@/features/page/store/selectors";
+import { useSetPages } from "@/features/editor/store/pages/selectors";
 import { useSetImages } from "@/features/editor/store/editor/selectors";
 import { useRouter } from "next/navigation";
 

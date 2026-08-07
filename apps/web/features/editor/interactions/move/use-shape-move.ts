@@ -14,6 +14,7 @@ import { checkIsInsideFrame, getGroupBounds } from "../selection/use-selection";
 import { usePointerState } from "../../pointer/use-pointer-state";
 import { FrameShape, Point, Shape } from "../../types";
 import { updateShapesApi } from "../../networking/api/shape-api";
+import { dispatchNavigateAction } from "next/dist/client/components/app-router-instance";
 
 /**
  * Generates a fractional z-index after the supplied z-index.
@@ -57,7 +58,7 @@ function didShapeChange(previous: Shape, next: Shape): boolean {
 }
 
 interface ShapeOrderIndex {
-  orderedShapes: Shape[];
+  orderedUnmovedShapes: Shape[];
   shapesById: Map<string, Shape>;
   shapesByFrameId: Map<string | null, Shape[]>;
 }
@@ -81,21 +82,20 @@ interface ComputeMovedShapesResult {
 
 /**
  * Creates indexes for the unmoved shapes.
- *
  * Array order is ignored. Shapes are ordered exclusively by zIndex.
  */
 function buildShapeOrderIndex(
   shapes: readonly Shape[],
   excludedShapeIds: ReadonlySet<string>,
 ): ShapeOrderIndex {
-  const orderedShapes = shapes
+  const orderedUnmovedShapes = shapes
     .filter((shape) => !excludedShapeIds.has(shape.id))
     .sort(compareByZIndex);
 
   const shapesById = new Map<string, Shape>();
   const shapesByFrameId = new Map<string | null, Shape[]>();
 
-  for (const shape of orderedShapes) {
+  for (const shape of orderedUnmovedShapes) {
     shapesById.set(shape.id, shape);
 
     const frameId = shape.frameId ?? null;
@@ -106,7 +106,7 @@ function buildShapeOrderIndex(
   }
 
   return {
-    orderedShapes,
+    orderedUnmovedShapes,
     shapesById,
     shapesByFrameId,
   };
@@ -114,9 +114,8 @@ function buildShapeOrderIndex(
 
 /**
  * Returns the selected roots of the moved forest.
- *
- * If a frame and its child are moved together, only the frame changes its
- * containing frame. The child remains inside the moved frame.
+ * If a frame and its child are moved together, only the frame changes its containing frame.
+ * The child remains inside the moved frame.
  */
 function getMovedRootIds(
   previewShapes: readonly Shape[],
@@ -147,7 +146,6 @@ function getMovedRootIds(
 
 /**
  * Gets the fractional-index insertion range.
- *
  * For a frame destination, moved shapes are inserted after its final child.
  * For the top level, moved shapes are appended after the final shape block.
  */
@@ -157,13 +155,12 @@ function getDestinationInsertionBounds(
 ): InsertionBounds {
   if (destinationFrameId === null) {
     return {
-      below: orderIndex.orderedShapes.at(-1)?.zIndex ?? null,
+      below: orderIndex.orderedUnmovedShapes.at(-1)?.zIndex ?? null,
       above: null,
     };
   }
 
   const destinationFrame = orderIndex.shapesById.get(destinationFrameId);
-
   if (!destinationFrame || destinationFrame.type !== "frame") {
     throw new Error(`Destination frame "${destinationFrameId}" was not found`);
   }
@@ -172,12 +169,9 @@ function getDestinationInsertionBounds(
     orderIndex.shapesByFrameId.get(destinationFrameId) ?? [];
 
   const below = destinationChildren.at(-1)?.zIndex ?? destinationFrame.zIndex;
-
   const destinationParentId = destinationFrame.frameId ?? null;
-
   const destinationSiblings =
     orderIndex.shapesByFrameId.get(destinationParentId) ?? [];
-
   const destinationIndex = destinationSiblings.findIndex(
     (shape) => shape.id === destinationFrameId,
   );
@@ -195,9 +189,7 @@ function getDestinationInsertionBounds(
 }
 
 /**
- * Applies moved positions, reparents moved roots, and assigns fresh
- * fractional z-index values.
- *
+ * Applies moved positions, reparents moved roots, and assigns fresh fractional z-index values.
  * The shape array itself is never reordered.
  */
 function computeMovedShapes({
@@ -216,10 +208,8 @@ function computeMovedShapes({
   const currentShapesById = new Map(
     currentShapes.map((shape) => [shape.id, shape]),
   );
-
   const movedShapeIds = new Set(previewShapes.map((shape) => shape.id));
   const movedRootIds = getMovedRootIds(previewShapes, selectedShapeIds);
-
   const orderIndex = buildShapeOrderIndex(currentShapes, movedShapeIds);
 
   const { below, above } = getDestinationInsertionBounds(
@@ -230,10 +220,12 @@ function computeMovedShapes({
   /**
    * Preserve the moved forest's existing visual order.
    */
+  // Todo: Try sorting the previewShapes directly in future
   const orderedMovedShapes = previewShapes
     .map((previewShape) => {
       const currentShape = currentShapesById.get(previewShape.id);
 
+      // Preview shape's coordinates changes when we move - so we destructure both current & preview shapes here
       return currentShape ? { ...currentShape, ...previewShape } : previewShape;
     })
     .sort(compareByZIndex);
@@ -245,7 +237,6 @@ function computeMovedShapes({
 
   for (const movedShape of orderedMovedShapes) {
     const previousShape = currentShapesById.get(movedShape.id);
-
     if (!previousShape) {
       continue;
     }
@@ -257,7 +248,6 @@ function computeMovedShapes({
 
       /**
        * Only roots enter the destination frame.
-       *
        * Children of moved frames retain their existing frameId.
        */
       frameId: movedRootIds.has(movedShape.id)
@@ -277,9 +267,7 @@ function computeMovedShapes({
 
   /**
    * Preserve the store's array order.
-   *
-   * Rendering and hit testing must sort by zIndex when visual order is
-   * required.
+   * Rendering and hit testing must sort by zIndex when visual order is required.
    */
   const finalShapes = currentShapes.map(
     (shape) => finalShapesById.get(shape.id) ?? shape,
@@ -313,7 +301,6 @@ export default function useShapeMove(
     movedShapeIds: ReadonlySet<string>,
   ): FrameShape | null {
     const groupBounds = getGroupBounds([...selectedPreviewShapes]);
-
     if (!groupBounds) {
       return null;
     }
@@ -396,7 +383,6 @@ export default function useShapeMove(
 
       setHoveredFrameId(null);
       invalidate();
-
       return;
     }
 
