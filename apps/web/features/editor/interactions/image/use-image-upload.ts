@@ -7,7 +7,7 @@ import { createImageShape } from "./create-image-shape";
 import { usePointerState } from "../../pointer/use-pointer-state";
 import { loadImageAssets } from "./image-loader";
 import { getNextZIndex } from "../../utils/shape-z-index";
-import { createImageAssets } from "../../networking/api/image-api";
+import { createImageAssets } from "../../networking/api/image-asset-api";
 import { useParams } from "next/navigation";
 import { useUser } from "@/features/auth/store/selectors";
 import { createShapes } from "../../networking/api/shape-api";
@@ -53,7 +53,7 @@ export default function useImageUpload({
     const canvas = sceneCanvasRef.current;
     if (!canvas) return;
 
-    const { assets, upload } = await loadImageAssets(files, boardId, user!.id);
+    const { assets, upload } = await loadImageAssets(files, pageId, user!.id);
 
     // Cache uploaded assets
     assets.forEach(addImage);
@@ -118,7 +118,7 @@ export default function useImageUpload({
     await createShapes(pageId, imageShapes);
 
     upload.then(async (imageAssets) => {
-      await createImageAssets(boardId, imageAssets);
+      await createImageAssets(pageId, imageAssets);
     });
   };
 

@@ -1,13 +1,8 @@
 "use client";
 
 import DialogHeader from "./dialog-header";
-import { Dispatch, SetStateAction } from "react";
 import { Board } from "@/types/board";
 import DialogInput from "./dialog-input";
-import { createBoard } from "@/features/board/api/board-api";
-import { useRouter } from "next/navigation";
-import { createPage } from "@/features/page/api/page-api";
-import { useAuth } from "@/features/auth/store/selectors";
 
 interface CreateBoardDialogProps {
   open: boolean;
@@ -23,8 +18,6 @@ export function CreateBoardDialog({
   open,
   onOpenChange,
 }: CreateBoardDialogProps) {
-  const router = useRouter();
-
   if (!open) {
     return null;
   }

@@ -8,9 +8,6 @@ import { UpcomingCall } from "./components/upcoming-call";
 import { ActivityFeed } from "./components/activity-feed";
 import Templates from "./components/templates";
 import { CreateBoardDialog } from "./components/create-board-dialog";
-import { useState } from "react";
-import { Board } from "@/types/board";
-import { useAuth } from "../auth/store/selectors";
 import { BoardList } from "./components/board-list/list";
 
 export default function DashboardPage() {

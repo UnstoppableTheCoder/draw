@@ -6,6 +6,7 @@ import LeftSidebar from "@/features/editor/components/left-sidebar/left-sidebar"
 import { PropertiesPanel } from "@/features/editor/components/properties-panel/properties-panel";
 import Toolbar from "@/features/editor/components/toolbar/toolbar";
 import RendererProvider from "@/features/editor/context/renderer-provider";
+import { useInitializeEditor } from "@/features/editor/hooks/use-initialization-editor";
 import { useImageManager } from "@/features/editor/interactions/manager/image-manager";
 import { usePointerState } from "@/features/editor/pointer/use-pointer-state";
 import { EditorRefs } from "@/features/editor/types/editor";
@@ -29,6 +30,8 @@ const Board = () => {
     }),
     [pointerRefs],
   );
+
+  const { error, loading } = useInitializeEditor();
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 

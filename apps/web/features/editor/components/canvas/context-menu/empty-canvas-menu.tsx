@@ -3,6 +3,7 @@ import MenuButton from "./menu-button";
 import { ContextMenuType } from "../../types";
 import { Separator } from "@/components/ui/separator";
 import { useImageManager } from "@/features/editor/interactions/manager/image-manager";
+import useSelectAllShapes from "@/features/editor/interactions/selection/use-select-all";
 
 interface MenuItem {
   label: string;
@@ -26,6 +27,8 @@ export default function EmptyCanvasMenu({
     imageManager: ReturnType<typeof useImageManager>;
   };
 }) {
+  const selection = useSelectAllShapes();
+
   const menuItems: MenuItem[] = [
     {
       label: "Paste",
@@ -52,9 +55,7 @@ export default function EmptyCanvasMenu({
     {
       label: "Select all",
       shortcut: "Ctrl+A",
-      action: () => {
-        // select.selectAllShapes();
-      },
+      action: selection.selectAllShapes,
     },
 
     { label: "divider", divider: true },

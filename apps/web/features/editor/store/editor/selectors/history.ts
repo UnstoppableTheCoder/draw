@@ -12,3 +12,6 @@ export const useCanUndo = () =>
 
 export const useCanRedo = () =>
   useEditorStore((state) => state.redoStack.length > 0);
+
+export const useClearHistory = () =>
+  useEditorStore((state) => state.clearHistory);

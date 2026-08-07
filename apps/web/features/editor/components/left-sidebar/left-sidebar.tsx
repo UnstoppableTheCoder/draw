@@ -15,11 +15,9 @@ import {
   useUpdatePage,
 } from "@/features/page/store/selectors";
 import { useState } from "react";
-import { createPage, updatePage } from "@/features/page/api/page-api";
 import { useUser } from "@/features/auth/store/selectors";
-import { useCanvasRenderer } from "../../context/use-renderer";
-import { getNextZIndex } from "../../utils/shape-z-index";
 import { Page } from "../../types/page";
+import { createPageApi, updatePageApi } from "@/features/page/api/page-api";
 
 function IconButton({
   label,
@@ -66,7 +64,7 @@ export default function LeftSidebar({
   const handleCreatePage = async () => {
     const lastPageOrderKey = pages.at(-1)?.orderKey!;
 
-    const { page } = await createPage({
+    const { page } = await createPageApi({
       name: "Untitled",
       backgroundColor: "",
       boardId,
@@ -88,7 +86,7 @@ export default function LeftSidebar({
   const finishEditing = async (pageId: string) => {
     const name = editingName.trim();
 
-    const { page } = await updatePage(pageId, {
+    const { page } = await updatePageApi(pageId, {
       name: name || "Untitled",
     });
 

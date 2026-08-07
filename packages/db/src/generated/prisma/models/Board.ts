@@ -217,7 +217,6 @@ export type BoardWhereInput = {
   owner?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   members?: Prisma.BoardMemberListRelationFilter
   pages?: Prisma.PageListRelationFilter
-  imageAssets?: Prisma.ImageAssetListRelationFilter
   chatMessages?: Prisma.ChatMessageListRelationFilter
   calls?: Prisma.CallListRelationFilter
   versions?: Prisma.BoardVersionListRelationFilter
@@ -238,7 +237,6 @@ export type BoardOrderByWithRelationInput = {
   owner?: Prisma.UserOrderByWithRelationInput
   members?: Prisma.BoardMemberOrderByRelationAggregateInput
   pages?: Prisma.PageOrderByRelationAggregateInput
-  imageAssets?: Prisma.ImageAssetOrderByRelationAggregateInput
   chatMessages?: Prisma.ChatMessageOrderByRelationAggregateInput
   calls?: Prisma.CallOrderByRelationAggregateInput
   versions?: Prisma.BoardVersionOrderByRelationAggregateInput
@@ -262,7 +260,6 @@ export type BoardWhereUniqueInput = Prisma.AtLeast<{
   owner?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   members?: Prisma.BoardMemberListRelationFilter
   pages?: Prisma.PageListRelationFilter
-  imageAssets?: Prisma.ImageAssetListRelationFilter
   chatMessages?: Prisma.ChatMessageListRelationFilter
   calls?: Prisma.CallListRelationFilter
   versions?: Prisma.BoardVersionListRelationFilter
@@ -312,7 +309,6 @@ export type BoardCreateInput = {
   owner: Prisma.UserCreateNestedOneWithoutOwnedBoardsInput
   members?: Prisma.BoardMemberCreateNestedManyWithoutBoardInput
   pages?: Prisma.PageCreateNestedManyWithoutBoardInput
-  imageAssets?: Prisma.ImageAssetCreateNestedManyWithoutBoardInput
   chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutBoardInput
   calls?: Prisma.CallCreateNestedManyWithoutBoardInput
   versions?: Prisma.BoardVersionCreateNestedManyWithoutBoardInput
@@ -332,7 +328,6 @@ export type BoardUncheckedCreateInput = {
   updatedAt?: Date | string
   members?: Prisma.BoardMemberUncheckedCreateNestedManyWithoutBoardInput
   pages?: Prisma.PageUncheckedCreateNestedManyWithoutBoardInput
-  imageAssets?: Prisma.ImageAssetUncheckedCreateNestedManyWithoutBoardInput
   chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutBoardInput
   calls?: Prisma.CallUncheckedCreateNestedManyWithoutBoardInput
   versions?: Prisma.BoardVersionUncheckedCreateNestedManyWithoutBoardInput
@@ -352,7 +347,6 @@ export type BoardUpdateInput = {
   owner?: Prisma.UserUpdateOneRequiredWithoutOwnedBoardsNestedInput
   members?: Prisma.BoardMemberUpdateManyWithoutBoardNestedInput
   pages?: Prisma.PageUpdateManyWithoutBoardNestedInput
-  imageAssets?: Prisma.ImageAssetUpdateManyWithoutBoardNestedInput
   chatMessages?: Prisma.ChatMessageUpdateManyWithoutBoardNestedInput
   calls?: Prisma.CallUpdateManyWithoutBoardNestedInput
   versions?: Prisma.BoardVersionUpdateManyWithoutBoardNestedInput
@@ -372,7 +366,6 @@ export type BoardUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   members?: Prisma.BoardMemberUncheckedUpdateManyWithoutBoardNestedInput
   pages?: Prisma.PageUncheckedUpdateManyWithoutBoardNestedInput
-  imageAssets?: Prisma.ImageAssetUncheckedUpdateManyWithoutBoardNestedInput
   chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutBoardNestedInput
   calls?: Prisma.CallUncheckedUpdateManyWithoutBoardNestedInput
   versions?: Prisma.BoardVersionUncheckedUpdateManyWithoutBoardNestedInput
@@ -526,20 +519,6 @@ export type BoardUpdateOneRequiredWithoutChatMessagesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.BoardUpdateToOneWithWhereWithoutChatMessagesInput, Prisma.BoardUpdateWithoutChatMessagesInput>, Prisma.BoardUncheckedUpdateWithoutChatMessagesInput>
 }
 
-export type BoardCreateNestedOneWithoutImageAssetsInput = {
-  create?: Prisma.XOR<Prisma.BoardCreateWithoutImageAssetsInput, Prisma.BoardUncheckedCreateWithoutImageAssetsInput>
-  connectOrCreate?: Prisma.BoardCreateOrConnectWithoutImageAssetsInput
-  connect?: Prisma.BoardWhereUniqueInput
-}
-
-export type BoardUpdateOneRequiredWithoutImageAssetsNestedInput = {
-  create?: Prisma.XOR<Prisma.BoardCreateWithoutImageAssetsInput, Prisma.BoardUncheckedCreateWithoutImageAssetsInput>
-  connectOrCreate?: Prisma.BoardCreateOrConnectWithoutImageAssetsInput
-  upsert?: Prisma.BoardUpsertWithoutImageAssetsInput
-  connect?: Prisma.BoardWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.BoardUpdateToOneWithWhereWithoutImageAssetsInput, Prisma.BoardUpdateWithoutImageAssetsInput>, Prisma.BoardUncheckedUpdateWithoutImageAssetsInput>
-}
-
 export type BoardCreateNestedOneWithoutInvitesInput = {
   create?: Prisma.XOR<Prisma.BoardCreateWithoutInvitesInput, Prisma.BoardUncheckedCreateWithoutInvitesInput>
   connectOrCreate?: Prisma.BoardCreateOrConnectWithoutInvitesInput
@@ -636,7 +615,6 @@ export type BoardCreateWithoutActivityLogsInput = {
   owner: Prisma.UserCreateNestedOneWithoutOwnedBoardsInput
   members?: Prisma.BoardMemberCreateNestedManyWithoutBoardInput
   pages?: Prisma.PageCreateNestedManyWithoutBoardInput
-  imageAssets?: Prisma.ImageAssetCreateNestedManyWithoutBoardInput
   chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutBoardInput
   calls?: Prisma.CallCreateNestedManyWithoutBoardInput
   versions?: Prisma.BoardVersionCreateNestedManyWithoutBoardInput
@@ -655,7 +633,6 @@ export type BoardUncheckedCreateWithoutActivityLogsInput = {
   updatedAt?: Date | string
   members?: Prisma.BoardMemberUncheckedCreateNestedManyWithoutBoardInput
   pages?: Prisma.PageUncheckedCreateNestedManyWithoutBoardInput
-  imageAssets?: Prisma.ImageAssetUncheckedCreateNestedManyWithoutBoardInput
   chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutBoardInput
   calls?: Prisma.CallUncheckedCreateNestedManyWithoutBoardInput
   versions?: Prisma.BoardVersionUncheckedCreateNestedManyWithoutBoardInput
@@ -690,7 +667,6 @@ export type BoardUpdateWithoutActivityLogsInput = {
   owner?: Prisma.UserUpdateOneRequiredWithoutOwnedBoardsNestedInput
   members?: Prisma.BoardMemberUpdateManyWithoutBoardNestedInput
   pages?: Prisma.PageUpdateManyWithoutBoardNestedInput
-  imageAssets?: Prisma.ImageAssetUpdateManyWithoutBoardNestedInput
   chatMessages?: Prisma.ChatMessageUpdateManyWithoutBoardNestedInput
   calls?: Prisma.CallUpdateManyWithoutBoardNestedInput
   versions?: Prisma.BoardVersionUpdateManyWithoutBoardNestedInput
@@ -709,7 +685,6 @@ export type BoardUncheckedUpdateWithoutActivityLogsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   members?: Prisma.BoardMemberUncheckedUpdateManyWithoutBoardNestedInput
   pages?: Prisma.PageUncheckedUpdateManyWithoutBoardNestedInput
-  imageAssets?: Prisma.ImageAssetUncheckedUpdateManyWithoutBoardNestedInput
   chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutBoardNestedInput
   calls?: Prisma.CallUncheckedUpdateManyWithoutBoardNestedInput
   versions?: Prisma.BoardVersionUncheckedUpdateManyWithoutBoardNestedInput
@@ -727,7 +702,6 @@ export type BoardCreateWithoutMembersInput = {
   updatedAt?: Date | string
   owner: Prisma.UserCreateNestedOneWithoutOwnedBoardsInput
   pages?: Prisma.PageCreateNestedManyWithoutBoardInput
-  imageAssets?: Prisma.ImageAssetCreateNestedManyWithoutBoardInput
   chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutBoardInput
   calls?: Prisma.CallCreateNestedManyWithoutBoardInput
   versions?: Prisma.BoardVersionCreateNestedManyWithoutBoardInput
@@ -746,7 +720,6 @@ export type BoardUncheckedCreateWithoutMembersInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   pages?: Prisma.PageUncheckedCreateNestedManyWithoutBoardInput
-  imageAssets?: Prisma.ImageAssetUncheckedCreateNestedManyWithoutBoardInput
   chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutBoardInput
   calls?: Prisma.CallUncheckedCreateNestedManyWithoutBoardInput
   versions?: Prisma.BoardVersionUncheckedCreateNestedManyWithoutBoardInput
@@ -781,7 +754,6 @@ export type BoardUpdateWithoutMembersInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   owner?: Prisma.UserUpdateOneRequiredWithoutOwnedBoardsNestedInput
   pages?: Prisma.PageUpdateManyWithoutBoardNestedInput
-  imageAssets?: Prisma.ImageAssetUpdateManyWithoutBoardNestedInput
   chatMessages?: Prisma.ChatMessageUpdateManyWithoutBoardNestedInput
   calls?: Prisma.CallUpdateManyWithoutBoardNestedInput
   versions?: Prisma.BoardVersionUpdateManyWithoutBoardNestedInput
@@ -800,7 +772,6 @@ export type BoardUncheckedUpdateWithoutMembersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   pages?: Prisma.PageUncheckedUpdateManyWithoutBoardNestedInput
-  imageAssets?: Prisma.ImageAssetUncheckedUpdateManyWithoutBoardNestedInput
   chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutBoardNestedInput
   calls?: Prisma.CallUncheckedUpdateManyWithoutBoardNestedInput
   versions?: Prisma.BoardVersionUncheckedUpdateManyWithoutBoardNestedInput
@@ -820,7 +791,6 @@ export type BoardCreateWithoutCallsInput = {
   owner: Prisma.UserCreateNestedOneWithoutOwnedBoardsInput
   members?: Prisma.BoardMemberCreateNestedManyWithoutBoardInput
   pages?: Prisma.PageCreateNestedManyWithoutBoardInput
-  imageAssets?: Prisma.ImageAssetCreateNestedManyWithoutBoardInput
   chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutBoardInput
   versions?: Prisma.BoardVersionCreateNestedManyWithoutBoardInput
   invites?: Prisma.InviteCreateNestedManyWithoutBoardInput
@@ -839,7 +809,6 @@ export type BoardUncheckedCreateWithoutCallsInput = {
   updatedAt?: Date | string
   members?: Prisma.BoardMemberUncheckedCreateNestedManyWithoutBoardInput
   pages?: Prisma.PageUncheckedCreateNestedManyWithoutBoardInput
-  imageAssets?: Prisma.ImageAssetUncheckedCreateNestedManyWithoutBoardInput
   chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutBoardInput
   versions?: Prisma.BoardVersionUncheckedCreateNestedManyWithoutBoardInput
   invites?: Prisma.InviteUncheckedCreateNestedManyWithoutBoardInput
@@ -874,7 +843,6 @@ export type BoardUpdateWithoutCallsInput = {
   owner?: Prisma.UserUpdateOneRequiredWithoutOwnedBoardsNestedInput
   members?: Prisma.BoardMemberUpdateManyWithoutBoardNestedInput
   pages?: Prisma.PageUpdateManyWithoutBoardNestedInput
-  imageAssets?: Prisma.ImageAssetUpdateManyWithoutBoardNestedInput
   chatMessages?: Prisma.ChatMessageUpdateManyWithoutBoardNestedInput
   versions?: Prisma.BoardVersionUpdateManyWithoutBoardNestedInput
   invites?: Prisma.InviteUpdateManyWithoutBoardNestedInput
@@ -893,7 +861,6 @@ export type BoardUncheckedUpdateWithoutCallsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   members?: Prisma.BoardMemberUncheckedUpdateManyWithoutBoardNestedInput
   pages?: Prisma.PageUncheckedUpdateManyWithoutBoardNestedInput
-  imageAssets?: Prisma.ImageAssetUncheckedUpdateManyWithoutBoardNestedInput
   chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutBoardNestedInput
   versions?: Prisma.BoardVersionUncheckedUpdateManyWithoutBoardNestedInput
   invites?: Prisma.InviteUncheckedUpdateManyWithoutBoardNestedInput
@@ -912,7 +879,6 @@ export type BoardCreateWithoutChatMessagesInput = {
   owner: Prisma.UserCreateNestedOneWithoutOwnedBoardsInput
   members?: Prisma.BoardMemberCreateNestedManyWithoutBoardInput
   pages?: Prisma.PageCreateNestedManyWithoutBoardInput
-  imageAssets?: Prisma.ImageAssetCreateNestedManyWithoutBoardInput
   calls?: Prisma.CallCreateNestedManyWithoutBoardInput
   versions?: Prisma.BoardVersionCreateNestedManyWithoutBoardInput
   invites?: Prisma.InviteCreateNestedManyWithoutBoardInput
@@ -931,7 +897,6 @@ export type BoardUncheckedCreateWithoutChatMessagesInput = {
   updatedAt?: Date | string
   members?: Prisma.BoardMemberUncheckedCreateNestedManyWithoutBoardInput
   pages?: Prisma.PageUncheckedCreateNestedManyWithoutBoardInput
-  imageAssets?: Prisma.ImageAssetUncheckedCreateNestedManyWithoutBoardInput
   calls?: Prisma.CallUncheckedCreateNestedManyWithoutBoardInput
   versions?: Prisma.BoardVersionUncheckedCreateNestedManyWithoutBoardInput
   invites?: Prisma.InviteUncheckedCreateNestedManyWithoutBoardInput
@@ -966,7 +931,6 @@ export type BoardUpdateWithoutChatMessagesInput = {
   owner?: Prisma.UserUpdateOneRequiredWithoutOwnedBoardsNestedInput
   members?: Prisma.BoardMemberUpdateManyWithoutBoardNestedInput
   pages?: Prisma.PageUpdateManyWithoutBoardNestedInput
-  imageAssets?: Prisma.ImageAssetUpdateManyWithoutBoardNestedInput
   calls?: Prisma.CallUpdateManyWithoutBoardNestedInput
   versions?: Prisma.BoardVersionUpdateManyWithoutBoardNestedInput
   invites?: Prisma.InviteUpdateManyWithoutBoardNestedInput
@@ -985,99 +949,6 @@ export type BoardUncheckedUpdateWithoutChatMessagesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   members?: Prisma.BoardMemberUncheckedUpdateManyWithoutBoardNestedInput
   pages?: Prisma.PageUncheckedUpdateManyWithoutBoardNestedInput
-  imageAssets?: Prisma.ImageAssetUncheckedUpdateManyWithoutBoardNestedInput
-  calls?: Prisma.CallUncheckedUpdateManyWithoutBoardNestedInput
-  versions?: Prisma.BoardVersionUncheckedUpdateManyWithoutBoardNestedInput
-  invites?: Prisma.InviteUncheckedUpdateManyWithoutBoardNestedInput
-  activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutBoardNestedInput
-}
-
-export type BoardCreateWithoutImageAssetsInput = {
-  id?: string
-  name: string
-  description?: string | null
-  thumbnail?: string | null
-  isPublic?: boolean
-  favorite?: boolean
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  owner: Prisma.UserCreateNestedOneWithoutOwnedBoardsInput
-  members?: Prisma.BoardMemberCreateNestedManyWithoutBoardInput
-  pages?: Prisma.PageCreateNestedManyWithoutBoardInput
-  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutBoardInput
-  calls?: Prisma.CallCreateNestedManyWithoutBoardInput
-  versions?: Prisma.BoardVersionCreateNestedManyWithoutBoardInput
-  invites?: Prisma.InviteCreateNestedManyWithoutBoardInput
-  activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutBoardInput
-}
-
-export type BoardUncheckedCreateWithoutImageAssetsInput = {
-  id?: string
-  name: string
-  description?: string | null
-  thumbnail?: string | null
-  isPublic?: boolean
-  favorite?: boolean
-  ownerId: string
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  members?: Prisma.BoardMemberUncheckedCreateNestedManyWithoutBoardInput
-  pages?: Prisma.PageUncheckedCreateNestedManyWithoutBoardInput
-  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutBoardInput
-  calls?: Prisma.CallUncheckedCreateNestedManyWithoutBoardInput
-  versions?: Prisma.BoardVersionUncheckedCreateNestedManyWithoutBoardInput
-  invites?: Prisma.InviteUncheckedCreateNestedManyWithoutBoardInput
-  activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutBoardInput
-}
-
-export type BoardCreateOrConnectWithoutImageAssetsInput = {
-  where: Prisma.BoardWhereUniqueInput
-  create: Prisma.XOR<Prisma.BoardCreateWithoutImageAssetsInput, Prisma.BoardUncheckedCreateWithoutImageAssetsInput>
-}
-
-export type BoardUpsertWithoutImageAssetsInput = {
-  update: Prisma.XOR<Prisma.BoardUpdateWithoutImageAssetsInput, Prisma.BoardUncheckedUpdateWithoutImageAssetsInput>
-  create: Prisma.XOR<Prisma.BoardCreateWithoutImageAssetsInput, Prisma.BoardUncheckedCreateWithoutImageAssetsInput>
-  where?: Prisma.BoardWhereInput
-}
-
-export type BoardUpdateToOneWithWhereWithoutImageAssetsInput = {
-  where?: Prisma.BoardWhereInput
-  data: Prisma.XOR<Prisma.BoardUpdateWithoutImageAssetsInput, Prisma.BoardUncheckedUpdateWithoutImageAssetsInput>
-}
-
-export type BoardUpdateWithoutImageAssetsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  thumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  favorite?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  owner?: Prisma.UserUpdateOneRequiredWithoutOwnedBoardsNestedInput
-  members?: Prisma.BoardMemberUpdateManyWithoutBoardNestedInput
-  pages?: Prisma.PageUpdateManyWithoutBoardNestedInput
-  chatMessages?: Prisma.ChatMessageUpdateManyWithoutBoardNestedInput
-  calls?: Prisma.CallUpdateManyWithoutBoardNestedInput
-  versions?: Prisma.BoardVersionUpdateManyWithoutBoardNestedInput
-  invites?: Prisma.InviteUpdateManyWithoutBoardNestedInput
-  activityLogs?: Prisma.ActivityLogUpdateManyWithoutBoardNestedInput
-}
-
-export type BoardUncheckedUpdateWithoutImageAssetsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  thumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  favorite?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  ownerId?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  members?: Prisma.BoardMemberUncheckedUpdateManyWithoutBoardNestedInput
-  pages?: Prisma.PageUncheckedUpdateManyWithoutBoardNestedInput
-  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutBoardNestedInput
   calls?: Prisma.CallUncheckedUpdateManyWithoutBoardNestedInput
   versions?: Prisma.BoardVersionUncheckedUpdateManyWithoutBoardNestedInput
   invites?: Prisma.InviteUncheckedUpdateManyWithoutBoardNestedInput
@@ -1096,7 +967,6 @@ export type BoardCreateWithoutInvitesInput = {
   owner: Prisma.UserCreateNestedOneWithoutOwnedBoardsInput
   members?: Prisma.BoardMemberCreateNestedManyWithoutBoardInput
   pages?: Prisma.PageCreateNestedManyWithoutBoardInput
-  imageAssets?: Prisma.ImageAssetCreateNestedManyWithoutBoardInput
   chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutBoardInput
   calls?: Prisma.CallCreateNestedManyWithoutBoardInput
   versions?: Prisma.BoardVersionCreateNestedManyWithoutBoardInput
@@ -1115,7 +985,6 @@ export type BoardUncheckedCreateWithoutInvitesInput = {
   updatedAt?: Date | string
   members?: Prisma.BoardMemberUncheckedCreateNestedManyWithoutBoardInput
   pages?: Prisma.PageUncheckedCreateNestedManyWithoutBoardInput
-  imageAssets?: Prisma.ImageAssetUncheckedCreateNestedManyWithoutBoardInput
   chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutBoardInput
   calls?: Prisma.CallUncheckedCreateNestedManyWithoutBoardInput
   versions?: Prisma.BoardVersionUncheckedCreateNestedManyWithoutBoardInput
@@ -1150,7 +1019,6 @@ export type BoardUpdateWithoutInvitesInput = {
   owner?: Prisma.UserUpdateOneRequiredWithoutOwnedBoardsNestedInput
   members?: Prisma.BoardMemberUpdateManyWithoutBoardNestedInput
   pages?: Prisma.PageUpdateManyWithoutBoardNestedInput
-  imageAssets?: Prisma.ImageAssetUpdateManyWithoutBoardNestedInput
   chatMessages?: Prisma.ChatMessageUpdateManyWithoutBoardNestedInput
   calls?: Prisma.CallUpdateManyWithoutBoardNestedInput
   versions?: Prisma.BoardVersionUpdateManyWithoutBoardNestedInput
@@ -1169,7 +1037,6 @@ export type BoardUncheckedUpdateWithoutInvitesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   members?: Prisma.BoardMemberUncheckedUpdateManyWithoutBoardNestedInput
   pages?: Prisma.PageUncheckedUpdateManyWithoutBoardNestedInput
-  imageAssets?: Prisma.ImageAssetUncheckedUpdateManyWithoutBoardNestedInput
   chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutBoardNestedInput
   calls?: Prisma.CallUncheckedUpdateManyWithoutBoardNestedInput
   versions?: Prisma.BoardVersionUncheckedUpdateManyWithoutBoardNestedInput
@@ -1187,7 +1054,6 @@ export type BoardCreateWithoutPagesInput = {
   updatedAt?: Date | string
   owner: Prisma.UserCreateNestedOneWithoutOwnedBoardsInput
   members?: Prisma.BoardMemberCreateNestedManyWithoutBoardInput
-  imageAssets?: Prisma.ImageAssetCreateNestedManyWithoutBoardInput
   chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutBoardInput
   calls?: Prisma.CallCreateNestedManyWithoutBoardInput
   versions?: Prisma.BoardVersionCreateNestedManyWithoutBoardInput
@@ -1206,7 +1072,6 @@ export type BoardUncheckedCreateWithoutPagesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   members?: Prisma.BoardMemberUncheckedCreateNestedManyWithoutBoardInput
-  imageAssets?: Prisma.ImageAssetUncheckedCreateNestedManyWithoutBoardInput
   chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutBoardInput
   calls?: Prisma.CallUncheckedCreateNestedManyWithoutBoardInput
   versions?: Prisma.BoardVersionUncheckedCreateNestedManyWithoutBoardInput
@@ -1241,7 +1106,6 @@ export type BoardUpdateWithoutPagesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   owner?: Prisma.UserUpdateOneRequiredWithoutOwnedBoardsNestedInput
   members?: Prisma.BoardMemberUpdateManyWithoutBoardNestedInput
-  imageAssets?: Prisma.ImageAssetUpdateManyWithoutBoardNestedInput
   chatMessages?: Prisma.ChatMessageUpdateManyWithoutBoardNestedInput
   calls?: Prisma.CallUpdateManyWithoutBoardNestedInput
   versions?: Prisma.BoardVersionUpdateManyWithoutBoardNestedInput
@@ -1260,7 +1124,6 @@ export type BoardUncheckedUpdateWithoutPagesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   members?: Prisma.BoardMemberUncheckedUpdateManyWithoutBoardNestedInput
-  imageAssets?: Prisma.ImageAssetUncheckedUpdateManyWithoutBoardNestedInput
   chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutBoardNestedInput
   calls?: Prisma.CallUncheckedUpdateManyWithoutBoardNestedInput
   versions?: Prisma.BoardVersionUncheckedUpdateManyWithoutBoardNestedInput
@@ -1279,7 +1142,6 @@ export type BoardCreateWithoutOwnerInput = {
   updatedAt?: Date | string
   members?: Prisma.BoardMemberCreateNestedManyWithoutBoardInput
   pages?: Prisma.PageCreateNestedManyWithoutBoardInput
-  imageAssets?: Prisma.ImageAssetCreateNestedManyWithoutBoardInput
   chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutBoardInput
   calls?: Prisma.CallCreateNestedManyWithoutBoardInput
   versions?: Prisma.BoardVersionCreateNestedManyWithoutBoardInput
@@ -1298,7 +1160,6 @@ export type BoardUncheckedCreateWithoutOwnerInput = {
   updatedAt?: Date | string
   members?: Prisma.BoardMemberUncheckedCreateNestedManyWithoutBoardInput
   pages?: Prisma.PageUncheckedCreateNestedManyWithoutBoardInput
-  imageAssets?: Prisma.ImageAssetUncheckedCreateNestedManyWithoutBoardInput
   chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutBoardInput
   calls?: Prisma.CallUncheckedCreateNestedManyWithoutBoardInput
   versions?: Prisma.BoardVersionUncheckedCreateNestedManyWithoutBoardInput
@@ -1359,7 +1220,6 @@ export type BoardCreateWithoutVersionsInput = {
   owner: Prisma.UserCreateNestedOneWithoutOwnedBoardsInput
   members?: Prisma.BoardMemberCreateNestedManyWithoutBoardInput
   pages?: Prisma.PageCreateNestedManyWithoutBoardInput
-  imageAssets?: Prisma.ImageAssetCreateNestedManyWithoutBoardInput
   chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutBoardInput
   calls?: Prisma.CallCreateNestedManyWithoutBoardInput
   invites?: Prisma.InviteCreateNestedManyWithoutBoardInput
@@ -1378,7 +1238,6 @@ export type BoardUncheckedCreateWithoutVersionsInput = {
   updatedAt?: Date | string
   members?: Prisma.BoardMemberUncheckedCreateNestedManyWithoutBoardInput
   pages?: Prisma.PageUncheckedCreateNestedManyWithoutBoardInput
-  imageAssets?: Prisma.ImageAssetUncheckedCreateNestedManyWithoutBoardInput
   chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutBoardInput
   calls?: Prisma.CallUncheckedCreateNestedManyWithoutBoardInput
   invites?: Prisma.InviteUncheckedCreateNestedManyWithoutBoardInput
@@ -1413,7 +1272,6 @@ export type BoardUpdateWithoutVersionsInput = {
   owner?: Prisma.UserUpdateOneRequiredWithoutOwnedBoardsNestedInput
   members?: Prisma.BoardMemberUpdateManyWithoutBoardNestedInput
   pages?: Prisma.PageUpdateManyWithoutBoardNestedInput
-  imageAssets?: Prisma.ImageAssetUpdateManyWithoutBoardNestedInput
   chatMessages?: Prisma.ChatMessageUpdateManyWithoutBoardNestedInput
   calls?: Prisma.CallUpdateManyWithoutBoardNestedInput
   invites?: Prisma.InviteUpdateManyWithoutBoardNestedInput
@@ -1432,7 +1290,6 @@ export type BoardUncheckedUpdateWithoutVersionsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   members?: Prisma.BoardMemberUncheckedUpdateManyWithoutBoardNestedInput
   pages?: Prisma.PageUncheckedUpdateManyWithoutBoardNestedInput
-  imageAssets?: Prisma.ImageAssetUncheckedUpdateManyWithoutBoardNestedInput
   chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutBoardNestedInput
   calls?: Prisma.CallUncheckedUpdateManyWithoutBoardNestedInput
   invites?: Prisma.InviteUncheckedUpdateManyWithoutBoardNestedInput
@@ -1461,7 +1318,6 @@ export type BoardUpdateWithoutOwnerInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   members?: Prisma.BoardMemberUpdateManyWithoutBoardNestedInput
   pages?: Prisma.PageUpdateManyWithoutBoardNestedInput
-  imageAssets?: Prisma.ImageAssetUpdateManyWithoutBoardNestedInput
   chatMessages?: Prisma.ChatMessageUpdateManyWithoutBoardNestedInput
   calls?: Prisma.CallUpdateManyWithoutBoardNestedInput
   versions?: Prisma.BoardVersionUpdateManyWithoutBoardNestedInput
@@ -1480,7 +1336,6 @@ export type BoardUncheckedUpdateWithoutOwnerInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   members?: Prisma.BoardMemberUncheckedUpdateManyWithoutBoardNestedInput
   pages?: Prisma.PageUncheckedUpdateManyWithoutBoardNestedInput
-  imageAssets?: Prisma.ImageAssetUncheckedUpdateManyWithoutBoardNestedInput
   chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutBoardNestedInput
   calls?: Prisma.CallUncheckedUpdateManyWithoutBoardNestedInput
   versions?: Prisma.BoardVersionUncheckedUpdateManyWithoutBoardNestedInput
@@ -1507,7 +1362,6 @@ export type BoardUncheckedUpdateManyWithoutOwnerInput = {
 export type BoardCountOutputType = {
   members: number
   pages: number
-  imageAssets: number
   chatMessages: number
   calls: number
   versions: number
@@ -1518,7 +1372,6 @@ export type BoardCountOutputType = {
 export type BoardCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   members?: boolean | BoardCountOutputTypeCountMembersArgs
   pages?: boolean | BoardCountOutputTypeCountPagesArgs
-  imageAssets?: boolean | BoardCountOutputTypeCountImageAssetsArgs
   chatMessages?: boolean | BoardCountOutputTypeCountChatMessagesArgs
   calls?: boolean | BoardCountOutputTypeCountCallsArgs
   versions?: boolean | BoardCountOutputTypeCountVersionsArgs
@@ -1548,13 +1401,6 @@ export type BoardCountOutputTypeCountMembersArgs<ExtArgs extends runtime.Types.E
  */
 export type BoardCountOutputTypeCountPagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.PageWhereInput
-}
-
-/**
- * BoardCountOutputType without action
- */
-export type BoardCountOutputTypeCountImageAssetsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ImageAssetWhereInput
 }
 
 /**
@@ -1606,7 +1452,6 @@ export type BoardSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   owner?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   members?: boolean | Prisma.Board$membersArgs<ExtArgs>
   pages?: boolean | Prisma.Board$pagesArgs<ExtArgs>
-  imageAssets?: boolean | Prisma.Board$imageAssetsArgs<ExtArgs>
   chatMessages?: boolean | Prisma.Board$chatMessagesArgs<ExtArgs>
   calls?: boolean | Prisma.Board$callsArgs<ExtArgs>
   versions?: boolean | Prisma.Board$versionsArgs<ExtArgs>
@@ -1658,7 +1503,6 @@ export type BoardInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   owner?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   members?: boolean | Prisma.Board$membersArgs<ExtArgs>
   pages?: boolean | Prisma.Board$pagesArgs<ExtArgs>
-  imageAssets?: boolean | Prisma.Board$imageAssetsArgs<ExtArgs>
   chatMessages?: boolean | Prisma.Board$chatMessagesArgs<ExtArgs>
   calls?: boolean | Prisma.Board$callsArgs<ExtArgs>
   versions?: boolean | Prisma.Board$versionsArgs<ExtArgs>
@@ -1679,7 +1523,6 @@ export type $BoardPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     owner: Prisma.$UserPayload<ExtArgs>
     members: Prisma.$BoardMemberPayload<ExtArgs>[]
     pages: Prisma.$PagePayload<ExtArgs>[]
-    imageAssets: Prisma.$ImageAssetPayload<ExtArgs>[]
     chatMessages: Prisma.$ChatMessagePayload<ExtArgs>[]
     calls: Prisma.$CallPayload<ExtArgs>[]
     versions: Prisma.$BoardVersionPayload<ExtArgs>[]
@@ -2093,7 +1936,6 @@ export interface Prisma__BoardClient<T, Null = never, ExtArgs extends runtime.Ty
   owner<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   members<T extends Prisma.Board$membersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Board$membersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BoardMemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   pages<T extends Prisma.Board$pagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Board$pagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  imageAssets<T extends Prisma.Board$imageAssetsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Board$imageAssetsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ImageAssetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   chatMessages<T extends Prisma.Board$chatMessagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Board$chatMessagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChatMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   calls<T extends Prisma.Board$callsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Board$callsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CallPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   versions<T extends Prisma.Board$versionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Board$versionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BoardVersionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -2583,30 +2425,6 @@ export type Board$pagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
   take?: number
   skip?: number
   distinct?: Prisma.PageScalarFieldEnum | Prisma.PageScalarFieldEnum[]
-}
-
-/**
- * Board.imageAssets
- */
-export type Board$imageAssetsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the ImageAsset
-   */
-  select?: Prisma.ImageAssetSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the ImageAsset
-   */
-  omit?: Prisma.ImageAssetOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.ImageAssetInclude<ExtArgs> | null
-  where?: Prisma.ImageAssetWhereInput
-  orderBy?: Prisma.ImageAssetOrderByWithRelationInput | Prisma.ImageAssetOrderByWithRelationInput[]
-  cursor?: Prisma.ImageAssetWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.ImageAssetScalarFieldEnum | Prisma.ImageAssetScalarFieldEnum[]
 }
 
 /**

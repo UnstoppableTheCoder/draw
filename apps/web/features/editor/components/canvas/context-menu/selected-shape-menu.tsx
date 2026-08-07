@@ -12,6 +12,7 @@ import { RefObject, useLayoutEffect, useRef, useState } from "react";
 import { usePointerState } from "@/features/editor/pointer/use-pointer-state";
 import { ChevronRight } from "lucide-react";
 import useSelectionMenuActions from "./use-selection-menu-actions";
+import useSelectAllShapes from "@/features/editor/interactions/selection/use-select-all";
 
 interface MenuItem {
   label: string;
@@ -55,6 +56,7 @@ export default function SelectedShapeMenu({
   const duplicate = useDuplicateShapes();
   const order = useShapeOrder();
   const actions = useSelectionMenuActions({ overlayCanvasRef, pointerRefs });
+  const selection = useSelectAllShapes();
 
   const selectedShapes = shapes.filter((shape) => selected.has(shape.id));
   const selectedCount = selectedShapes.length;
@@ -81,7 +83,7 @@ export default function SelectedShapeMenu({
     {
       label: "Select all",
       shortcut: "Ctrl A",
-      action: () => console.log("Select all"),
+      action: selection.selectAllShapes,
     },
     { label: "divider", divider: true },
     {
@@ -145,7 +147,7 @@ export default function SelectedShapeMenu({
     {
       label: "Remove Frame",
       shortcut: "F",
-      action: actions.wrapInFrame,
+      action: actions.removeFrame,
       show: showRemoveFrame,
     },
     {
@@ -157,7 +159,7 @@ export default function SelectedShapeMenu({
     {
       label: "Ungroup selection",
       shortcut: "Ctrl G",
-      action: () => console.log("Ungroup selection"),
+      action: actions.unGroup,
       show: hasGroupedShapes && !hasFramesIncluded,
     },
     { label: "divider", divider: true },

@@ -1,22 +1,20 @@
 import { axiosClient } from "@/config/axios";
 import { ImageAsset } from "../../types";
 
-export const getImageAssets = async (
-  boardId: string,
-): Promise<ImageAsset[]> => {
+export const getImageAssets = async (pageId: string): Promise<ImageAsset[]> => {
   const { data } = await axiosClient.get<ImageAsset[]>(
-    `/boards/${boardId}/image-assets`,
+    `/pages/${pageId}/image-assets`,
   );
 
   return data;
 };
 
 export const createImageAssets = async (
-  boardId: string,
+  pageId: string,
   imageAssets: ImageAsset[],
 ): Promise<ImageAsset[]> => {
   const { data } = await axiosClient.post<ImageAsset[]>(
-    `/boards/${boardId}/image-assets`,
+    `/pages/${pageId}/image-assets`,
     imageAssets,
   );
 
@@ -24,11 +22,11 @@ export const createImageAssets = async (
 };
 
 export const updateImageAssets = async (
-  boardId: string,
+  pageId: string,
   imageAssets: ImageAsset[],
 ): Promise<ImageAsset[]> => {
   const { data } = await axiosClient.patch<ImageAsset[]>(
-    `/boards/${boardId}/image-assets`,
+    `/pages/${pageId}/image-assets`,
     imageAssets,
   );
 
@@ -36,10 +34,10 @@ export const updateImageAssets = async (
 };
 
 export const deleteImageAssets = async (
-  boardId: string,
+  pageId: string,
   ids: string[],
 ): Promise<void> => {
-  await axiosClient.delete(`/boards/${boardId}/image-assets`, {
+  await axiosClient.delete(`/pages/${pageId}/image-assets`, {
     data: {
       ids,
     },

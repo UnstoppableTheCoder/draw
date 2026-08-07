@@ -19,13 +19,21 @@ type UpdatePageResponse = {
   page: Page;
 };
 
-export const getPage = async (pageId: string) => {
+type DuplicatePageResponse = {
+  page: Page;
+};
+
+type MovePageResponse = {
+  page: Page;
+};
+
+export const getPageApi = async (pageId: string) => {
   const { data } = await axiosClient.get<GetPageResponse>(`pages/${pageId}`);
 
   return data;
 };
 
-export const getPages = async (boardId: string) => {
+export const getPagesApi = async (boardId: string) => {
   const { data } = await axiosClient.get<GetPagesResponse>(
     `/boards/${boardId}/pages`,
   );
@@ -33,7 +41,7 @@ export const getPages = async (boardId: string) => {
   return data;
 };
 
-export const createPage = async (payload: CreatePagePayload) => {
+export const createPageApi = async (payload: CreatePagePayload) => {
   const { data } = await axiosClient.post<CreatePageResponse>(
     `/boards/${payload.boardId}/pages`,
     {
@@ -47,7 +55,7 @@ export const createPage = async (payload: CreatePagePayload) => {
   return data;
 };
 
-export const updatePage = async (
+export const updatePageApi = async (
   pageId: string,
   payload: UpdatePagePayload,
 ): Promise<UpdatePageResponse> => {
@@ -59,7 +67,7 @@ export const updatePage = async (
   return data;
 };
 
-export const deletePage = async (pageId: string) => {
+export const deletePageApi = async (pageId: string) => {
   await axiosClient.delete(`/pages/${pageId}`);
 };
 
@@ -73,4 +81,28 @@ export const reorderPages = async (
   await axiosClient.patch(`/boards/${boardId}/pages/reorder`, {
     pages,
   });
+};
+
+export const duplicatePageApi = async (
+  pageId: string,
+): Promise<DuplicatePageResponse> => {
+  const { data } = await axiosClient.post<DuplicatePageResponse>(
+    `/pages/${pageId}/duplicate`,
+  );
+
+  return data;
+};
+
+export const movePageApi = async (
+  pageId: string,
+  boardId: string,
+): Promise<MovePageResponse> => {
+  const { data } = await axiosClient.patch<MovePageResponse>(
+    `/pages/${pageId}/move`,
+    {
+      boardId,
+    },
+  );
+
+  return data;
 };

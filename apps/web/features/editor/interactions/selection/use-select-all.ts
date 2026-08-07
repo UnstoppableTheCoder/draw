@@ -1,5 +1,4 @@
 import { useCanvasRenderer } from "../../context/use-renderer";
-import { useEditorStore } from "../../store/editor/editor-store";
 import {
   useSetSelectedShapesIds,
   useShapes,

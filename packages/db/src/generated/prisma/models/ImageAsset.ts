@@ -40,7 +40,7 @@ export type ImageAssetSumAggregateOutputType = {
 
 export type ImageAssetMinAggregateOutputType = {
   id: string | null
-  boardId: string | null
+  pageId: string | null
   uploadedById: string | null
   s3Key: string | null
   renderUrl: string | null
@@ -55,7 +55,7 @@ export type ImageAssetMinAggregateOutputType = {
 
 export type ImageAssetMaxAggregateOutputType = {
   id: string | null
-  boardId: string | null
+  pageId: string | null
   uploadedById: string | null
   s3Key: string | null
   renderUrl: string | null
@@ -70,7 +70,7 @@ export type ImageAssetMaxAggregateOutputType = {
 
 export type ImageAssetCountAggregateOutputType = {
   id: number
-  boardId: number
+  pageId: number
   uploadedById: number
   s3Key: number
   renderUrl: number
@@ -99,7 +99,7 @@ export type ImageAssetSumAggregateInputType = {
 
 export type ImageAssetMinAggregateInputType = {
   id?: true
-  boardId?: true
+  pageId?: true
   uploadedById?: true
   s3Key?: true
   renderUrl?: true
@@ -114,7 +114,7 @@ export type ImageAssetMinAggregateInputType = {
 
 export type ImageAssetMaxAggregateInputType = {
   id?: true
-  boardId?: true
+  pageId?: true
   uploadedById?: true
   s3Key?: true
   renderUrl?: true
@@ -129,7 +129,7 @@ export type ImageAssetMaxAggregateInputType = {
 
 export type ImageAssetCountAggregateInputType = {
   id?: true
-  boardId?: true
+  pageId?: true
   uploadedById?: true
   s3Key?: true
   renderUrl?: true
@@ -231,7 +231,7 @@ export type ImageAssetGroupByArgs<ExtArgs extends runtime.Types.Extensions.Inter
 
 export type ImageAssetGroupByOutputType = {
   id: string
-  boardId: string
+  pageId: string
   uploadedById: string
   s3Key: string | null
   renderUrl: string
@@ -269,7 +269,7 @@ export type ImageAssetWhereInput = {
   OR?: Prisma.ImageAssetWhereInput[]
   NOT?: Prisma.ImageAssetWhereInput | Prisma.ImageAssetWhereInput[]
   id?: Prisma.StringFilter<"ImageAsset"> | string
-  boardId?: Prisma.StringFilter<"ImageAsset"> | string
+  pageId?: Prisma.StringFilter<"ImageAsset"> | string
   uploadedById?: Prisma.StringFilter<"ImageAsset"> | string
   s3Key?: Prisma.StringNullableFilter<"ImageAsset"> | string | null
   renderUrl?: Prisma.StringFilter<"ImageAsset"> | string
@@ -280,13 +280,13 @@ export type ImageAssetWhereInput = {
   naturalHeight?: Prisma.IntFilter<"ImageAsset"> | number
   status?: Prisma.StringFilter<"ImageAsset"> | string
   createdAt?: Prisma.DateTimeFilter<"ImageAsset"> | Date | string
-  board?: Prisma.XOR<Prisma.BoardScalarRelationFilter, Prisma.BoardWhereInput>
+  page?: Prisma.XOR<Prisma.PageScalarRelationFilter, Prisma.PageWhereInput>
   uploadedBy?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }
 
 export type ImageAssetOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  boardId?: Prisma.SortOrder
+  pageId?: Prisma.SortOrder
   uploadedById?: Prisma.SortOrder
   s3Key?: Prisma.SortOrderInput | Prisma.SortOrder
   renderUrl?: Prisma.SortOrder
@@ -297,7 +297,7 @@ export type ImageAssetOrderByWithRelationInput = {
   naturalHeight?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
-  board?: Prisma.BoardOrderByWithRelationInput
+  page?: Prisma.PageOrderByWithRelationInput
   uploadedBy?: Prisma.UserOrderByWithRelationInput
 }
 
@@ -306,7 +306,7 @@ export type ImageAssetWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.ImageAssetWhereInput | Prisma.ImageAssetWhereInput[]
   OR?: Prisma.ImageAssetWhereInput[]
   NOT?: Prisma.ImageAssetWhereInput | Prisma.ImageAssetWhereInput[]
-  boardId?: Prisma.StringFilter<"ImageAsset"> | string
+  pageId?: Prisma.StringFilter<"ImageAsset"> | string
   uploadedById?: Prisma.StringFilter<"ImageAsset"> | string
   s3Key?: Prisma.StringNullableFilter<"ImageAsset"> | string | null
   renderUrl?: Prisma.StringFilter<"ImageAsset"> | string
@@ -317,13 +317,13 @@ export type ImageAssetWhereUniqueInput = Prisma.AtLeast<{
   naturalHeight?: Prisma.IntFilter<"ImageAsset"> | number
   status?: Prisma.StringFilter<"ImageAsset"> | string
   createdAt?: Prisma.DateTimeFilter<"ImageAsset"> | Date | string
-  board?: Prisma.XOR<Prisma.BoardScalarRelationFilter, Prisma.BoardWhereInput>
+  page?: Prisma.XOR<Prisma.PageScalarRelationFilter, Prisma.PageWhereInput>
   uploadedBy?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }, "id">
 
 export type ImageAssetOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  boardId?: Prisma.SortOrder
+  pageId?: Prisma.SortOrder
   uploadedById?: Prisma.SortOrder
   s3Key?: Prisma.SortOrderInput | Prisma.SortOrder
   renderUrl?: Prisma.SortOrder
@@ -346,7 +346,7 @@ export type ImageAssetScalarWhereWithAggregatesInput = {
   OR?: Prisma.ImageAssetScalarWhereWithAggregatesInput[]
   NOT?: Prisma.ImageAssetScalarWhereWithAggregatesInput | Prisma.ImageAssetScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"ImageAsset"> | string
-  boardId?: Prisma.StringWithAggregatesFilter<"ImageAsset"> | string
+  pageId?: Prisma.StringWithAggregatesFilter<"ImageAsset"> | string
   uploadedById?: Prisma.StringWithAggregatesFilter<"ImageAsset"> | string
   s3Key?: Prisma.StringNullableWithAggregatesFilter<"ImageAsset"> | string | null
   renderUrl?: Prisma.StringWithAggregatesFilter<"ImageAsset"> | string
@@ -370,13 +370,13 @@ export type ImageAssetCreateInput = {
   naturalHeight: number
   status: string
   createdAt?: Date | string
-  board: Prisma.BoardCreateNestedOneWithoutImageAssetsInput
+  page: Prisma.PageCreateNestedOneWithoutImageAssetsInput
   uploadedBy: Prisma.UserCreateNestedOneWithoutUploadedAssetsInput
 }
 
 export type ImageAssetUncheckedCreateInput = {
   id: string
-  boardId: string
+  pageId: string
   uploadedById: string
   s3Key?: string | null
   renderUrl: string
@@ -400,13 +400,13 @@ export type ImageAssetUpdateInput = {
   naturalHeight?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  board?: Prisma.BoardUpdateOneRequiredWithoutImageAssetsNestedInput
+  page?: Prisma.PageUpdateOneRequiredWithoutImageAssetsNestedInput
   uploadedBy?: Prisma.UserUpdateOneRequiredWithoutUploadedAssetsNestedInput
 }
 
 export type ImageAssetUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  boardId?: Prisma.StringFieldUpdateOperationsInput | string
+  pageId?: Prisma.StringFieldUpdateOperationsInput | string
   uploadedById?: Prisma.StringFieldUpdateOperationsInput | string
   s3Key?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   renderUrl?: Prisma.StringFieldUpdateOperationsInput | string
@@ -421,7 +421,7 @@ export type ImageAssetUncheckedUpdateInput = {
 
 export type ImageAssetCreateManyInput = {
   id: string
-  boardId: string
+  pageId: string
   uploadedById: string
   s3Key?: string | null
   renderUrl: string
@@ -449,7 +449,7 @@ export type ImageAssetUpdateManyMutationInput = {
 
 export type ImageAssetUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  boardId?: Prisma.StringFieldUpdateOperationsInput | string
+  pageId?: Prisma.StringFieldUpdateOperationsInput | string
   uploadedById?: Prisma.StringFieldUpdateOperationsInput | string
   s3Key?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   renderUrl?: Prisma.StringFieldUpdateOperationsInput | string
@@ -462,19 +462,9 @@ export type ImageAssetUncheckedUpdateManyInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type ImageAssetListRelationFilter = {
-  every?: Prisma.ImageAssetWhereInput
-  some?: Prisma.ImageAssetWhereInput
-  none?: Prisma.ImageAssetWhereInput
-}
-
-export type ImageAssetOrderByRelationAggregateInput = {
-  _count?: Prisma.SortOrder
-}
-
 export type ImageAssetCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  boardId?: Prisma.SortOrder
+  pageId?: Prisma.SortOrder
   uploadedById?: Prisma.SortOrder
   s3Key?: Prisma.SortOrder
   renderUrl?: Prisma.SortOrder
@@ -495,7 +485,7 @@ export type ImageAssetAvgOrderByAggregateInput = {
 
 export type ImageAssetMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  boardId?: Prisma.SortOrder
+  pageId?: Prisma.SortOrder
   uploadedById?: Prisma.SortOrder
   s3Key?: Prisma.SortOrder
   renderUrl?: Prisma.SortOrder
@@ -510,7 +500,7 @@ export type ImageAssetMaxOrderByAggregateInput = {
 
 export type ImageAssetMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  boardId?: Prisma.SortOrder
+  pageId?: Prisma.SortOrder
   uploadedById?: Prisma.SortOrder
   s3Key?: Prisma.SortOrder
   renderUrl?: Prisma.SortOrder
@@ -529,46 +519,14 @@ export type ImageAssetSumOrderByAggregateInput = {
   naturalHeight?: Prisma.SortOrder
 }
 
-export type ImageAssetCreateNestedManyWithoutBoardInput = {
-  create?: Prisma.XOR<Prisma.ImageAssetCreateWithoutBoardInput, Prisma.ImageAssetUncheckedCreateWithoutBoardInput> | Prisma.ImageAssetCreateWithoutBoardInput[] | Prisma.ImageAssetUncheckedCreateWithoutBoardInput[]
-  connectOrCreate?: Prisma.ImageAssetCreateOrConnectWithoutBoardInput | Prisma.ImageAssetCreateOrConnectWithoutBoardInput[]
-  createMany?: Prisma.ImageAssetCreateManyBoardInputEnvelope
-  connect?: Prisma.ImageAssetWhereUniqueInput | Prisma.ImageAssetWhereUniqueInput[]
+export type ImageAssetListRelationFilter = {
+  every?: Prisma.ImageAssetWhereInput
+  some?: Prisma.ImageAssetWhereInput
+  none?: Prisma.ImageAssetWhereInput
 }
 
-export type ImageAssetUncheckedCreateNestedManyWithoutBoardInput = {
-  create?: Prisma.XOR<Prisma.ImageAssetCreateWithoutBoardInput, Prisma.ImageAssetUncheckedCreateWithoutBoardInput> | Prisma.ImageAssetCreateWithoutBoardInput[] | Prisma.ImageAssetUncheckedCreateWithoutBoardInput[]
-  connectOrCreate?: Prisma.ImageAssetCreateOrConnectWithoutBoardInput | Prisma.ImageAssetCreateOrConnectWithoutBoardInput[]
-  createMany?: Prisma.ImageAssetCreateManyBoardInputEnvelope
-  connect?: Prisma.ImageAssetWhereUniqueInput | Prisma.ImageAssetWhereUniqueInput[]
-}
-
-export type ImageAssetUpdateManyWithoutBoardNestedInput = {
-  create?: Prisma.XOR<Prisma.ImageAssetCreateWithoutBoardInput, Prisma.ImageAssetUncheckedCreateWithoutBoardInput> | Prisma.ImageAssetCreateWithoutBoardInput[] | Prisma.ImageAssetUncheckedCreateWithoutBoardInput[]
-  connectOrCreate?: Prisma.ImageAssetCreateOrConnectWithoutBoardInput | Prisma.ImageAssetCreateOrConnectWithoutBoardInput[]
-  upsert?: Prisma.ImageAssetUpsertWithWhereUniqueWithoutBoardInput | Prisma.ImageAssetUpsertWithWhereUniqueWithoutBoardInput[]
-  createMany?: Prisma.ImageAssetCreateManyBoardInputEnvelope
-  set?: Prisma.ImageAssetWhereUniqueInput | Prisma.ImageAssetWhereUniqueInput[]
-  disconnect?: Prisma.ImageAssetWhereUniqueInput | Prisma.ImageAssetWhereUniqueInput[]
-  delete?: Prisma.ImageAssetWhereUniqueInput | Prisma.ImageAssetWhereUniqueInput[]
-  connect?: Prisma.ImageAssetWhereUniqueInput | Prisma.ImageAssetWhereUniqueInput[]
-  update?: Prisma.ImageAssetUpdateWithWhereUniqueWithoutBoardInput | Prisma.ImageAssetUpdateWithWhereUniqueWithoutBoardInput[]
-  updateMany?: Prisma.ImageAssetUpdateManyWithWhereWithoutBoardInput | Prisma.ImageAssetUpdateManyWithWhereWithoutBoardInput[]
-  deleteMany?: Prisma.ImageAssetScalarWhereInput | Prisma.ImageAssetScalarWhereInput[]
-}
-
-export type ImageAssetUncheckedUpdateManyWithoutBoardNestedInput = {
-  create?: Prisma.XOR<Prisma.ImageAssetCreateWithoutBoardInput, Prisma.ImageAssetUncheckedCreateWithoutBoardInput> | Prisma.ImageAssetCreateWithoutBoardInput[] | Prisma.ImageAssetUncheckedCreateWithoutBoardInput[]
-  connectOrCreate?: Prisma.ImageAssetCreateOrConnectWithoutBoardInput | Prisma.ImageAssetCreateOrConnectWithoutBoardInput[]
-  upsert?: Prisma.ImageAssetUpsertWithWhereUniqueWithoutBoardInput | Prisma.ImageAssetUpsertWithWhereUniqueWithoutBoardInput[]
-  createMany?: Prisma.ImageAssetCreateManyBoardInputEnvelope
-  set?: Prisma.ImageAssetWhereUniqueInput | Prisma.ImageAssetWhereUniqueInput[]
-  disconnect?: Prisma.ImageAssetWhereUniqueInput | Prisma.ImageAssetWhereUniqueInput[]
-  delete?: Prisma.ImageAssetWhereUniqueInput | Prisma.ImageAssetWhereUniqueInput[]
-  connect?: Prisma.ImageAssetWhereUniqueInput | Prisma.ImageAssetWhereUniqueInput[]
-  update?: Prisma.ImageAssetUpdateWithWhereUniqueWithoutBoardInput | Prisma.ImageAssetUpdateWithWhereUniqueWithoutBoardInput[]
-  updateMany?: Prisma.ImageAssetUpdateManyWithWhereWithoutBoardInput | Prisma.ImageAssetUpdateManyWithWhereWithoutBoardInput[]
-  deleteMany?: Prisma.ImageAssetScalarWhereInput | Prisma.ImageAssetScalarWhereInput[]
+export type ImageAssetOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
 }
 
 export type NullableBigIntFieldUpdateOperationsInput = {
@@ -585,6 +543,48 @@ export type IntFieldUpdateOperationsInput = {
   decrement?: number
   multiply?: number
   divide?: number
+}
+
+export type ImageAssetCreateNestedManyWithoutPageInput = {
+  create?: Prisma.XOR<Prisma.ImageAssetCreateWithoutPageInput, Prisma.ImageAssetUncheckedCreateWithoutPageInput> | Prisma.ImageAssetCreateWithoutPageInput[] | Prisma.ImageAssetUncheckedCreateWithoutPageInput[]
+  connectOrCreate?: Prisma.ImageAssetCreateOrConnectWithoutPageInput | Prisma.ImageAssetCreateOrConnectWithoutPageInput[]
+  createMany?: Prisma.ImageAssetCreateManyPageInputEnvelope
+  connect?: Prisma.ImageAssetWhereUniqueInput | Prisma.ImageAssetWhereUniqueInput[]
+}
+
+export type ImageAssetUncheckedCreateNestedManyWithoutPageInput = {
+  create?: Prisma.XOR<Prisma.ImageAssetCreateWithoutPageInput, Prisma.ImageAssetUncheckedCreateWithoutPageInput> | Prisma.ImageAssetCreateWithoutPageInput[] | Prisma.ImageAssetUncheckedCreateWithoutPageInput[]
+  connectOrCreate?: Prisma.ImageAssetCreateOrConnectWithoutPageInput | Prisma.ImageAssetCreateOrConnectWithoutPageInput[]
+  createMany?: Prisma.ImageAssetCreateManyPageInputEnvelope
+  connect?: Prisma.ImageAssetWhereUniqueInput | Prisma.ImageAssetWhereUniqueInput[]
+}
+
+export type ImageAssetUpdateManyWithoutPageNestedInput = {
+  create?: Prisma.XOR<Prisma.ImageAssetCreateWithoutPageInput, Prisma.ImageAssetUncheckedCreateWithoutPageInput> | Prisma.ImageAssetCreateWithoutPageInput[] | Prisma.ImageAssetUncheckedCreateWithoutPageInput[]
+  connectOrCreate?: Prisma.ImageAssetCreateOrConnectWithoutPageInput | Prisma.ImageAssetCreateOrConnectWithoutPageInput[]
+  upsert?: Prisma.ImageAssetUpsertWithWhereUniqueWithoutPageInput | Prisma.ImageAssetUpsertWithWhereUniqueWithoutPageInput[]
+  createMany?: Prisma.ImageAssetCreateManyPageInputEnvelope
+  set?: Prisma.ImageAssetWhereUniqueInput | Prisma.ImageAssetWhereUniqueInput[]
+  disconnect?: Prisma.ImageAssetWhereUniqueInput | Prisma.ImageAssetWhereUniqueInput[]
+  delete?: Prisma.ImageAssetWhereUniqueInput | Prisma.ImageAssetWhereUniqueInput[]
+  connect?: Prisma.ImageAssetWhereUniqueInput | Prisma.ImageAssetWhereUniqueInput[]
+  update?: Prisma.ImageAssetUpdateWithWhereUniqueWithoutPageInput | Prisma.ImageAssetUpdateWithWhereUniqueWithoutPageInput[]
+  updateMany?: Prisma.ImageAssetUpdateManyWithWhereWithoutPageInput | Prisma.ImageAssetUpdateManyWithWhereWithoutPageInput[]
+  deleteMany?: Prisma.ImageAssetScalarWhereInput | Prisma.ImageAssetScalarWhereInput[]
+}
+
+export type ImageAssetUncheckedUpdateManyWithoutPageNestedInput = {
+  create?: Prisma.XOR<Prisma.ImageAssetCreateWithoutPageInput, Prisma.ImageAssetUncheckedCreateWithoutPageInput> | Prisma.ImageAssetCreateWithoutPageInput[] | Prisma.ImageAssetUncheckedCreateWithoutPageInput[]
+  connectOrCreate?: Prisma.ImageAssetCreateOrConnectWithoutPageInput | Prisma.ImageAssetCreateOrConnectWithoutPageInput[]
+  upsert?: Prisma.ImageAssetUpsertWithWhereUniqueWithoutPageInput | Prisma.ImageAssetUpsertWithWhereUniqueWithoutPageInput[]
+  createMany?: Prisma.ImageAssetCreateManyPageInputEnvelope
+  set?: Prisma.ImageAssetWhereUniqueInput | Prisma.ImageAssetWhereUniqueInput[]
+  disconnect?: Prisma.ImageAssetWhereUniqueInput | Prisma.ImageAssetWhereUniqueInput[]
+  delete?: Prisma.ImageAssetWhereUniqueInput | Prisma.ImageAssetWhereUniqueInput[]
+  connect?: Prisma.ImageAssetWhereUniqueInput | Prisma.ImageAssetWhereUniqueInput[]
+  update?: Prisma.ImageAssetUpdateWithWhereUniqueWithoutPageInput | Prisma.ImageAssetUpdateWithWhereUniqueWithoutPageInput[]
+  updateMany?: Prisma.ImageAssetUpdateManyWithWhereWithoutPageInput | Prisma.ImageAssetUpdateManyWithWhereWithoutPageInput[]
+  deleteMany?: Prisma.ImageAssetScalarWhereInput | Prisma.ImageAssetScalarWhereInput[]
 }
 
 export type ImageAssetCreateNestedManyWithoutUploadedByInput = {
@@ -629,7 +629,7 @@ export type ImageAssetUncheckedUpdateManyWithoutUploadedByNestedInput = {
   deleteMany?: Prisma.ImageAssetScalarWhereInput | Prisma.ImageAssetScalarWhereInput[]
 }
 
-export type ImageAssetCreateWithoutBoardInput = {
+export type ImageAssetCreateWithoutPageInput = {
   id: string
   s3Key?: string | null
   renderUrl: string
@@ -643,7 +643,7 @@ export type ImageAssetCreateWithoutBoardInput = {
   uploadedBy: Prisma.UserCreateNestedOneWithoutUploadedAssetsInput
 }
 
-export type ImageAssetUncheckedCreateWithoutBoardInput = {
+export type ImageAssetUncheckedCreateWithoutPageInput = {
   id: string
   uploadedById: string
   s3Key?: string | null
@@ -657,30 +657,30 @@ export type ImageAssetUncheckedCreateWithoutBoardInput = {
   createdAt?: Date | string
 }
 
-export type ImageAssetCreateOrConnectWithoutBoardInput = {
+export type ImageAssetCreateOrConnectWithoutPageInput = {
   where: Prisma.ImageAssetWhereUniqueInput
-  create: Prisma.XOR<Prisma.ImageAssetCreateWithoutBoardInput, Prisma.ImageAssetUncheckedCreateWithoutBoardInput>
+  create: Prisma.XOR<Prisma.ImageAssetCreateWithoutPageInput, Prisma.ImageAssetUncheckedCreateWithoutPageInput>
 }
 
-export type ImageAssetCreateManyBoardInputEnvelope = {
-  data: Prisma.ImageAssetCreateManyBoardInput | Prisma.ImageAssetCreateManyBoardInput[]
+export type ImageAssetCreateManyPageInputEnvelope = {
+  data: Prisma.ImageAssetCreateManyPageInput | Prisma.ImageAssetCreateManyPageInput[]
   skipDuplicates?: boolean
 }
 
-export type ImageAssetUpsertWithWhereUniqueWithoutBoardInput = {
+export type ImageAssetUpsertWithWhereUniqueWithoutPageInput = {
   where: Prisma.ImageAssetWhereUniqueInput
-  update: Prisma.XOR<Prisma.ImageAssetUpdateWithoutBoardInput, Prisma.ImageAssetUncheckedUpdateWithoutBoardInput>
-  create: Prisma.XOR<Prisma.ImageAssetCreateWithoutBoardInput, Prisma.ImageAssetUncheckedCreateWithoutBoardInput>
+  update: Prisma.XOR<Prisma.ImageAssetUpdateWithoutPageInput, Prisma.ImageAssetUncheckedUpdateWithoutPageInput>
+  create: Prisma.XOR<Prisma.ImageAssetCreateWithoutPageInput, Prisma.ImageAssetUncheckedCreateWithoutPageInput>
 }
 
-export type ImageAssetUpdateWithWhereUniqueWithoutBoardInput = {
+export type ImageAssetUpdateWithWhereUniqueWithoutPageInput = {
   where: Prisma.ImageAssetWhereUniqueInput
-  data: Prisma.XOR<Prisma.ImageAssetUpdateWithoutBoardInput, Prisma.ImageAssetUncheckedUpdateWithoutBoardInput>
+  data: Prisma.XOR<Prisma.ImageAssetUpdateWithoutPageInput, Prisma.ImageAssetUncheckedUpdateWithoutPageInput>
 }
 
-export type ImageAssetUpdateManyWithWhereWithoutBoardInput = {
+export type ImageAssetUpdateManyWithWhereWithoutPageInput = {
   where: Prisma.ImageAssetScalarWhereInput
-  data: Prisma.XOR<Prisma.ImageAssetUpdateManyMutationInput, Prisma.ImageAssetUncheckedUpdateManyWithoutBoardInput>
+  data: Prisma.XOR<Prisma.ImageAssetUpdateManyMutationInput, Prisma.ImageAssetUncheckedUpdateManyWithoutPageInput>
 }
 
 export type ImageAssetScalarWhereInput = {
@@ -688,7 +688,7 @@ export type ImageAssetScalarWhereInput = {
   OR?: Prisma.ImageAssetScalarWhereInput[]
   NOT?: Prisma.ImageAssetScalarWhereInput | Prisma.ImageAssetScalarWhereInput[]
   id?: Prisma.StringFilter<"ImageAsset"> | string
-  boardId?: Prisma.StringFilter<"ImageAsset"> | string
+  pageId?: Prisma.StringFilter<"ImageAsset"> | string
   uploadedById?: Prisma.StringFilter<"ImageAsset"> | string
   s3Key?: Prisma.StringNullableFilter<"ImageAsset"> | string | null
   renderUrl?: Prisma.StringFilter<"ImageAsset"> | string
@@ -712,12 +712,12 @@ export type ImageAssetCreateWithoutUploadedByInput = {
   naturalHeight: number
   status: string
   createdAt?: Date | string
-  board: Prisma.BoardCreateNestedOneWithoutImageAssetsInput
+  page: Prisma.PageCreateNestedOneWithoutImageAssetsInput
 }
 
 export type ImageAssetUncheckedCreateWithoutUploadedByInput = {
   id: string
-  boardId: string
+  pageId: string
   s3Key?: string | null
   renderUrl: string
   publicUrl?: string | null
@@ -755,7 +755,7 @@ export type ImageAssetUpdateManyWithWhereWithoutUploadedByInput = {
   data: Prisma.XOR<Prisma.ImageAssetUpdateManyMutationInput, Prisma.ImageAssetUncheckedUpdateManyWithoutUploadedByInput>
 }
 
-export type ImageAssetCreateManyBoardInput = {
+export type ImageAssetCreateManyPageInput = {
   id: string
   uploadedById: string
   s3Key?: string | null
@@ -769,7 +769,7 @@ export type ImageAssetCreateManyBoardInput = {
   createdAt?: Date | string
 }
 
-export type ImageAssetUpdateWithoutBoardInput = {
+export type ImageAssetUpdateWithoutPageInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   s3Key?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   renderUrl?: Prisma.StringFieldUpdateOperationsInput | string
@@ -783,7 +783,7 @@ export type ImageAssetUpdateWithoutBoardInput = {
   uploadedBy?: Prisma.UserUpdateOneRequiredWithoutUploadedAssetsNestedInput
 }
 
-export type ImageAssetUncheckedUpdateWithoutBoardInput = {
+export type ImageAssetUncheckedUpdateWithoutPageInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   uploadedById?: Prisma.StringFieldUpdateOperationsInput | string
   s3Key?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -797,7 +797,7 @@ export type ImageAssetUncheckedUpdateWithoutBoardInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type ImageAssetUncheckedUpdateManyWithoutBoardInput = {
+export type ImageAssetUncheckedUpdateManyWithoutPageInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   uploadedById?: Prisma.StringFieldUpdateOperationsInput | string
   s3Key?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -813,7 +813,7 @@ export type ImageAssetUncheckedUpdateManyWithoutBoardInput = {
 
 export type ImageAssetCreateManyUploadedByInput = {
   id: string
-  boardId: string
+  pageId: string
   s3Key?: string | null
   renderUrl: string
   publicUrl?: string | null
@@ -836,12 +836,12 @@ export type ImageAssetUpdateWithoutUploadedByInput = {
   naturalHeight?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  board?: Prisma.BoardUpdateOneRequiredWithoutImageAssetsNestedInput
+  page?: Prisma.PageUpdateOneRequiredWithoutImageAssetsNestedInput
 }
 
 export type ImageAssetUncheckedUpdateWithoutUploadedByInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  boardId?: Prisma.StringFieldUpdateOperationsInput | string
+  pageId?: Prisma.StringFieldUpdateOperationsInput | string
   s3Key?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   renderUrl?: Prisma.StringFieldUpdateOperationsInput | string
   publicUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -855,7 +855,7 @@ export type ImageAssetUncheckedUpdateWithoutUploadedByInput = {
 
 export type ImageAssetUncheckedUpdateManyWithoutUploadedByInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  boardId?: Prisma.StringFieldUpdateOperationsInput | string
+  pageId?: Prisma.StringFieldUpdateOperationsInput | string
   s3Key?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   renderUrl?: Prisma.StringFieldUpdateOperationsInput | string
   publicUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -871,7 +871,7 @@ export type ImageAssetUncheckedUpdateManyWithoutUploadedByInput = {
 
 export type ImageAssetSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  boardId?: boolean
+  pageId?: boolean
   uploadedById?: boolean
   s3Key?: boolean
   renderUrl?: boolean
@@ -882,13 +882,13 @@ export type ImageAssetSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   naturalHeight?: boolean
   status?: boolean
   createdAt?: boolean
-  board?: boolean | Prisma.BoardDefaultArgs<ExtArgs>
+  page?: boolean | Prisma.PageDefaultArgs<ExtArgs>
   uploadedBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["imageAsset"]>
 
 export type ImageAssetSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  boardId?: boolean
+  pageId?: boolean
   uploadedById?: boolean
   s3Key?: boolean
   renderUrl?: boolean
@@ -899,13 +899,13 @@ export type ImageAssetSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ex
   naturalHeight?: boolean
   status?: boolean
   createdAt?: boolean
-  board?: boolean | Prisma.BoardDefaultArgs<ExtArgs>
+  page?: boolean | Prisma.PageDefaultArgs<ExtArgs>
   uploadedBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["imageAsset"]>
 
 export type ImageAssetSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  boardId?: boolean
+  pageId?: boolean
   uploadedById?: boolean
   s3Key?: boolean
   renderUrl?: boolean
@@ -916,13 +916,13 @@ export type ImageAssetSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
   naturalHeight?: boolean
   status?: boolean
   createdAt?: boolean
-  board?: boolean | Prisma.BoardDefaultArgs<ExtArgs>
+  page?: boolean | Prisma.PageDefaultArgs<ExtArgs>
   uploadedBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["imageAsset"]>
 
 export type ImageAssetSelectScalar = {
   id?: boolean
-  boardId?: boolean
+  pageId?: boolean
   uploadedById?: boolean
   s3Key?: boolean
   renderUrl?: boolean
@@ -935,29 +935,29 @@ export type ImageAssetSelectScalar = {
   createdAt?: boolean
 }
 
-export type ImageAssetOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "boardId" | "uploadedById" | "s3Key" | "renderUrl" | "publicUrl" | "mimeType" | "fileSize" | "naturalWidth" | "naturalHeight" | "status" | "createdAt", ExtArgs["result"]["imageAsset"]>
+export type ImageAssetOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "pageId" | "uploadedById" | "s3Key" | "renderUrl" | "publicUrl" | "mimeType" | "fileSize" | "naturalWidth" | "naturalHeight" | "status" | "createdAt", ExtArgs["result"]["imageAsset"]>
 export type ImageAssetInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  board?: boolean | Prisma.BoardDefaultArgs<ExtArgs>
+  page?: boolean | Prisma.PageDefaultArgs<ExtArgs>
   uploadedBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 export type ImageAssetIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  board?: boolean | Prisma.BoardDefaultArgs<ExtArgs>
+  page?: boolean | Prisma.PageDefaultArgs<ExtArgs>
   uploadedBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 export type ImageAssetIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  board?: boolean | Prisma.BoardDefaultArgs<ExtArgs>
+  page?: boolean | Prisma.PageDefaultArgs<ExtArgs>
   uploadedBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 
 export type $ImageAssetPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "ImageAsset"
   objects: {
-    board: Prisma.$BoardPayload<ExtArgs>
+    page: Prisma.$PagePayload<ExtArgs>
     uploadedBy: Prisma.$UserPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
-    boardId: string
+    pageId: string
     uploadedById: string
     s3Key: string | null
     renderUrl: string
@@ -1362,7 +1362,7 @@ readonly fields: ImageAssetFieldRefs;
  */
 export interface Prisma__ImageAssetClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  board<T extends Prisma.BoardDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BoardDefaultArgs<ExtArgs>>): Prisma.Prisma__BoardClient<runtime.Types.Result.GetResult<Prisma.$BoardPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  page<T extends Prisma.PageDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PageDefaultArgs<ExtArgs>>): Prisma.Prisma__PageClient<runtime.Types.Result.GetResult<Prisma.$PagePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   uploadedBy<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1394,7 +1394,7 @@ export interface Prisma__ImageAssetClient<T, Null = never, ExtArgs extends runti
  */
 export interface ImageAssetFieldRefs {
   readonly id: Prisma.FieldRef<"ImageAsset", 'String'>
-  readonly boardId: Prisma.FieldRef<"ImageAsset", 'String'>
+  readonly pageId: Prisma.FieldRef<"ImageAsset", 'String'>
   readonly uploadedById: Prisma.FieldRef<"ImageAsset", 'String'>
   readonly s3Key: Prisma.FieldRef<"ImageAsset", 'String'>
   readonly renderUrl: Prisma.FieldRef<"ImageAsset", 'String'>

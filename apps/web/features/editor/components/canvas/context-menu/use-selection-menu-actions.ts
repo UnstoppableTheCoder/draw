@@ -26,7 +26,7 @@ import {
   useShapes,
 } from "@/features/editor/store/editor/selectors";
 
-import { Shape } from "@/features/editor/types";
+import { FrameShape, Shape } from "@/features/editor/types";
 
 function compareStrings(a: string, b: string): number {
   return a < b ? -1 : a > b ? 1 : 0;
@@ -53,6 +53,21 @@ export default function useSelectionMenuActions({
 
   const group = async () => {
     const selected = new Set(selectedShapesIds);
+    const selectedShapes = shapes.filter((shape) => selected.has(shape.id));
+
+    // Conditions
+    const selectedCount = selectedShapes.length;
+    const isMultipleShapes = selectedCount > 1;
+    const hasFramesIncluded = selectedShapes.some(
+      (shape) => shape.type === "frame",
+    );
+    const hasGroupedShapes = selectedShapes.some((shape) => shape.groupId);
+
+    // Guard clauses
+    if (!isMultipleShapes || hasFramesIncluded || hasGroupedShapes) {
+      return;
+    }
+
     const groupId = uuidv4();
 
     const previousShapes = shapes;
@@ -89,20 +104,25 @@ export default function useSelectionMenuActions({
   const unGroup = async () => {
     const selected = new Set(selectedShapesIds);
 
-    const selectedGroups = new Set(
-      shapes
-        .filter(
-          (shape) =>
-            selected.has(shape.id) &&
-            shape.groupId !== null &&
-            shape.groupId !== undefined,
-        )
-        .map((shape) => shape.groupId!),
+    const selectedShapes = shapes.filter((shape) => selected.has(shape.id));
+
+    // Conditions
+    const hasFramesIncluded = selectedShapes.some(
+      (shape) => shape.type === "frame",
     );
 
-    if (selectedGroups.size === 0) {
+    const hasGroupedShapes = selectedShapes.some((shape) => shape.groupId);
+
+    // Guard clauses
+    if (hasFramesIncluded || !hasGroupedShapes) {
       return;
     }
+
+    const selectedGroups = new Set(
+      selectedShapes
+        .filter((shape): shape is Shape => shape.groupId != null)
+        .map((shape) => shape.groupId),
+    );
 
     const previousShapes = shapes;
     const changedShapes: Shape[] = [];
@@ -267,15 +287,33 @@ export default function useSelectionMenuActions({
   };
 
   const removeFrame = async () => {
-    const previousShapes = shapes;
-    const changedShapes: Shape[] = [];
     const selectedIds = new Set(selectedShapesIds);
 
-    const frame = shapes.find(
-      (shape) => selectedIds.has(shape.id) && shape.type === "frame",
+    const selectedShapes = shapes.filter((shape) => selectedIds.has(shape.id));
+
+    // Conditions
+    const hasGroupedShapes = selectedShapes.some((shape) => shape.groupId);
+    const hasFramesIncluded = selectedShapes.some(
+      (shape) => shape.type === "frame",
+    );
+    const hasFrameChildren = selectedShapes.some((shape) => shape.frameId);
+
+    const removeFrame =
+      (hasFramesIncluded || hasFrameChildren) && !hasGroupedShapes;
+
+    // Guard clause
+    if (!removeFrame) {
+      return;
+    }
+
+    const previousShapes = shapes;
+    const changedShapes: Shape[] = [];
+
+    const frame = selectedShapes.find(
+      (shape): shape is FrameShape => shape.type === "frame",
     );
 
-    // Case 1: A frame is selected -> remove the frame.
+    // A frame is selected -> remove the frame
     if (frame) {
       const nextShapes = previousShapes
         .map((shape) => {
@@ -312,7 +350,7 @@ export default function useSelectionMenuActions({
       return;
     }
 
-    // Case 2: Selected shapes are inside a frame -> detach them.
+    // Selected shapes are inside a frame -> detach them
     const nextShapes = previousShapes.map((shape) => {
       if (selectedIds.has(shape.id) && shape.frameId) {
         const updatedShape = {
@@ -327,7 +365,9 @@ export default function useSelectionMenuActions({
       return shape;
     });
 
-    if (changedShapes.length === 0) return;
+    if (changedShapes.length === 0) {
+      return;
+    }
 
     setShapes(nextShapes);
     pushHistory();

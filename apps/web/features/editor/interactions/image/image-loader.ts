@@ -25,7 +25,7 @@ export function loadImage(src: string): Promise<HTMLImageElement> {
 
 export async function loadImageAssets(
   files: FileList,
-  boardId: string,
+  pageId: string,
   uploadedById: string,
 ): Promise<{
   assets: ImageAsset[];
@@ -41,7 +41,7 @@ export async function loadImageAssets(
       return {
         id: uuidv4(),
         renderUrl,
-        boardId,
+        pageId,
         uploadedById,
         naturalWidth: image.naturalWidth,
         naturalHeight: image.naturalHeight,

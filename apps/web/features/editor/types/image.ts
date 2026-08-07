@@ -1,6 +1,6 @@
 export interface ImageAsset {
   id: string;
-  boardId: string;
+  pageId: string;
   uploadedById: string;
   s3Key?: string;
   renderUrl: string;

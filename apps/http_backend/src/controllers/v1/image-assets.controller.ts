@@ -3,7 +3,7 @@ import type { Request, Response } from "express";
 
 export const createImageAssets = async (req: Request, res: Response) => {
   try {
-    const { boardId } = req.params;
+    const { pageId } = req.params;
     const imageAssets = req.body;
 
     if (!Array.isArray(imageAssets)) {
@@ -15,7 +15,7 @@ export const createImageAssets = async (req: Request, res: Response) => {
     const images = await prisma.imageAsset.createManyAndReturn({
       data: imageAssets.map((image) => ({
         ...image,
-        boardId,
+        pageId,
       })),
     });
 
@@ -29,34 +29,13 @@ export const createImageAssets = async (req: Request, res: Response) => {
   }
 };
 
-export const createImageAsset = async (req: Request, res: Response) => {
-  try {
-    const { boardId } = req.params;
-
-    const image = await prisma.imageAsset.create({
-      data: {
-        ...req.body,
-        boardId,
-      },
-    });
-
-    return res.status(201).json(image);
-  } catch (error) {
-    console.error(error);
-
-    return res.status(500).json({
-      message: "Failed to create image asset.",
-    });
-  }
-};
-
 export const getImageAssets = async (req: Request, res: Response) => {
   try {
-    const { boardId } = req.params;
+    const { pageId } = req.params;
 
     const images = await prisma.imageAsset.findMany({
       where: {
-        boardId: boardId as string,
+        pageId: pageId as string,
       },
       orderBy: {
         createdAt: "asc",
@@ -73,43 +52,59 @@ export const getImageAssets = async (req: Request, res: Response) => {
   }
 };
 
-export const updateImageAsset = async (req: Request, res: Response) => {
+export const updateImageAssets = async (req: Request, res: Response) => {
   try {
-    const { id, imageId, ...data } = req.params;
+    const updates = req.body;
 
-    const image = await prisma.imageAsset.update({
-      where: {
-        id: imageId as string,
-      },
-      data,
-    });
+    if (!Array.isArray(updates)) {
+      return res.status(400).json({
+        message: "Expected an array of image assets.",
+      });
+    }
 
-    return res.json(image);
+    const images = await prisma.$transaction(
+      updates.map(({ id, ...data }) =>
+        prisma.imageAsset.update({
+          where: { id },
+          data,
+        }),
+      ),
+    );
+
+    return res.json(images);
   } catch (error) {
     console.error(error);
 
     return res.status(500).json({
-      message: "Failed to update image asset.",
+      message: "Failed to update image assets.",
     });
   }
 };
 
-export const deleteImageAsset = async (req: Request, res: Response) => {
+export const deleteImageAssets = async (req: Request, res: Response) => {
   try {
-    const { imageId } = req.params;
+    const { ids } = req.body;
 
-    await prisma.imageAsset.delete({
+    if (!Array.isArray(ids)) {
+      return res.status(400).json({
+        message: "Expected an array of image ids.",
+      });
+    }
+
+    const result = await prisma.imageAsset.deleteMany({
       where: {
-        id: imageId as string,
+        id: {
+          in: ids,
+        },
       },
     });
 
-    return res.sendStatus(204);
+    return res.json(result);
   } catch (error) {
     console.error(error);
 
     return res.status(500).json({
-      message: "Failed to delete image asset.",
+      message: "Failed to delete image assets.",
     });
   }
 };

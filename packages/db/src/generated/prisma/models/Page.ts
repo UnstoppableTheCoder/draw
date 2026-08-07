@@ -211,6 +211,7 @@ export type PageWhereInput = {
   shapes?: Prisma.ShapeListRelationFilter
   comments?: Prisma.CommentListRelationFilter
   activityLogs?: Prisma.ActivityLogListRelationFilter
+  imageAssets?: Prisma.ImageAssetListRelationFilter
 }
 
 export type PageOrderByWithRelationInput = {
@@ -227,6 +228,7 @@ export type PageOrderByWithRelationInput = {
   shapes?: Prisma.ShapeOrderByRelationAggregateInput
   comments?: Prisma.CommentOrderByRelationAggregateInput
   activityLogs?: Prisma.ActivityLogOrderByRelationAggregateInput
+  imageAssets?: Prisma.ImageAssetOrderByRelationAggregateInput
 }
 
 export type PageWhereUniqueInput = Prisma.AtLeast<{
@@ -246,6 +248,7 @@ export type PageWhereUniqueInput = Prisma.AtLeast<{
   shapes?: Prisma.ShapeListRelationFilter
   comments?: Prisma.CommentListRelationFilter
   activityLogs?: Prisma.ActivityLogListRelationFilter
+  imageAssets?: Prisma.ImageAssetListRelationFilter
 }, "id">
 
 export type PageOrderByWithAggregationInput = {
@@ -288,6 +291,7 @@ export type PageCreateInput = {
   shapes?: Prisma.ShapeCreateNestedManyWithoutPageInput
   comments?: Prisma.CommentCreateNestedManyWithoutPageInput
   activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutPageInput
+  imageAssets?: Prisma.ImageAssetCreateNestedManyWithoutPageInput
 }
 
 export type PageUncheckedCreateInput = {
@@ -302,6 +306,7 @@ export type PageUncheckedCreateInput = {
   shapes?: Prisma.ShapeUncheckedCreateNestedManyWithoutPageInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutPageInput
   activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutPageInput
+  imageAssets?: Prisma.ImageAssetUncheckedCreateNestedManyWithoutPageInput
 }
 
 export type PageUpdateInput = {
@@ -316,6 +321,7 @@ export type PageUpdateInput = {
   shapes?: Prisma.ShapeUpdateManyWithoutPageNestedInput
   comments?: Prisma.CommentUpdateManyWithoutPageNestedInput
   activityLogs?: Prisma.ActivityLogUpdateManyWithoutPageNestedInput
+  imageAssets?: Prisma.ImageAssetUpdateManyWithoutPageNestedInput
 }
 
 export type PageUncheckedUpdateInput = {
@@ -330,6 +336,7 @@ export type PageUncheckedUpdateInput = {
   shapes?: Prisma.ShapeUncheckedUpdateManyWithoutPageNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutPageNestedInput
   activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutPageNestedInput
+  imageAssets?: Prisma.ImageAssetUncheckedUpdateManyWithoutPageNestedInput
 }
 
 export type PageCreateManyInput = {
@@ -488,6 +495,20 @@ export type PageUpdateOneRequiredWithoutCommentsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.PageUpdateToOneWithWhereWithoutCommentsInput, Prisma.PageUpdateWithoutCommentsInput>, Prisma.PageUncheckedUpdateWithoutCommentsInput>
 }
 
+export type PageCreateNestedOneWithoutImageAssetsInput = {
+  create?: Prisma.XOR<Prisma.PageCreateWithoutImageAssetsInput, Prisma.PageUncheckedCreateWithoutImageAssetsInput>
+  connectOrCreate?: Prisma.PageCreateOrConnectWithoutImageAssetsInput
+  connect?: Prisma.PageWhereUniqueInput
+}
+
+export type PageUpdateOneRequiredWithoutImageAssetsNestedInput = {
+  create?: Prisma.XOR<Prisma.PageCreateWithoutImageAssetsInput, Prisma.PageUncheckedCreateWithoutImageAssetsInput>
+  connectOrCreate?: Prisma.PageCreateOrConnectWithoutImageAssetsInput
+  upsert?: Prisma.PageUpsertWithoutImageAssetsInput
+  connect?: Prisma.PageWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PageUpdateToOneWithWhereWithoutImageAssetsInput, Prisma.PageUpdateWithoutImageAssetsInput>, Prisma.PageUncheckedUpdateWithoutImageAssetsInput>
+}
+
 export type PageCreateNestedOneWithoutShapesInput = {
   create?: Prisma.XOR<Prisma.PageCreateWithoutShapesInput, Prisma.PageUncheckedCreateWithoutShapesInput>
   connectOrCreate?: Prisma.PageCreateOrConnectWithoutShapesInput
@@ -555,6 +576,7 @@ export type PageCreateWithoutActivityLogsInput = {
   createdBy: Prisma.UserCreateNestedOneWithoutPagesCreatedInput
   shapes?: Prisma.ShapeCreateNestedManyWithoutPageInput
   comments?: Prisma.CommentCreateNestedManyWithoutPageInput
+  imageAssets?: Prisma.ImageAssetCreateNestedManyWithoutPageInput
 }
 
 export type PageUncheckedCreateWithoutActivityLogsInput = {
@@ -568,6 +590,7 @@ export type PageUncheckedCreateWithoutActivityLogsInput = {
   updatedAt?: Date | string
   shapes?: Prisma.ShapeUncheckedCreateNestedManyWithoutPageInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutPageInput
+  imageAssets?: Prisma.ImageAssetUncheckedCreateNestedManyWithoutPageInput
 }
 
 export type PageCreateOrConnectWithoutActivityLogsInput = {
@@ -597,6 +620,7 @@ export type PageUpdateWithoutActivityLogsInput = {
   createdBy?: Prisma.UserUpdateOneRequiredWithoutPagesCreatedNestedInput
   shapes?: Prisma.ShapeUpdateManyWithoutPageNestedInput
   comments?: Prisma.CommentUpdateManyWithoutPageNestedInput
+  imageAssets?: Prisma.ImageAssetUpdateManyWithoutPageNestedInput
 }
 
 export type PageUncheckedUpdateWithoutActivityLogsInput = {
@@ -610,6 +634,7 @@ export type PageUncheckedUpdateWithoutActivityLogsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   shapes?: Prisma.ShapeUncheckedUpdateManyWithoutPageNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutPageNestedInput
+  imageAssets?: Prisma.ImageAssetUncheckedUpdateManyWithoutPageNestedInput
 }
 
 export type PageCreateWithoutBoardInput = {
@@ -623,6 +648,7 @@ export type PageCreateWithoutBoardInput = {
   shapes?: Prisma.ShapeCreateNestedManyWithoutPageInput
   comments?: Prisma.CommentCreateNestedManyWithoutPageInput
   activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutPageInput
+  imageAssets?: Prisma.ImageAssetCreateNestedManyWithoutPageInput
 }
 
 export type PageUncheckedCreateWithoutBoardInput = {
@@ -636,6 +662,7 @@ export type PageUncheckedCreateWithoutBoardInput = {
   shapes?: Prisma.ShapeUncheckedCreateNestedManyWithoutPageInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutPageInput
   activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutPageInput
+  imageAssets?: Prisma.ImageAssetUncheckedCreateNestedManyWithoutPageInput
 }
 
 export type PageCreateOrConnectWithoutBoardInput = {
@@ -689,6 +716,7 @@ export type PageCreateWithoutCommentsInput = {
   createdBy: Prisma.UserCreateNestedOneWithoutPagesCreatedInput
   shapes?: Prisma.ShapeCreateNestedManyWithoutPageInput
   activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutPageInput
+  imageAssets?: Prisma.ImageAssetCreateNestedManyWithoutPageInput
 }
 
 export type PageUncheckedCreateWithoutCommentsInput = {
@@ -702,6 +730,7 @@ export type PageUncheckedCreateWithoutCommentsInput = {
   updatedAt?: Date | string
   shapes?: Prisma.ShapeUncheckedCreateNestedManyWithoutPageInput
   activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutPageInput
+  imageAssets?: Prisma.ImageAssetUncheckedCreateNestedManyWithoutPageInput
 }
 
 export type PageCreateOrConnectWithoutCommentsInput = {
@@ -731,6 +760,7 @@ export type PageUpdateWithoutCommentsInput = {
   createdBy?: Prisma.UserUpdateOneRequiredWithoutPagesCreatedNestedInput
   shapes?: Prisma.ShapeUpdateManyWithoutPageNestedInput
   activityLogs?: Prisma.ActivityLogUpdateManyWithoutPageNestedInput
+  imageAssets?: Prisma.ImageAssetUpdateManyWithoutPageNestedInput
 }
 
 export type PageUncheckedUpdateWithoutCommentsInput = {
@@ -743,6 +773,79 @@ export type PageUncheckedUpdateWithoutCommentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   shapes?: Prisma.ShapeUncheckedUpdateManyWithoutPageNestedInput
+  activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutPageNestedInput
+  imageAssets?: Prisma.ImageAssetUncheckedUpdateManyWithoutPageNestedInput
+}
+
+export type PageCreateWithoutImageAssetsInput = {
+  id?: string
+  name: string
+  orderKey: string
+  backgroundColor?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  board: Prisma.BoardCreateNestedOneWithoutPagesInput
+  createdBy: Prisma.UserCreateNestedOneWithoutPagesCreatedInput
+  shapes?: Prisma.ShapeCreateNestedManyWithoutPageInput
+  comments?: Prisma.CommentCreateNestedManyWithoutPageInput
+  activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutPageInput
+}
+
+export type PageUncheckedCreateWithoutImageAssetsInput = {
+  id?: string
+  boardId: string
+  name: string
+  orderKey: string
+  backgroundColor?: string | null
+  createdById: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  shapes?: Prisma.ShapeUncheckedCreateNestedManyWithoutPageInput
+  comments?: Prisma.CommentUncheckedCreateNestedManyWithoutPageInput
+  activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutPageInput
+}
+
+export type PageCreateOrConnectWithoutImageAssetsInput = {
+  where: Prisma.PageWhereUniqueInput
+  create: Prisma.XOR<Prisma.PageCreateWithoutImageAssetsInput, Prisma.PageUncheckedCreateWithoutImageAssetsInput>
+}
+
+export type PageUpsertWithoutImageAssetsInput = {
+  update: Prisma.XOR<Prisma.PageUpdateWithoutImageAssetsInput, Prisma.PageUncheckedUpdateWithoutImageAssetsInput>
+  create: Prisma.XOR<Prisma.PageCreateWithoutImageAssetsInput, Prisma.PageUncheckedCreateWithoutImageAssetsInput>
+  where?: Prisma.PageWhereInput
+}
+
+export type PageUpdateToOneWithWhereWithoutImageAssetsInput = {
+  where?: Prisma.PageWhereInput
+  data: Prisma.XOR<Prisma.PageUpdateWithoutImageAssetsInput, Prisma.PageUncheckedUpdateWithoutImageAssetsInput>
+}
+
+export type PageUpdateWithoutImageAssetsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  orderKey?: Prisma.StringFieldUpdateOperationsInput | string
+  backgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  board?: Prisma.BoardUpdateOneRequiredWithoutPagesNestedInput
+  createdBy?: Prisma.UserUpdateOneRequiredWithoutPagesCreatedNestedInput
+  shapes?: Prisma.ShapeUpdateManyWithoutPageNestedInput
+  comments?: Prisma.CommentUpdateManyWithoutPageNestedInput
+  activityLogs?: Prisma.ActivityLogUpdateManyWithoutPageNestedInput
+}
+
+export type PageUncheckedUpdateWithoutImageAssetsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  boardId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  orderKey?: Prisma.StringFieldUpdateOperationsInput | string
+  backgroundColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  shapes?: Prisma.ShapeUncheckedUpdateManyWithoutPageNestedInput
+  comments?: Prisma.CommentUncheckedUpdateManyWithoutPageNestedInput
   activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutPageNestedInput
 }
 
@@ -757,6 +860,7 @@ export type PageCreateWithoutShapesInput = {
   createdBy: Prisma.UserCreateNestedOneWithoutPagesCreatedInput
   comments?: Prisma.CommentCreateNestedManyWithoutPageInput
   activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutPageInput
+  imageAssets?: Prisma.ImageAssetCreateNestedManyWithoutPageInput
 }
 
 export type PageUncheckedCreateWithoutShapesInput = {
@@ -770,6 +874,7 @@ export type PageUncheckedCreateWithoutShapesInput = {
   updatedAt?: Date | string
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutPageInput
   activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutPageInput
+  imageAssets?: Prisma.ImageAssetUncheckedCreateNestedManyWithoutPageInput
 }
 
 export type PageCreateOrConnectWithoutShapesInput = {
@@ -799,6 +904,7 @@ export type PageUpdateWithoutShapesInput = {
   createdBy?: Prisma.UserUpdateOneRequiredWithoutPagesCreatedNestedInput
   comments?: Prisma.CommentUpdateManyWithoutPageNestedInput
   activityLogs?: Prisma.ActivityLogUpdateManyWithoutPageNestedInput
+  imageAssets?: Prisma.ImageAssetUpdateManyWithoutPageNestedInput
 }
 
 export type PageUncheckedUpdateWithoutShapesInput = {
@@ -812,6 +918,7 @@ export type PageUncheckedUpdateWithoutShapesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   comments?: Prisma.CommentUncheckedUpdateManyWithoutPageNestedInput
   activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutPageNestedInput
+  imageAssets?: Prisma.ImageAssetUncheckedUpdateManyWithoutPageNestedInput
 }
 
 export type PageCreateWithoutCreatedByInput = {
@@ -825,6 +932,7 @@ export type PageCreateWithoutCreatedByInput = {
   shapes?: Prisma.ShapeCreateNestedManyWithoutPageInput
   comments?: Prisma.CommentCreateNestedManyWithoutPageInput
   activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutPageInput
+  imageAssets?: Prisma.ImageAssetCreateNestedManyWithoutPageInput
 }
 
 export type PageUncheckedCreateWithoutCreatedByInput = {
@@ -838,6 +946,7 @@ export type PageUncheckedCreateWithoutCreatedByInput = {
   shapes?: Prisma.ShapeUncheckedCreateNestedManyWithoutPageInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutPageInput
   activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutPageInput
+  imageAssets?: Prisma.ImageAssetUncheckedCreateNestedManyWithoutPageInput
 }
 
 export type PageCreateOrConnectWithoutCreatedByInput = {
@@ -887,6 +996,7 @@ export type PageUpdateWithoutBoardInput = {
   shapes?: Prisma.ShapeUpdateManyWithoutPageNestedInput
   comments?: Prisma.CommentUpdateManyWithoutPageNestedInput
   activityLogs?: Prisma.ActivityLogUpdateManyWithoutPageNestedInput
+  imageAssets?: Prisma.ImageAssetUpdateManyWithoutPageNestedInput
 }
 
 export type PageUncheckedUpdateWithoutBoardInput = {
@@ -900,6 +1010,7 @@ export type PageUncheckedUpdateWithoutBoardInput = {
   shapes?: Prisma.ShapeUncheckedUpdateManyWithoutPageNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutPageNestedInput
   activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutPageNestedInput
+  imageAssets?: Prisma.ImageAssetUncheckedUpdateManyWithoutPageNestedInput
 }
 
 export type PageUncheckedUpdateManyWithoutBoardInput = {
@@ -933,6 +1044,7 @@ export type PageUpdateWithoutCreatedByInput = {
   shapes?: Prisma.ShapeUpdateManyWithoutPageNestedInput
   comments?: Prisma.CommentUpdateManyWithoutPageNestedInput
   activityLogs?: Prisma.ActivityLogUpdateManyWithoutPageNestedInput
+  imageAssets?: Prisma.ImageAssetUpdateManyWithoutPageNestedInput
 }
 
 export type PageUncheckedUpdateWithoutCreatedByInput = {
@@ -946,6 +1058,7 @@ export type PageUncheckedUpdateWithoutCreatedByInput = {
   shapes?: Prisma.ShapeUncheckedUpdateManyWithoutPageNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutPageNestedInput
   activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutPageNestedInput
+  imageAssets?: Prisma.ImageAssetUncheckedUpdateManyWithoutPageNestedInput
 }
 
 export type PageUncheckedUpdateManyWithoutCreatedByInput = {
@@ -967,12 +1080,14 @@ export type PageCountOutputType = {
   shapes: number
   comments: number
   activityLogs: number
+  imageAssets: number
 }
 
 export type PageCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   shapes?: boolean | PageCountOutputTypeCountShapesArgs
   comments?: boolean | PageCountOutputTypeCountCommentsArgs
   activityLogs?: boolean | PageCountOutputTypeCountActivityLogsArgs
+  imageAssets?: boolean | PageCountOutputTypeCountImageAssetsArgs
 }
 
 /**
@@ -1006,6 +1121,13 @@ export type PageCountOutputTypeCountActivityLogsArgs<ExtArgs extends runtime.Typ
   where?: Prisma.ActivityLogWhereInput
 }
 
+/**
+ * PageCountOutputType without action
+ */
+export type PageCountOutputTypeCountImageAssetsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ImageAssetWhereInput
+}
+
 
 export type PageSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1021,6 +1143,7 @@ export type PageSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   shapes?: boolean | Prisma.Page$shapesArgs<ExtArgs>
   comments?: boolean | Prisma.Page$commentsArgs<ExtArgs>
   activityLogs?: boolean | Prisma.Page$activityLogsArgs<ExtArgs>
+  imageAssets?: boolean | Prisma.Page$imageAssetsArgs<ExtArgs>
   _count?: boolean | Prisma.PageCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["page"]>
 
@@ -1068,6 +1191,7 @@ export type PageInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   shapes?: boolean | Prisma.Page$shapesArgs<ExtArgs>
   comments?: boolean | Prisma.Page$commentsArgs<ExtArgs>
   activityLogs?: boolean | Prisma.Page$activityLogsArgs<ExtArgs>
+  imageAssets?: boolean | Prisma.Page$imageAssetsArgs<ExtArgs>
   _count?: boolean | Prisma.PageCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type PageIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1087,6 +1211,7 @@ export type $PagePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     shapes: Prisma.$ShapePayload<ExtArgs>[]
     comments: Prisma.$CommentPayload<ExtArgs>[]
     activityLogs: Prisma.$ActivityLogPayload<ExtArgs>[]
+    imageAssets: Prisma.$ImageAssetPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1496,6 +1621,7 @@ export interface Prisma__PageClient<T, Null = never, ExtArgs extends runtime.Typ
   shapes<T extends Prisma.Page$shapesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Page$shapesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ShapePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   comments<T extends Prisma.Page$commentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Page$commentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   activityLogs<T extends Prisma.Page$activityLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Page$activityLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ActivityLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  imageAssets<T extends Prisma.Page$imageAssetsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Page$imageAssetsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ImageAssetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2003,6 +2129,30 @@ export type Page$activityLogsArgs<ExtArgs extends runtime.Types.Extensions.Inter
   take?: number
   skip?: number
   distinct?: Prisma.ActivityLogScalarFieldEnum | Prisma.ActivityLogScalarFieldEnum[]
+}
+
+/**
+ * Page.imageAssets
+ */
+export type Page$imageAssetsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ImageAsset
+   */
+  select?: Prisma.ImageAssetSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ImageAsset
+   */
+  omit?: Prisma.ImageAssetOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ImageAssetInclude<ExtArgs> | null
+  where?: Prisma.ImageAssetWhereInput
+  orderBy?: Prisma.ImageAssetOrderByWithRelationInput | Prisma.ImageAssetOrderByWithRelationInput[]
+  cursor?: Prisma.ImageAssetWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ImageAssetScalarFieldEnum | Prisma.ImageAssetScalarFieldEnum[]
 }
 
 /**

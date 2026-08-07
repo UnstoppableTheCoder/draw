@@ -6,23 +6,32 @@ import type { Request, Response } from "express";
 //   "pageId" | "createdById" | "createdAt" | "updatedAt" | "comments"
 // >;
 
-export const createShape = async (req: Request, res: Response) => {
+export const createShapes = async (req: Request, res: Response) => {
   try {
     const { pageId } = req.params;
+    const { shapes } = req.body;
 
-    const shape = await prisma.shape.create({
-      data: {
-        ...req.body,
+    if (!Array.isArray(shapes) || shapes.length === 0) {
+      return res.status(400).json({
+        message: "Shapes array is required.",
+      });
+    }
+
+    const createdShapes = await prisma.shape.createManyAndReturn({
+      data: shapes.map((shape) => ({
+        ...shape,
         pageId,
-      },
+      })),
     });
 
-    return res.status(201).json(shape);
+    return res.status(201).json({
+      shapes: createdShapes,
+    });
   } catch (error) {
     console.error(error);
 
     return res.status(500).json({
-      message: "Failed to create shape.",
+      message: "Failed to create shapes.",
     });
   }
 };

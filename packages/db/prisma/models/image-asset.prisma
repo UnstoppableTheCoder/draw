@@ -1,7 +1,7 @@
 model ImageAsset {
     id            String   @id
-    boardId       String
-    board         Board    @relation(fields: [boardId], references: [id], onDelete: Cascade)
+    pageId        String
+    page          Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
     uploadedById  String
     uploadedBy    User     @relation(fields: [uploadedById], references: [id])
     s3Key         String?
@@ -15,6 +15,6 @@ model ImageAsset {
     status        String
     createdAt     DateTime @default(now())
 
-    @@index([boardId, createdAt])
+    @@index([pageId, createdAt])
     @@index([uploadedById])
 }

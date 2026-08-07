@@ -36,9 +36,6 @@ router.get("/:boardId/pages", getPages);
 // Create a page
 router.post("/:boardId/pages", createPage);
 
-// Create Image Assets
-router.post(`/:boardId/image-assets`, createImageAssets);
-
 // Reorder pages
 // router.patch("/:boardId/pages/reorder", reorderPages);
 

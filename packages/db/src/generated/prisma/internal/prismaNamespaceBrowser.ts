@@ -189,7 +189,7 @@ export type CommentReplyScalarFieldEnum = (typeof CommentReplyScalarFieldEnum)[k
 
 export const ImageAssetScalarFieldEnum = {
   id: 'id',
-  boardId: 'boardId',
+  pageId: 'pageId',
   uploadedById: 'uploadedById',
   s3Key: 's3Key',
   renderUrl: 'renderUrl',

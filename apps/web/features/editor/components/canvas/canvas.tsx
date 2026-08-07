@@ -14,11 +14,8 @@ import useInteractionManager from "../../interactions/manager/use-interaction-ma
 import CanvasLayers from "./canvas-layers";
 import useContextMenu from "./context-menu/use-context-menu";
 import { cn } from "@/lib/utils";
-import { useLoadBoard } from "../../hooks/use-load-board";
 import { useLoadPage } from "../../hooks/use-load-page";
 import { useRef } from "react";
-import { useImageManager } from "../../interactions/manager/image-manager";
-import { useCanvasRenderer } from "../../context/use-renderer";
 type CanvasProps = {
   editor: EditorRefs;
   isSidebarOpen: boolean;
@@ -32,8 +29,7 @@ const Canvas = ({ editor, isSidebarOpen }: CanvasProps) => {
   const imageInputRef = useRef<HTMLInputElement | null>(null);
   const frameNameInputRef = useRef<HTMLInputElement | null>(null);
 
-  useLoadBoard();
-  useLoadPage(imageManager);
+  const { error, loading } = useLoadPage(imageManager);
 
   // UI
   const contextMenu = useContextMenu(overlayCanvasRef);

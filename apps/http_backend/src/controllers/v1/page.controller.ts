@@ -1,5 +1,6 @@
-import { prisma } from "@repo/db";
+import { Prisma, prisma } from "@repo/db";
 import type { Request, Response } from "express";
+import { v4 as uuidv4 } from "uuid";
 
 export const createPage = async (req: Request, res: Response) => {
   try {
@@ -70,7 +71,7 @@ export const getPage = async (req: Request, res: Response) => {
 
     const imageAssetsData = await prisma.imageAsset.findMany({
       where: {
-        boardId: page.boardId as string,
+        pageId: pageId as string,
       },
       orderBy: {
         createdAt: "asc",
@@ -135,32 +136,87 @@ export const deletePage = async (req: Request, res: Response) => {
   }
 };
 
-export const createShapes = async (req: Request, res: Response) => {
+export const duplicatePage = async (req: Request, res: Response) => {
   try {
     const { pageId } = req.params;
-    const { shapes } = req.body;
 
-    if (!Array.isArray(shapes) || shapes.length === 0) {
-      return res.status(400).json({
-        message: "Shapes array is required.",
+    const page = await prisma.page.findUnique({
+      where: {
+        id: pageId as string,
+      },
+      include: {
+        shapes: true,
+      },
+    });
+
+    if (!page) {
+      return res.status(404).json({
+        message: "Page not found.",
       });
     }
 
-    const createdShapes = await prisma.shape.createManyAndReturn({
-      data: shapes.map((shape) => ({
-        ...shape,
-        pageId,
-      })),
+    const duplicatedPage = await prisma.$transaction(async (tx) => {
+      const { id, createdAt, updatedAt, shapes, ...pageData } = page;
+
+      // Create the new page
+      const newPage = await tx.page.create({
+        data: {
+          ...pageData,
+          name: `${page.name} Copy`,
+        },
+      });
+
+      // Duplicate all shapes
+      const newShapes = await tx.shape.createManyAndReturn({
+        data: shapes.map(({ id, pageId, createdAt, updatedAt, ...shape }) => ({
+          id: uuidv4(),
+          ...shape,
+          pageId: newPage.id,
+          appearance: shape.appearance as Prisma.InputJsonValue,
+          data: shape.data as Prisma.InputJsonValue,
+        })),
+      });
+
+      return {
+        ...newPage,
+        shapes: newShapes,
+      };
     });
 
     return res.status(201).json({
-      shapes: createdShapes,
+      page: duplicatedPage,
     });
   } catch (error) {
     console.error(error);
 
     return res.status(500).json({
-      message: "Failed to create shapes.",
+      message: "Failed to duplicate page.",
+    });
+  }
+};
+
+export const movePage = async (req: Request, res: Response) => {
+  try {
+    const { pageId } = req.params;
+    const { boardId } = req.body;
+
+    const page = await prisma.page.update({
+      where: {
+        id: pageId as string,
+      },
+      data: {
+        boardId,
+      },
+    });
+
+    return res.json({
+      page,
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      message: "Failed to move page.",
     });
   }
 };

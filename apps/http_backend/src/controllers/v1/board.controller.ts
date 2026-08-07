@@ -97,11 +97,6 @@ export const getBoard = async (req: Request<BoardParams>, res: Response) => {
             createdAt: "asc",
           },
         },
-        imageAssets: {
-          orderBy: {
-            createdAt: "asc",
-          },
-        },
       },
     });
 
@@ -110,10 +105,6 @@ export const getBoard = async (req: Request<BoardParams>, res: Response) => {
         message: "Board not found.",
       });
     }
-
-    const imageMap = Object.fromEntries(
-      board.imageAssets.map((image) => [image.id, image]),
-    );
 
     return res.json({
       board: {
@@ -127,7 +118,6 @@ export const getBoard = async (req: Request<BoardParams>, res: Response) => {
         updatedAt: board.updatedAt,
       },
       pages: board.pages,
-      imageMap,
     });
   } catch (error) {
     console.error(error);

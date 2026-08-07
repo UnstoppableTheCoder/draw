@@ -15,7 +15,6 @@ model Board {
 
     members      BoardMember[]
     pages        Page[]
-    imageAssets  ImageAsset[]
     chatMessages ChatMessage[]
     calls        Call[]
     versions     BoardVersion[]

@@ -69,6 +69,7 @@ export interface EditorStore {
   pushHistory: () => void;
   undo: () => void;
   redo: () => void;
+  clearHistory: () => void;
 
   // Frame
   hoveredFrameId: string | null;

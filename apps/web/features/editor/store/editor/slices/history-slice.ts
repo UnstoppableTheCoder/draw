@@ -61,4 +61,6 @@ export const createHistorySlice: StateCreator<
       false,
       "history/redo",
     ),
+
+  clearHistory: () => set({ undoStack: [], redoStack: [] }),
 });
