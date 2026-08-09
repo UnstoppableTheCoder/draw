@@ -29,7 +29,6 @@ export const useImageManager = () => {
       image,
       status: "loading",
     });
-
     image.src = url;
 
     try {

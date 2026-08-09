@@ -89,15 +89,8 @@ export default function useDuplicateShapes() {
       new Set(selectedShapesIds),
     );
 
-    console.log({ duplicatedShapes });
-
     // Optimistic update
-    setShapes((prev) => {
-      const allShapes = [...prev, ...duplicatedShapes];
-
-      console.log({ allShapes });
-      return allShapes;
-    });
+    setShapes((prev) => [...prev, ...duplicatedShapes]);
     setSelectedShapesIds(duplicatedShapes.map((shape) => shape.id));
     pushHistory();
     invalidate();

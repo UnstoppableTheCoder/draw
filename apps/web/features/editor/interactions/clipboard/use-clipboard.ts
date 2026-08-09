@@ -10,10 +10,17 @@ import {
 import { ImageAsset, Shape } from "../../types";
 import { writeClipboard, readClipboard } from "./clipboard-actions";
 import { v4 as uuidv4 } from "uuid";
+import { useParams } from "next/navigation";
+import {
+  createShapes,
+  deleteShapesApi,
+  updateShapesApi,
+} from "../../networking/api/shape-api";
 
 const PASTE_OFFSET = 20;
 
 export default function useClipboard() {
+  const { pageId } = useParams<{ boardId: string; pageId: string }>();
   const selectedShapesIds = useSelectedShapesIds();
   const shapes = useShapes();
   const setShapes = useSetShapes();
@@ -57,10 +64,22 @@ export default function useClipboard() {
 
     const selectedIds = new Set(selectedShapesIds);
 
-    setShapes((prev) => prev.filter((shape) => !selectedIds.has(shape.id)));
+    let updatedShapes: Shape[] = [];
+    setShapes((prev) => {
+      updatedShapes = prev.filter((shape) => !selectedIds.has(shape.id));
+      return updatedShapes;
+    });
 
     pushHistory();
     invalidate();
+
+    try {
+      if (pageId) {
+        await deleteShapesApi(pageId, Array.from(selectedIds));
+      }
+    } catch (error) {
+      console.error("Failed to sync cut shapes to DB:", error);
+    }
   };
 
   const pasteShapes = async () => {
@@ -123,10 +142,21 @@ export default function useClipboard() {
     }
 
     // Add shapes
-    setShapes((prev) => [...prev, ...newShapes]);
+    setShapes((prev) => {
+      return [...prev, ...newShapes];
+    });
 
     pushHistory();
     invalidate();
+
+    // Sync with database
+    try {
+      if (pageId) {
+        await createShapes(pageId, newShapes);
+      }
+    } catch (error) {
+      console.error("Failed to sync pasted shapes to DB:", error);
+    }
   };
 
   const getDuplicatedGroupId = (

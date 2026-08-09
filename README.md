@@ -1,4 +1,6 @@
-https://chatgpt.com/c/6a514205-1c74-83e8-91a1-08ec4b474cef
+# Select shapes onces they are pasted
+# Fix the bug of rendering images
+
 
 # The recent shape should always be at the top
 

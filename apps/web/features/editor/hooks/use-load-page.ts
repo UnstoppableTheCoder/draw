@@ -23,7 +23,6 @@ export function useLoadPage(imageManager: ReturnType<typeof useImageManager>) {
   const [error, setError] = useState<Error | null>(null);
 
   const load = useCallback(async () => {
-    console.log("loading page Shapes");
     if (!pageId) {
       setLoading(false);
       return;
@@ -42,8 +41,6 @@ export function useLoadPage(imageManager: ReturnType<typeof useImageManager>) {
       clearHistory();
 
       renderer.invalidate();
-
-      console.log("Pages shapes loaded");
     } catch (err) {
       setError(err as Error);
       throw err;

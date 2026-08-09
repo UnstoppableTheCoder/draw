@@ -32,7 +32,7 @@ export default function useImageUpload({
   const setSelectedShapesIds = store.useSetSelectedShapesIds();
   const addImage = store.useAddImage();
   const shapes = store.useShapes();
-  const { boardId, pageId } = useParams<{ boardId: string; pageId: string }>();
+  const { pageId } = useParams<{ boardId: string; pageId: string }>();
   const user = useUser();
 
   const { invalidate } = useCanvasRenderer();
@@ -95,8 +95,7 @@ export default function useImageUpload({
     const imageMap = Object.fromEntries(
       assets.map((image) => [image.id, image]),
     );
-
-    imageManager.preload(imageMap);
+    await imageManager.preload(imageMap);
 
     setShapes((prev) => [...prev, ...imageShapes]);
     setSelectedTool("select");
@@ -116,7 +115,6 @@ export default function useImageUpload({
 
     // Save Image Shape
     await createShapes(pageId, imageShapes);
-
     upload.then(async (imageAssets) => {
       await createImageAssets(pageId, imageAssets);
     });

@@ -5,6 +5,7 @@ import { Separator } from "@/components/ui/separator";
 import { useImageManager } from "@/features/editor/interactions/manager/image-manager";
 import useSelectAllShapes from "@/features/editor/interactions/selection/use-select-all";
 import { usePointerState } from "@/features/editor/pointer/use-pointer-state";
+import useClipboard from "@/features/editor/interactions/clipboard/use-clipboard";
 
 interface MenuItem {
   label: string;
@@ -29,14 +30,13 @@ export default function EmptyCanvasMenu({
   };
 }) {
   const selection = useSelectAllShapes();
+  const clipboard = useClipboard();
 
   const menuItems: MenuItem[] = [
     {
       label: "Paste",
       shortcut: "Ctrl+V",
-      action: () => {
-        // clipboard.pasteShapes();
-      },
+      action: clipboard.pasteShapes,
     },
 
     { label: "divider", divider: true },

@@ -13,6 +13,7 @@ import { usePointerState } from "@/features/editor/pointer/use-pointer-state";
 import { ChevronRight } from "lucide-react";
 import useSelectionMenuActions from "./use-selection-menu-actions";
 import useSelectAllShapes from "@/features/editor/interactions/selection/use-select-all";
+import useClipboard from "@/features/editor/interactions/clipboard/use-clipboard";
 
 interface MenuItem {
   label: string;
@@ -57,6 +58,7 @@ export default function SelectedShapeMenu({
   const order = useShapeOrder();
   const actions = useSelectionMenuActions({ overlayCanvasRef, pointerRefs });
   const selection = useSelectAllShapes();
+  const clipboard = useClipboard();
 
   const selectedShapes = shapes.filter((shape) => selected.has(shape.id));
   const selectedCount = selectedShapes.length;
@@ -72,9 +74,9 @@ export default function SelectedShapeMenu({
     !hasGroupedShapes;
 
   const rawMenuItems: MenuItem[] = [
-    { label: "Cut", shortcut: "Ctrl X", action: () => console.log("Cut") },
-    { label: "Copy", shortcut: "Ctrl C", action: () => console.log("Copy") },
-    { label: "Paste", shortcut: "Ctrl V", action: () => console.log("Paste") },
+    { label: "Cut", shortcut: "Ctrl X", action: clipboard.cutShapes },
+    { label: "Copy", shortcut: "Ctrl C", action: clipboard.copyShapes },
+    { label: "Paste", shortcut: "Ctrl V", action: clipboard.pasteShapes },
     {
       label: "Duplicate",
       shortcut: "Ctrl D",
