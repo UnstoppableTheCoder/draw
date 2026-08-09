@@ -51,7 +51,7 @@ const Board = () => {
             onClick={() => setIsSidebarOpen(true)}
             variant="secondary"
             size="icon"
-            className="absolute left-3 top-3 z-50 hidden shadow-lg md:inline-flex"
+            className="absolute left-3 top-3 z-40 hidden shadow-lg md:inline-flex"
           >
             <PanelLeftOpen />
           </Button>

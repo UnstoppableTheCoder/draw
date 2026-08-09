@@ -4,20 +4,23 @@ import {
   PanelLeftClose,
   Plus,
   Search,
+  Edit3,
+  Copy,
+  Trash2,
+  Settings,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import PageActionsMenu from "./page-actions-menu";
 import {
-  useAddPage,
-  usePages,
-  useUpdatePage,
-} from "@/features/editor/store/pages/selectors";
-import { useState } from "react";
-import { useUser } from "@/features/auth/store/selectors";
-import { Page } from "../../types/page";
-import { createPageApi, updatePageApi } from "../../networking/api/page-api";
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import Image from "next/image";
+import { useBoardActions } from "./use-board-actions";
+import { usePageActions } from "./use-page-actions";
 
 function IconButton({
   label,
@@ -49,68 +52,109 @@ export default function LeftSidebar({
 }: {
   onCollapse: () => void;
 }) {
-  const { boardId, pageId } = useParams<{ boardId: string; pageId: string }>();
+  const {
+    boardId,
+    pageId,
+    filteredPages,
+    editingPageId,
+    editingName,
+    setEditingName,
+    setEditingPageId,
+    handleCreatePage,
+    startEditing,
+    finishEditing,
+    handlePageClick,
+    handleDuplicate,
+    handleMove,
+    handleDelete,
+  } = usePageActions();
 
-  const [editingPageId, setEditingPageId] = useState<string | null>(null);
-  const [editingName, setEditingName] = useState("");
-  const addPage = useAddPage();
-  const user = useUser();
-  const updatePageState = useUpdatePage();
-  const router = useRouter();
-
-  const pages: Page[] = usePages();
-  const filteredPages = pages.filter((page) => page.boardId === boardId);
-
-  const handleCreatePage = async () => {
-    const lastPageOrderKey = pages.at(-1)?.orderKey!;
-
-    const { page } = await createPageApi({
-      name: "Untitled",
-      backgroundColor: "",
-      boardId,
-      orderKey: lastPageOrderKey,
-      createdById: user!.id,
-    });
-
-    // Zustand action
-    addPage(page);
-    setEditingPageId(page.id);
-    setEditingName(page.name);
-  };
-
-  const startEditing = (id: string, name: string) => {
-    setEditingPageId(id);
-    setEditingName(name);
-  };
-
-  const finishEditing = async (pageId: string) => {
-    const name = editingName.trim();
-
-    const { page } = await updatePageApi(pageId, {
-      name: name || "Untitled",
-    });
-
-    updatePageState(pageId, page);
-    setEditingPageId(null);
-  };
-
-  const handlePageClick = (pageId: string) => {
-    router.push(`/board/${boardId}/${pageId}`);
-  };
+  const {
+    boardName,
+    isRenamingBoard,
+    saveBoardName,
+    handleRenameBoard,
+    handleDuplicateBoard,
+    handleDeleteBoard,
+    handleExportSettings,
+  } = useBoardActions();
 
   return (
-    <aside className="border-r flex flex-col w-56 h-full bg-white dark:bg-[#212121]">
+    <aside className="border-r flex flex-col w-70 h-full bg-white dark:bg-[#212121]">
       {/* Header */}
       <div className="flex flex-col border-b p-4">
-        <div className="flex items-center justify-between">
-          <span className="text-lg font-bold uppercase tracking-wider text-black dark:text-white">
-            <Link href={"/dashboard"}>Board</Link>
-          </span>
-          <div className="flex items-center gap-1">
+        <div className="flex items-center justify-between gap-2">
+          <Link href={"/dashboard"} className="shrink-0">
+            <Image src={"/logo.png"} width={20} height={20} alt="logo" />
+          </Link>
+
+          {/* Board Name / Input taking available width with truncate */}
+          <div className="flex-1 min-w-0">
+            {isRenamingBoard ? (
+              <input
+                autoFocus
+                defaultValue={boardName}
+                onBlur={(e) => saveBoardName(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") saveBoardName(e.currentTarget.value);
+                }}
+                className="w-full text-base font-bold uppercase tracking-wider bg-transparent outline-none border-b border-primary text-black dark:text-white truncate"
+              />
+            ) : (
+              <button
+                onDoubleClick={handleRenameBoard}
+                title={boardName}
+                className="w-full text-left text-base font-bold uppercase tracking-wider text-black dark:text-white truncate block"
+              >
+                {boardName}
+              </button>
+            )}
+          </div>
+
+          <div className="flex items-center gap-1 shrink-0">
             <IconButton label="Collapse sidebar" onClick={onCollapse}>
               <PanelLeftClose className="size-4" />
             </IconButton>
-            <MoreHorizontal className="size-4 text-muted-foreground" />
+
+            {/* Board More Actions Popover */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-8 w-8">
+                  <MoreHorizontal className="size-4 text-muted-foreground" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent align="end" className="w-48 p-1">
+                <button
+                  onClick={handleRenameBoard}
+                  className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-muted"
+                >
+                  <Edit3 className="size-4" />
+                  Rename board
+                </button>
+                <button
+                  onClick={handleDuplicateBoard}
+                  className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-muted"
+                >
+                  <Copy className="size-4" />
+                  Duplicate board
+                </button>
+                <button
+                  onClick={handleExportSettings}
+                  className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-muted"
+                >
+                  <Settings className="size-4" />
+                  Export / Settings
+                </button>
+                <div className="my-1 h-px bg-border" />
+                <button
+                  onClick={handleDeleteBoard}
+                  className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-950/50"
+                >
+                  <Trash2 className="size-4" />
+                  Delete board
+                </button>
+              </PopoverContent>
+            </Popover>
           </div>
         </div>
       </div>
@@ -178,7 +222,17 @@ export default function LeftSidebar({
                 {page.id === pageId && (
                   <span className="size-1.5 rounded-full bg-primary" />
                 )}
-                <MoreHorizontal className="size-4 opacity-0 group-hover:opacity-100" />
+
+                <PageActionsMenu
+                  editingPageId={editingPageId}
+                  pageId={page.id}
+                  pageName={page.name}
+                  currentBoardId={boardId}
+                  onRename={startEditing}
+                  onDuplicate={handleDuplicate}
+                  onMove={handleMove}
+                  onDelete={handleDelete}
+                />
               </div>
             ))}
           </div>

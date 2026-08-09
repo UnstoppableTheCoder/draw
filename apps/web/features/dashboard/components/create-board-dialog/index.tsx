@@ -27,7 +27,7 @@ export function CreateBoardDialog({
       role="dialog"
       aria-modal="true"
       aria-labelledby="new-board-title"
-      className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 p-4"
+      className="fixed inset-0 z-30 flex items-center justify-center bg-background/80 p-4"
       onClick={() => onOpenChange(false)}
     >
       <div

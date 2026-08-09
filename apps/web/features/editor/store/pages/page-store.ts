@@ -1,16 +1,6 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
-
-export interface Page {
-  id: string;
-  boardId: string;
-  name: string;
-  orderKey: string;
-  backgroundColor?: string;
-  createdById: string;
-  createdAt: string;
-  updatedAt: string;
-}
+import { Page } from "../../types/page";
 
 type SetStateAction<T> = T | ((prev: T) => T);
 

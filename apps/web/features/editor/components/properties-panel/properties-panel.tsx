@@ -66,8 +66,8 @@ export const PropertiesPanel = ({
   return (
     <div
       className={cn(
-        "w-[202px] select-none h-fit max-h-[80%] z-50 bg-white dark:bg-[#212121] cursor-default rounded-md shadow-spread p-3 space-y-4 absolute top-20 border overflow-y-auto scrollbar-hide",
-        isSidebarOpen ? "left-60" : "left-5",
+        "w-[202px] select-none h-fit max-h-[80%] z-40 bg-white dark:bg-[#212121] cursor-default rounded-md shadow-spread p-3 space-y-4 absolute top-20 border overflow-y-auto scrollbar-hide",
+        isSidebarOpen ? "left-72" : "left-5",
       )}
       onWheel={(e) => e.stopPropagation()}
     >

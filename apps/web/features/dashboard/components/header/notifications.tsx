@@ -24,7 +24,7 @@ export default function Notifications({
       <span className="absolute right-2 top-2 size-2 rounded-full bg-primary" />
 
       {open && (
-        <div className="absolute right-0 top-12 z-30 w-80 rounded-xl border bg-popover p-3 shadow-2xl">
+        <div className="absolute right-0 top-12 z-20 w-80 rounded-xl border bg-popover p-3 shadow-2xl">
           <div className="flex items-center justify-between">
             <p className="text-sm font-semibold">Notifications</p>
 

@@ -104,7 +104,7 @@ export default function EmptyCanvasMenu({
 
   return (
     <div
-      className="fixed z-50 min-w-50 rounded-md border bg-popover p-1 text-popover-foreground shadow-md"
+      className="fixed z-20 min-w-50 rounded-md border bg-popover p-1 text-popover-foreground shadow-md"
       onContextMenu={(e) => e.preventDefault()}
       style={{
         left: x,

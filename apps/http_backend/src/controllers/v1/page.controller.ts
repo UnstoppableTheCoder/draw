@@ -137,6 +137,9 @@ export const deletePage = async (req: Request, res: Response) => {
 };
 
 export const duplicatePage = async (req: Request, res: Response) => {
+  const shapeIdMap = new Map<string, string>();
+  const groupIdMap = new Map<string, string>();
+
   try {
     const { pageId } = req.params;
 
@@ -155,6 +158,17 @@ export const duplicatePage = async (req: Request, res: Response) => {
       });
     }
 
+    // Creating new ids
+    page.shapes.forEach((shape) => {
+      if (shape) {
+        shapeIdMap.set(shape.id, uuidv4());
+      }
+
+      if (shape.groupId) {
+        groupIdMap.set(shape.groupId, uuidv4());
+      }
+    });
+
     const duplicatedPage = await prisma.$transaction(async (tx) => {
       const { id, createdAt, updatedAt, shapes, ...pageData } = page;
 
@@ -169,11 +183,13 @@ export const duplicatePage = async (req: Request, res: Response) => {
       // Duplicate all shapes
       const newShapes = await tx.shape.createManyAndReturn({
         data: shapes.map(({ id, pageId, createdAt, updatedAt, ...shape }) => ({
-          id: uuidv4(),
+          id: shapeIdMap.get(id) ?? uuidv4(),
           ...shape,
           pageId: newPage.id,
           appearance: shape.appearance as Prisma.InputJsonValue,
           data: shape.data as Prisma.InputJsonValue,
+          frameId: shape.frameId ? shapeIdMap.get(shape.frameId) : null,
+          groupId: shape.groupId ? groupIdMap.get(shape.groupId) : null,
         })),
       });
 

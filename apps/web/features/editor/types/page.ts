@@ -10,7 +10,6 @@ export interface Page {
   createdAt: string;
   updatedAt: string;
 }
-
 export interface PageWithShapes extends Page {
   shapes: Shape[];
 }

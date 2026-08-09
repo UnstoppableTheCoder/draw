@@ -396,7 +396,7 @@ export default function SelectedShapeMenu({
 
   return (
     <div
-      className="fixed inset-0 z-50"
+      className="fixed inset-0 z-20"
       onClick={closeContextMenu}
       style={{
         visibility: target !== "selection" || !open ? "hidden" : undefined,
