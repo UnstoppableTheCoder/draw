@@ -21,7 +21,8 @@ type UpdatePageResponse = {
 };
 
 type DuplicatePageResponse = {
-  page: Page;
+  page: Page & { shapes: Shape[] };
+  imageAssets: Record<string, ImageAsset>;
 };
 
 type MovePageResponse = {

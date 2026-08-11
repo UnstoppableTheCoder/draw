@@ -22,15 +22,17 @@ export default function EmptyCanvasMenu({
     canvasMenuRef,
     overlayCanvasRef,
     pointerRefs,
+    imageManager,
   },
 }: {
   contextMenu: ContextMenuType & {
     overlayCanvasRef: RefObject<HTMLCanvasElement | null>;
     pointerRefs: ReturnType<typeof usePointerState>;
+    imageManager: ReturnType<typeof useImageManager>;
   };
 }) {
   const selection = useSelectAllShapes();
-  const clipboard = useClipboard();
+  const clipboard = useClipboard(imageManager);
 
   const menuItems: MenuItem[] = [
     {

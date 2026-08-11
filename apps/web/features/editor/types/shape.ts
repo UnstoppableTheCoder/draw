@@ -70,7 +70,6 @@ export interface TextData {
   containerId?: string | null;
   originalText?: string;
   autoResize?: boolean;
-  lineHeight?: number;
 }
 
 export interface ImageData {

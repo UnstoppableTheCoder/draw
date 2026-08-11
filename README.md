@@ -1,6 +1,6 @@
-# Select shapes onces they are pasted
-# Fix the bug of rendering images
+# Don't return all the shapes - return them by the page
 
+# Fix the bug of rendering images
 
 # The recent shape should always be at the top
 

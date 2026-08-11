@@ -162,7 +162,6 @@ export default function useTextEditing(
         fontSize: fontSize / scale,
         fontFamily,
         textAlign,
-        lineHeight: lineHeightMultiplier,
       },
       {
         ...DEFAULT_APPEARANCE.text,
@@ -294,7 +293,6 @@ export default function useTextEditing(
         fontSize,
         fontFamily,
         textAlign,
-        lineHeight: lineHeightMultiplier,
       },
 
       groupId: null,

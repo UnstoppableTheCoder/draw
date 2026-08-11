@@ -14,6 +14,7 @@ import { ChevronRight } from "lucide-react";
 import useSelectionMenuActions from "./use-selection-menu-actions";
 import useSelectAllShapes from "@/features/editor/interactions/selection/use-select-all";
 import useClipboard from "@/features/editor/interactions/clipboard/use-clipboard";
+import { useImageManager } from "@/features/editor/interactions/manager/image-manager";
 
 interface MenuItem {
   label: string;
@@ -33,11 +34,13 @@ export default function SelectedShapeMenu({
     selectionMenuRef,
     overlayCanvasRef,
     pointerRefs,
+    imageManager,
   },
 }: {
   contextMenu: ContextMenuType & {
     overlayCanvasRef: RefObject<HTMLCanvasElement | null>;
     pointerRefs: ReturnType<typeof usePointerState>;
+    imageManager: ReturnType<typeof useImageManager>;
   };
 }) {
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
@@ -58,7 +61,7 @@ export default function SelectedShapeMenu({
   const order = useShapeOrder();
   const actions = useSelectionMenuActions({ overlayCanvasRef, pointerRefs });
   const selection = useSelectAllShapes();
-  const clipboard = useClipboard();
+  const clipboard = useClipboard(imageManager);
 
   const selectedShapes = shapes.filter((shape) => selected.has(shape.id));
   const selectedCount = selectedShapes.length;

@@ -121,6 +121,7 @@ const Canvas = ({ editor, isSidebarOpen }: CanvasProps) => {
           ...contextMenu,
           overlayCanvasRef,
           pointerRefs,
+          imageManager
         }}
       />
     </div>

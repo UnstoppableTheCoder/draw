@@ -16,6 +16,7 @@ import {
   updatePageApi,
 } from "../../networking/api/page-api";
 import { Page } from "../../types/page";
+import { IMAGES_MANIFEST } from "next/constants";
 
 export function usePageActions() {
   const { boardId, pageId } = useParams<{ boardId: string; pageId: string }>();
@@ -82,7 +83,8 @@ export function usePageActions() {
       setShapes([]);
       clearHistory();
 
-      const { page } = await duplicatePageApi(id);
+      const { page, imageAssets } = await duplicatePageApi(id);
+      console.log({ imageAssets, shapes: page.shapes });
       addPage(page);
 
       if (page.id) {

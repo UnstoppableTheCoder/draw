@@ -139,6 +139,7 @@ export const deletePage = async (req: Request, res: Response) => {
 export const duplicatePage = async (req: Request, res: Response) => {
   const shapeIdMap = new Map<string, string>();
   const groupIdMap = new Map<string, string>();
+  const imageAssetIdMap = new Map<string, string>();
 
   try {
     const { pageId } = req.params;
@@ -149,6 +150,7 @@ export const duplicatePage = async (req: Request, res: Response) => {
       },
       include: {
         shapes: true,
+        imageAssets: true,
       },
     });
 
@@ -158,7 +160,7 @@ export const duplicatePage = async (req: Request, res: Response) => {
       });
     }
 
-    // Creating new ids
+    // Creating new ids for shapes
     page.shapes.forEach((shape) => {
       if (shape) {
         shapeIdMap.set(shape.id, uuidv4());
@@ -169,8 +171,16 @@ export const duplicatePage = async (req: Request, res: Response) => {
       }
     });
 
+    // Creating new ids for image assets
+    page.imageAssets.forEach((asset) => {
+      if (asset) {
+        imageAssetIdMap.set(asset.id, uuidv4());
+      }
+    });
+
     const duplicatedPage = await prisma.$transaction(async (tx) => {
-      const { id, createdAt, updatedAt, shapes, ...pageData } = page;
+      const { id, createdAt, updatedAt, shapes, imageAssets, ...pageData } =
+        page;
 
       // Create the new page
       const newPage = await tx.page.create({
@@ -180,27 +190,57 @@ export const duplicatePage = async (req: Request, res: Response) => {
         },
       });
 
-      // Duplicate all shapes
-      const newShapes = await tx.shape.createManyAndReturn({
-        data: shapes.map(({ id, pageId, createdAt, updatedAt, ...shape }) => ({
-          id: shapeIdMap.get(id) ?? uuidv4(),
-          ...shape,
+      const newImageAssets = await tx.imageAsset.createManyAndReturn({
+        data: imageAssets.map(({ id, pageId, ...imageAsset }) => ({
+          id: imageAssetIdMap.get(id) ?? uuidv4(),
+          ...imageAsset,
           pageId: newPage.id,
-          appearance: shape.appearance as Prisma.InputJsonValue,
-          data: shape.data as Prisma.InputJsonValue,
-          frameId: shape.frameId ? shapeIdMap.get(shape.frameId) : null,
-          groupId: shape.groupId ? groupIdMap.get(shape.groupId) : null,
         })),
       });
 
+      // Duplicate all shapes
+      const newShapes = await tx.shape.createManyAndReturn({
+        data: shapes.map(({ id, pageId, createdAt, updatedAt, ...shape }) => {
+          let data = shape.data;
+
+          if (
+            shape.type === "image" &&
+            shape.data !== null &&
+            typeof shape.data === "object" &&
+            !Array.isArray(shape.data) &&
+            "id" in shape.data
+          ) {
+            const imageAssetId = shape.data.id as string;
+
+            data = {
+              ...shape.data,
+              id: imageAssetIdMap.get(imageAssetId) ?? imageAssetId,
+            };
+          }
+
+          return {
+            id: shapeIdMap.get(id) ?? uuidv4(),
+            ...shape,
+            pageId: newPage.id,
+            appearance: shape.appearance as Prisma.InputJsonValue,
+            data: data as Prisma.InputJsonValue,
+            frameId: shape.frameId ? shapeIdMap.get(shape.frameId) : null,
+            groupId: shape.groupId ? groupIdMap.get(shape.groupId) : null,
+          };
+        }),
+      });
+
       return {
-        ...newPage,
-        shapes: newShapes,
+        page: {
+          ...newPage,
+          shapes: newShapes,
+        },
+        imageAssets: newImageAssets,
       };
     });
 
     return res.status(201).json({
-      page: duplicatedPage,
+      ...duplicatedPage,
     });
   } catch (error) {
     console.error(error);
