@@ -66,7 +66,7 @@ export default function DialogInput() {
     });
 
     const firstPage = board.pages[0]!;
-    router.push(`/board/${board.id}/${firstPage.id}`);
+    router.push(`/board/${board.id}/page/${firstPage.id}`);
   }
 
   return (

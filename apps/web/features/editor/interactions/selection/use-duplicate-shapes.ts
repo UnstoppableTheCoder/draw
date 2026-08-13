@@ -7,7 +7,7 @@ import {
   useSetShapes,
   useShapes,
 } from "../../store/editor/selectors";
-import { getZIndexBetween } from "../../utils/shape-z-index";
+import { getZIndexBetween } from "../../utils/z-index";
 import { Shape } from "../../types";
 import { v4 as uuidv4 } from "uuid";
 import { useParams } from "next/navigation";

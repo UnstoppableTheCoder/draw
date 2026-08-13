@@ -8,6 +8,7 @@ import {
   Copy,
   Trash2,
   Settings,
+  Check,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -192,22 +193,41 @@ export default function LeftSidebar({
                 />
                 {/* Page Name */}
                 {editingPageId === page.id ? (
-                  <input
-                    autoFocus
-                    value={editingName}
-                    onChange={(e) => setEditingName(e.target.value)}
-                    onBlur={() => finishEditing(page.id)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
+                  <>
+                    <input
+                      autoFocus
+                      value={editingName}
+                      onChange={(e) => setEditingName(e.target.value)}
+                      onBlur={() => finishEditing(page.id)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          finishEditing(page.id);
+                        }
+                        if (e.key === "Escape") {
+                          setEditingPageId(null);
+                        }
+                      }}
+                      onClick={(e) => e.stopPropagation()}
+                      className="flex-1 bg-transparent outline-none text-sm"
+                      onFocus={(e) => e.target.select()}
+                    />
+                    <button
+                      type="button"
+                      aria-label="Save page name"
+                      title="Save"
+                      onMouseDown={(e) => {
+                        // prevent input blur before click fires
+                        e.preventDefault();
+                      }}
+                      onClick={(e) => {
+                        e.stopPropagation();
                         finishEditing(page.id);
-                      }
-                      if (e.key === "Escape") {
-                        setEditingPageId(null);
-                      }
-                    }}
-                    className="flex-1 bg-transparent outline-none text-sm"
-                    onFocus={(e) => e.target.select()}
-                  />
+                      }}
+                      className="shrink-0 rounded-md p-1 hover:bg-muted text-muted-foreground hover:text-primary"
+                    >
+                      <Check className="size-4" />
+                    </button>
+                  </>
                 ) : (
                   <span
                     className="flex-1 truncate"
@@ -219,20 +239,22 @@ export default function LeftSidebar({
                     {page.name}
                   </span>
                 )}
-                {page.id === pageId && (
+                {page.id === pageId && editingPageId !== page.id && (
                   <span className="size-1.5 rounded-full bg-primary" />
                 )}
 
-                <PageActionsMenu
-                  editingPageId={editingPageId}
-                  pageId={page.id}
-                  pageName={page.name}
-                  currentBoardId={boardId}
-                  onRename={startEditing}
-                  onDuplicate={handleDuplicate}
-                  onMove={handleMove}
-                  onDelete={handleDelete}
-                />
+                {editingPageId !== page.id && (
+                  <PageActionsMenu
+                    editingPageId={editingPageId}
+                    pageId={page.id}
+                    pageName={page.name}
+                    currentBoardId={boardId}
+                    onRename={startEditing}
+                    onDuplicate={handleDuplicate}
+                    onMove={handleMove}
+                    onDelete={handleDelete}
+                  />
+                )}
               </div>
             ))}
           </div>

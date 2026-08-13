@@ -1,12 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { getBoard } from "@/features/board/api/board-api";
 
 export function useBoardActions() {
   const { boardId } = useParams<{ boardId: string }>();
   const router = useRouter();
 
   const [isRenamingBoard, setIsRenamingBoard] = useState(false);
-  const [boardName, setBoardName] = useState("Board");
+  const [boardName, setBoardName] = useState("");
 
   const handleRenameBoard = () => {
     setIsRenamingBoard(true);

@@ -16,7 +16,7 @@ import {
   updatePageApi,
 } from "../../networking/api/page-api";
 import { Page } from "../../types/page";
-import { IMAGES_MANIFEST } from "next/constants";
+import { getNextZIndex } from "../../utils/z-index";
 
 export function usePageActions() {
   const { boardId, pageId } = useParams<{ boardId: string; pageId: string }>();
@@ -37,13 +37,13 @@ export function usePageActions() {
 
   const handleCreatePage = async () => {
     try {
-      const lastPageOrderKey = pages.at(-1)!.orderKey;
+      const lastPageOrderKey = pages.at(-1)?.orderKey ?? null;
 
       const { page } = await createPageApi({
         name: "Untitled",
         backgroundColor: "",
         boardId,
-        orderKey: lastPageOrderKey,
+        orderKey: getNextZIndex(lastPageOrderKey),
         createdById: user!.id,
       });
 
@@ -68,13 +68,13 @@ export function usePageActions() {
 
     updatePageState(targetPageId, page);
     setEditingPageId(null);
-    router.push(`/board/${boardId}/${page.id}`);
+    router.push(`/board/${boardId}/page/${page.id}`);
   };
 
   const handlePageClick = (id: string) => {
     if (pageId !== id) {
       setShapes([]);
-      router.push(`/board/${boardId}/${id}`);
+      router.push(`/board/${boardId}/page/${id}`);
     }
   };
 
@@ -88,7 +88,7 @@ export function usePageActions() {
       addPage(page);
 
       if (page.id) {
-        router.push(`/board/${boardId}/${page.id}`);
+        router.push(`/board/${boardId}/page/${page.id}`);
       }
     } catch (err) {
       console.error("Failed to duplicate page", err);
@@ -106,7 +106,7 @@ export function usePageActions() {
       if (id === pageId) {
         const fallback = filteredPages.find((p) => p.id !== id);
         router.push(
-          fallback ? `/board/${boardId}/${fallback.id}` : `/board/${boardId}`,
+          fallback ? `/board/${boardId}/page/${fallback.id}` : `/board/${boardId}`,
         );
       }
     } catch (err) {
@@ -127,7 +127,7 @@ export function usePageActions() {
       if (id === pageId) {
         const fallback = filteredPages.find((p) => p.id !== id);
         router.push(
-          fallback ? `/board/${boardId}/${fallback.id}` : `/board/${boardId}`,
+          fallback ? `/board/${boardId}/page/${fallback.id}` : `/board/${boardId}`,
         );
       }
     } catch (error) {

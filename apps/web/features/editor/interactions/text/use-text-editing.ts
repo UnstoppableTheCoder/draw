@@ -22,7 +22,7 @@ import useViewportHelpers from "../viewport/use-viewport-helpers";
 import { getFrameAtPosition } from "../shared/get-frame-at-position";
 import { FrameShape, Point, Shape, TextShape } from "../../types";
 import { createBaseShape, DEFAULT_APPEARANCE } from "../draw/create-shape";
-import { getNextZIndex } from "../../utils/shape-z-index";
+import { getNextZIndex } from "../../utils/z-index";
 import { useUser } from "@/features/auth/store/selectors";
 import {
   createShapes,

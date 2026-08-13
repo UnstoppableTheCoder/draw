@@ -6,7 +6,7 @@ import { IMAGE_GAP, MAX_IMAGE_SIZE } from "../../constants/image";
 import { createImageShape } from "./create-image-shape";
 import { usePointerState } from "../../pointer/use-pointer-state";
 import { loadImageAssets } from "./image-loader";
-import { getNextZIndex } from "../../utils/shape-z-index";
+import { getNextZIndex } from "../../utils/z-index";
 import { createImageAssets } from "../../networking/api/image-asset-api";
 import { useParams } from "next/navigation";
 import { useUser } from "@/features/auth/store/selectors";

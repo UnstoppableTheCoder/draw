@@ -29,7 +29,7 @@ export function BoardCard({ board, listView }: BoardCardProps) {
     // setPages(pages);
     setImages(imageAssets);
 
-    router.push(`/board/${board.id}/${pages[0]!.id}`);
+    router.push(`/board/${board.id}/page/${pages[0]?.id ?? ""}`);
   };
 
   return (

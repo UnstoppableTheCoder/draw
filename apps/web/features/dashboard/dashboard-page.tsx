@@ -7,8 +7,8 @@ import { Sidebar } from "./components/sidebar";
 import { UpcomingCall } from "./components/upcoming-call";
 import { ActivityFeed } from "./components/activity-feed";
 import Templates from "./components/templates";
-import { CreateBoardDialog } from "./components/create-board-dialog";
 import { BoardList } from "./components/board-list/list";
+import { CreateBoardDialog } from "@/components/create-board-dialog";
 
 export default function DashboardPage() {
   const {

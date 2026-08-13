@@ -31,6 +31,9 @@ export const getPages = async (req: Request, res: Response) => {
       where: {
         boardId: boardId as string,
       },
+      orderBy: {
+        orderKey: "asc",
+      },
     });
 
     return res.json({ pages });
@@ -208,13 +211,13 @@ export const duplicatePage = async (req: Request, res: Response) => {
             shape.data !== null &&
             typeof shape.data === "object" &&
             !Array.isArray(shape.data) &&
-            "id" in shape.data
+            "imageId" in shape.data
           ) {
-            const imageAssetId = shape.data.id as string;
+            const imageAssetId = shape.data.imageId as string;
 
             data = {
               ...shape.data,
-              id: imageAssetIdMap.get(imageAssetId) ?? imageAssetId,
+              imageId: imageAssetIdMap.get(imageAssetId),
             };
           }
 

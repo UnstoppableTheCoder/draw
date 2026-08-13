@@ -146,7 +146,9 @@ export default function Board() {
 
   return (
     <>
-      <div className="h-screen w-screen flex justify-center items-center">{renderContent()}</div>
+      <div className="h-screen w-screen flex justify-center items-center">
+        {renderContent()}
+      </div>
 
       {/* Create Board modal */}
       <CreateBoardDialog

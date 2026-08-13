@@ -46,12 +46,7 @@ export const getPagesApi = async (boardId: string) => {
 export const createPageApi = async (payload: CreatePagePayload) => {
   const { data } = await axiosClient.post<CreatePageResponse>(
     `/boards/${payload.boardId}/pages`,
-    {
-      name: payload.name,
-      // icon: payload.icon,
-      orderKey: "",
-      createdById: payload.createdById,
-    },
+    payload,
   );
 
   return data;

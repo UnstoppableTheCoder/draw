@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 
-import { getBoards } from "@/features/board/api/board-api";
+import { getBoard, getBoards } from "@/features/board/api/board-api";
 import { useBoards, useSetBoards } from "@/features/board/store/selectors";
 
-import { useSetPages } from "@/features/editor/store/pages/selectors";
 import { getPagesApi } from "../networking/api/page-api";
+import { useSetPages } from "../store/board/pages/selectors";
 
 export const useLoadBoard = (boardId: string) => {
   const boards = useBoards();

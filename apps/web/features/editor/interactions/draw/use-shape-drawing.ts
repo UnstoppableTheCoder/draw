@@ -17,7 +17,7 @@ import useSelectionActions from "../selection/use-selection";
 import { usePointerState } from "../../pointer/use-pointer-state";
 import { createShape } from "./create-shape";
 import { DrawableTool, Shape } from "../../types";
-import { getNextZIndex } from "../../utils/shape-z-index";
+import { getNextZIndex } from "../../utils/z-index";
 import { createShapes as createShapeApi } from "../../networking/api/shape-api";
 import { useParams } from "next/navigation";
 import { useUser } from "@/features/auth/store/selectors";
@@ -67,7 +67,7 @@ export default function useShapeDrawing({
   function createDrawingShape(end: Point) {
     if (!drawingStartRef.current) return null;
 
-    const lastShapeZIndex = shapes.at(-1)?.zIndex!;
+    const lastShapeZIndex = shapes.at(-1)?.zIndex! ?? null;
     const zIndex = getNextZIndex(lastShapeZIndex);
 
     return createShape({
