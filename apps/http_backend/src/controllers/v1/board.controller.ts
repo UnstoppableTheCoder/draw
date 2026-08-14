@@ -97,6 +97,7 @@ export const getBoard = async (req: Request<BoardParams>, res: Response) => {
             createdAt: "asc",
           },
         },
+        members: true,
       },
     });
 
@@ -118,6 +119,7 @@ export const getBoard = async (req: Request<BoardParams>, res: Response) => {
         updatedAt: board.updatedAt,
       },
       pages: board.pages,
+      members: board.members,
     });
   } catch (error) {
     console.error(error);

@@ -1,16 +1,10 @@
-// features/dashboard/components/board-card.tsx
-
 "use client";
 
-import Link from "next/link";
 import { cn } from "@/lib/utils";
 import BoardInfo from "./info";
 import { BoardActions } from "./actions";
-import { Preview } from "../preview";
 import { Board } from "@/types/board";
 import { getBoard } from "@/features/board/api/board-api";
-import { useSetPages } from "@/features/editor/store/pages/selectors";
-import { useSetImages } from "@/features/editor/store/editor/selectors";
 import { useRouter } from "next/navigation";
 
 interface BoardCardProps {
@@ -19,17 +13,12 @@ interface BoardCardProps {
 }
 
 export function BoardCard({ board, listView }: BoardCardProps) {
-  const setPages = useSetPages();
-  const setImages = useSetImages();
   const router = useRouter();
 
   const handleBoardCardClick = async (boardId: string) => {
-    const { board, pages, imageAssets, members } = await getBoard(boardId);
+    const { board, pages } = await getBoard(boardId);
 
-    // setPages(pages);
-    setImages(imageAssets);
-
-    router.push(`/board/${board.id}/page/${pages[0]?.id ?? ""}`);
+    router.push(`/board/${board.id}/page/${pages[0]?.id}`);
   };
 
   return (

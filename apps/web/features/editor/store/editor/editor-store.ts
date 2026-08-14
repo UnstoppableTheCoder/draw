@@ -12,7 +12,6 @@ import {
   createViewportSlice,
 } from "./slices";
 import { createFrameSlice } from "./slices/frame-slice";
-import { createImageSlice } from "./slices/image-slice";
 
 export const useEditorStore = create<EditorStore>()(
   devtools(
@@ -25,7 +24,6 @@ export const useEditorStore = create<EditorStore>()(
       ...createViewportSlice(...args),
       ...createHistorySlice(...args),
       ...createFrameSlice(...args),
-      ...createImageSlice(...args),
     }),
     {
       name: "editor-store",

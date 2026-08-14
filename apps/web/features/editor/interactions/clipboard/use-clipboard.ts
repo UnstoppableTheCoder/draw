@@ -1,13 +1,4 @@
 import { useCanvasRenderer } from "../../context/use-renderer";
-import {
-  useAddImage,
-  useImages,
-  usePushHistory,
-  useSelectedShapesIds,
-  useSetSelectedShapesIds,
-  useSetShapes,
-  useShapes,
-} from "../../store/editor/selectors";
 import { ImageAsset, Shape } from "../../types";
 import { writeClipboard, readClipboard } from "./clipboard-actions";
 import { v4 as uuidv4 } from "uuid";
@@ -15,6 +6,14 @@ import { useParams } from "next/navigation";
 import { createShapes, deleteShapesApi } from "../../networking/api/shape-api";
 import { useImageManager } from "../manager/image-manager";
 import { createImageAssets } from "../../networking/api/image-asset-api";
+import {
+  usePushHistory,
+  useSelectedShapesIds,
+  useSetSelectedShapesIds,
+  useSetShapes,
+  useShapes,
+} from "../../store/editor/selectors";
+import { useAddImage, useImages } from "../../store/board/pages/selectors";
 
 const PASTE_OFFSET = 20;
 type ImageManager = ReturnType<typeof useImageManager>;

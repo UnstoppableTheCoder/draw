@@ -1,7 +1,5 @@
 import { Board } from "@/types/board";
-import { ImageAsset } from "./image";
 import { Page } from "./page";
-import { ImageMap } from "../store/editor/editor-types";
 
 export interface BoardMember {
   id: string;
@@ -18,7 +16,6 @@ export interface GetBoardsResponse {
 export interface GetBoardResponse {
   board: Board;
   pages: Page[];
-  imageAssets: ImageMap;
   members: BoardMember[];
 }
 

@@ -3,12 +3,9 @@ import { useParams } from "next/navigation";
 
 import { useCanvasRenderer } from "../context/use-renderer";
 import { useImageManager } from "../interactions/manager/image-manager";
-import {
-  useClearHistory,
-  useSetImages,
-  useSetShapes,
-} from "../store/editor/selectors";
+import { useClearHistory, useSetShapes } from "../store/editor/selectors";
 import { getPageApi } from "../networking/api/page-api";
+import { useSetImages } from "../store/board/pages/selectors";
 
 export function useLoadPage(imageManager: ReturnType<typeof useImageManager>) {
   const { pageId } = useParams<{ pageId: string }>();

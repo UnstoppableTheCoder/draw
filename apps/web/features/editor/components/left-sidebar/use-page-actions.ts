@@ -1,12 +1,6 @@
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { useUser } from "@/features/auth/store/selectors";
-import {
-  useAddPage,
-  usePages,
-  useRemovePage,
-  useUpdatePage,
-} from "@/features/editor/store/pages/selectors";
 import { useClearHistory, useSetShapes } from "../../store/editor/selectors";
 import {
   createPageApi,
@@ -17,6 +11,7 @@ import {
 } from "../../networking/api/page-api";
 import { Page } from "../../types/page";
 import { getNextZIndex } from "../../utils/z-index";
+import { useAddPage, usePages, useRemovePage, useUpdatePage } from "../../store/board/pages/selectors";
 
 export function usePageActions() {
   const { boardId, pageId } = useParams<{ boardId: string; pageId: string }>();

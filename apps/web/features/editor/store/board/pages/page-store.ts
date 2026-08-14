@@ -1,21 +1,6 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
-import { Page } from "../../types/page";
-
-type SetStateAction<T> = T | ((prev: T) => T);
-
-interface PageStore {
-  pages: Page[];
-  currentPageId: string | null;
-
-  setPages: (action: SetStateAction<Page[]>) => void;
-  addPage: (page: Page) => void;
-  updatePage: (pageId: string, updates: Partial<Page>) => void;
-  removePage: (pageId: string) => void;
-  reorderPages: (action: SetStateAction<Page[]>) => void;
-  setCurrentPageId: (pageId: string | null) => void;
-  clear: () => void;
-}
+import { ImageMap, PageStore } from "./types";
 
 export const usePageStore = create<PageStore>()(
   devtools(
@@ -94,6 +79,54 @@ export const usePageStore = create<PageStore>()(
           },
           false,
           "page/clear",
+        ),
+
+      // Images
+      images: {} as ImageMap,
+
+      setImages: (updater) =>
+        set(
+          (state) => ({
+            images:
+              typeof updater === "function" ? updater(state.images) : updater,
+          }),
+          false,
+          "images/setImages",
+        ),
+
+      addImage: (image) =>
+        set(
+          (state) => ({
+            images: {
+              ...state.images,
+              [image.id]: image,
+            },
+          }),
+          false,
+          "images/addImage",
+        ),
+
+      removeImage: (imageId: string) =>
+        set(
+          (state) => {
+            const nextImages = { ...state.images };
+            delete nextImages[imageId];
+
+            return {
+              images: nextImages,
+            };
+          },
+          false,
+          "images/removeImage",
+        ),
+
+      clearImages: () =>
+        set(
+          {
+            images: {},
+          },
+          false,
+          "images/clearImages",
         ),
     }),
     {

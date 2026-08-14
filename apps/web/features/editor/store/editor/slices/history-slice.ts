@@ -6,7 +6,7 @@ export const createHistorySlice: StateCreator<
   EditorStore,
   [["zustand/devtools", never]],
   [],
-  Pick<EditorStore, "undoStack" | "redoStack" | "undo" | "redo" | "pushHistory">
+  Pick<EditorStore, "undoStack" | "redoStack" | "undo" | "redo" | "pushHistory" | "clearHistory">
 > = (set) => ({
   undoStack: [],
   redoStack: [],

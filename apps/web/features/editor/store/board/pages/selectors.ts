@@ -27,3 +27,20 @@ export const useReorderPages = () =>
 
 export const useSetCurrentPageId = () =>
   usePageStore((state) => state.setCurrentPageId);
+
+// Images
+export const useImages = () => usePageStore((state) => state.images);
+
+export const useImage = (imageId: string) =>
+  usePageStore((state) => state.images[imageId]);
+
+export const useHasImage = (imageId: string) =>
+  usePageStore((state) => imageId in state.images);
+
+export const useSetImages = () => usePageStore((state) => state.setImages);
+
+export const useAddImage = () => usePageStore((state) => state.addImage);
+
+export const useRemoveImage = () => usePageStore((state) => state.removeImage);
+
+export const useClearImages = () => usePageStore((state) => state.clearImages);

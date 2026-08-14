@@ -12,6 +12,7 @@ import { useParams } from "next/navigation";
 import { useUser } from "@/features/auth/store/selectors";
 import { createShapes } from "../../networking/api/shape-api";
 import { useImageManager } from "../manager/image-manager";
+import { useAddImage } from "../../store/board/pages/selectors";
 
 export default function useImageUpload({
   sceneCanvasRef,
@@ -30,8 +31,8 @@ export default function useImageUpload({
   const setSelectedTool = store.useSetSelectedTool();
   const setShapes = store.useSetShapes();
   const setSelectedShapesIds = store.useSetSelectedShapesIds();
-  const addImage = store.useAddImage();
   const shapes = store.useShapes();
+  const addImage = useAddImage();
   const { pageId } = useParams<{ boardId: string; pageId: string }>();
   const user = useUser();
 

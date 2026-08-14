@@ -1,22 +1,25 @@
-import { useEffect, useState } from "react";
+import { updateBoard as updateBoardApi } from "@/features/board/api/board-api";
 import { useParams, useRouter } from "next/navigation";
-import { getBoard } from "@/features/board/api/board-api";
+import { useState } from "react";
+import { useBoard } from "../../store/board/board/selectors";
+import { useUpdateBoard } from "@/features/board/store/selectors";
 
 export function useBoardActions() {
   const { boardId } = useParams<{ boardId: string }>();
   const router = useRouter();
+  const board = useBoard();
+  const updateBoard = useUpdateBoard();
 
   const [isRenamingBoard, setIsRenamingBoard] = useState(false);
-  const [boardName, setBoardName] = useState("");
 
   const handleRenameBoard = () => {
     setIsRenamingBoard(true);
   };
 
-  const saveBoardName = (newName: string) => {
-    setBoardName(newName.trim() || "Untitled Board");
+  const saveBoardName = async (newName: string) => {
+    updateBoard(boardId, { ...board, name: newName });
     setIsRenamingBoard(false);
-    // TODO: Add call to updateBoardApi(boardId, { name: newName })
+    await updateBoardApi(boardId, { name: newName });
   };
 
   const handleDuplicateBoard = async () => {
@@ -44,8 +47,7 @@ export function useBoardActions() {
 
   return {
     boardId,
-    boardName,
-    setBoardName,
+    boardName: board?.name,
     isRenamingBoard,
     setIsRenamingBoard,
     handleRenameBoard,

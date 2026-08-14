@@ -5,13 +5,7 @@ import {
   Point,
   TextEditingState,
 } from "../../types/types";
-import { ImageAsset, Shape } from "../../types";
-
-export type ImageMap = Record<string, ImageAsset>;
-
-export type Group = {
-  [groupId: string]: string[];
-};
+import { Shape } from "../../types";
 
 export interface EditorStore {
   // Tool
@@ -24,13 +18,6 @@ export interface EditorStore {
   // Shapes
   shapes: Shape[];
   setShapes: (updater: Shape[] | ((prev: Shape[]) => Shape[])) => void;
-
-  // Images
-  images: ImageMap;
-  setImages: (updater: ImageMap | ((prev: ImageMap) => ImageMap)) => void;
-  addImage: (image: ImageAsset) => void;
-  removeImage: (imageId: string) => void;
-  clearImages: () => void;
 
   // Eraser Points
   eraserPoints: EraserPoint[];
