@@ -32,8 +32,6 @@ export function useLoadPage(imageManager: ReturnType<typeof useImageManager>) {
       const { page, imageAssets } = await getPageApi(pageId);
       await imageManager.preload(imageAssets);
 
-      console.log("Asset: ", { imageAssets, shapes: page.shapes });
-
       setImages(imageAssets);
       setShapes(page.shapes);
       clearHistory();

@@ -6,10 +6,17 @@ import {
   useSetShapes,
   useShapes,
 } from "../../store/editor/selectors";
-import { compareByZIndex } from "../../components/canvas/context-menu/use-selection-menu-actions";
 import { updateShapesApi } from "../../networking/api/shape-api";
 import { Shape } from "../../types";
 import { useParams } from "next/navigation";
+
+function compareStrings(a: string, b: string): number {
+  return a < b ? -1 : a > b ? 1 : 0;
+}
+
+function compareByZIndex(a: Shape, b: Shape): number {
+  return compareStrings(a.zIndex, b.zIndex) || compareStrings(a.id, b.id);
+}
 
 export default function useShapeOrder() {
   const { pageId } = useParams<{ pageId: string }>();
@@ -75,7 +82,11 @@ export default function useShapeOrder() {
 
     const changedShapes = [...updates.values()];
 
-    setShapes(shapes.map((shape) => updates.get(shape.id) ?? shape));
+    setShapes(
+      shapes
+        .map((shape) => updates.get(shape.id) ?? shape)
+        .sort(compareByZIndex),
+    );
 
     pushHistory();
     invalidate();
@@ -144,7 +155,11 @@ export default function useShapeOrder() {
 
     const changedShapes = [...updates.values()];
 
-    setShapes(shapes.map((shape) => updates.get(shape.id) ?? shape));
+    setShapes(
+      shapes
+        .map((shape) => updates.get(shape.id) ?? shape)
+        .sort(compareByZIndex),
+    );
 
     pushHistory();
     invalidate();
@@ -210,7 +225,11 @@ export default function useShapeOrder() {
 
     const changedShapes = [...updates.values()];
 
-    setShapes(shapes.map((shape) => updates.get(shape.id) ?? shape));
+    setShapes(
+      shapes
+        .map((shape) => updates.get(shape.id) ?? shape)
+        .sort(compareByZIndex),
+    );
 
     pushHistory();
     invalidate();
@@ -276,8 +295,11 @@ export default function useShapeOrder() {
 
     const changedShapes = [...updates.values()];
 
-    setShapes(shapes.map((shape) => updates.get(shape.id) ?? shape));
-
+    setShapes(
+      shapes
+        .map((shape) => updates.get(shape.id) ?? shape)
+        .sort(compareByZIndex),
+    );
     pushHistory();
     invalidate();
 

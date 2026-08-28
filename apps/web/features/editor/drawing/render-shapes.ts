@@ -1,7 +1,4 @@
-import { useCanvasRenderer } from "../context/use-renderer";
 import { useImageManager } from "../interactions/manager/image-manager";
-import useCanvasCursor from "../renderer/cursor/use-canvas-cursor";
-import { ImageMap } from "../store/editor/editor-types";
 import { Shape } from "../types";
 import { FrameEditingState } from "../types/types";
 import { drawArrow } from "./shapes/arrow";

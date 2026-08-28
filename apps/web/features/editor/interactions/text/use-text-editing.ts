@@ -30,8 +30,15 @@ import {
   updateShapesApi,
 } from "../../networking/api/shape-api";
 import { getBoundingBox } from "../../geometry/bounding-box/get-bounding-box";
-import { compareByZIndex } from "../../components/canvas/context-menu/use-selection-menu-actions";
 import { checkIsInsideFrame, getGroupBounds } from "../selection/use-selection";
+
+function compareStrings(a: string, b: string): number {
+  return a < b ? -1 : a > b ? 1 : 0;
+}
+
+function compareByZIndex(a: Shape, b: Shape): number {
+  return compareStrings(a.zIndex, b.zIndex) || compareStrings(a.id, b.id);
+}
 
 export default function useTextEditing(
   canvasRef: RefObject<HTMLCanvasElement | null>,

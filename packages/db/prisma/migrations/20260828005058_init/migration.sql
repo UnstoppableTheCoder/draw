@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "RoomRole" AS ENUM ('OWNER', 'ADMIN', 'EDITOR', 'VIEWER');
+CREATE TYPE "BoardRole" AS ENUM ('OWNER', 'EDITOR', 'VIEWER');
 
 -- CreateEnum
 CREATE TYPE "ShapeType" AS ENUM ('RECTANGLE', 'DIAMOND', 'ELLIPSE', 'LINE', 'ARROW', 'FREEDRAW', 'TEXT', 'IMAGE', 'FRAME', 'STICKY_NOTE');
@@ -16,7 +16,7 @@ CREATE TYPE "NotificationType" AS ENUM ('INVITE', 'COMMENT', 'MENTION', 'CHAT', 
 -- CreateTable
 CREATE TABLE "ActivityLog" (
     "id" TEXT NOT NULL,
-    "roomId" TEXT NOT NULL,
+    "boardId" TEXT NOT NULL,
     "pageId" TEXT,
     "userId" TEXT NOT NULL,
     "action" TEXT NOT NULL,
@@ -27,9 +27,35 @@ CREATE TABLE "ActivityLog" (
 );
 
 -- CreateTable
+CREATE TABLE "Board" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "description" TEXT,
+    "thumbnail" TEXT,
+    "isPublic" BOOLEAN NOT NULL DEFAULT false,
+    "favorite" BOOLEAN NOT NULL DEFAULT false,
+    "ownerId" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Board_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "BoardMember" (
+    "id" TEXT NOT NULL,
+    "boardId" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "role" "BoardRole" NOT NULL DEFAULT 'VIEWER',
+    "joinedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "BoardMember_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "Call" (
     "id" TEXT NOT NULL,
-    "roomId" TEXT NOT NULL,
+    "boardId" TEXT NOT NULL,
     "startedById" TEXT NOT NULL,
     "startedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "endedAt" TIMESTAMP(3),
@@ -54,7 +80,7 @@ CREATE TABLE "CallParticipant" (
 -- CreateTable
 CREATE TABLE "ChatMessage" (
     "id" TEXT NOT NULL,
-    "roomId" TEXT NOT NULL,
+    "boardId" TEXT NOT NULL,
     "senderId" TEXT NOT NULL,
     "type" "ChatMessageType" NOT NULL DEFAULT 'TEXT',
     "message" TEXT,
@@ -93,7 +119,7 @@ CREATE TABLE "CommentReply" (
 -- CreateTable
 CREATE TABLE "ImageAsset" (
     "id" TEXT NOT NULL,
-    "roomId" TEXT NOT NULL,
+    "pageId" TEXT NOT NULL,
     "uploadedById" TEXT NOT NULL,
     "s3Key" TEXT,
     "renderUrl" TEXT NOT NULL,
@@ -102,7 +128,7 @@ CREATE TABLE "ImageAsset" (
     "fileSize" BIGINT,
     "naturalWidth" INTEGER NOT NULL,
     "naturalHeight" INTEGER NOT NULL,
-    "status" "ImageStatus" NOT NULL DEFAULT 'UPLOADING',
+    "status" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "ImageAsset_pkey" PRIMARY KEY ("id")
@@ -111,9 +137,9 @@ CREATE TABLE "ImageAsset" (
 -- CreateTable
 CREATE TABLE "Invite" (
     "id" TEXT NOT NULL,
-    "roomId" TEXT NOT NULL,
+    "boardId" TEXT NOT NULL,
     "email" TEXT NOT NULL,
-    "role" "RoomRole" NOT NULL,
+    "role" "BoardRole" NOT NULL,
     "token" TEXT NOT NULL,
     "expiresAt" TIMESTAMP(3) NOT NULL,
     "accepted" BOOLEAN NOT NULL DEFAULT false,
@@ -137,9 +163,9 @@ CREATE TABLE "Notification" (
 -- CreateTable
 CREATE TABLE "Page" (
     "id" TEXT NOT NULL,
-    "roomId" TEXT NOT NULL,
+    "boardId" TEXT NOT NULL,
     "name" TEXT NOT NULL,
-    "index" INTEGER NOT NULL,
+    "orderKey" TEXT NOT NULL,
     "backgroundColor" TEXT,
     "createdById" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -149,37 +175,11 @@ CREATE TABLE "Page" (
 );
 
 -- CreateTable
-CREATE TABLE "Room" (
-    "id" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
-    "slug" TEXT NOT NULL,
-    "description" TEXT,
-    "thumbnail" TEXT,
-    "isPublic" BOOLEAN NOT NULL DEFAULT false,
-    "ownerId" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "Room_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "RoomMember" (
-    "id" TEXT NOT NULL,
-    "roomId" TEXT NOT NULL,
-    "userId" TEXT NOT NULL,
-    "role" "RoomRole" NOT NULL DEFAULT 'VIEWER',
-    "joinedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "RoomMember_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "Shape" (
     "id" TEXT NOT NULL,
     "pageId" TEXT NOT NULL,
     "createdById" TEXT NOT NULL,
-    "type" "ShapeType" NOT NULL,
+    "type" TEXT NOT NULL,
     "x" DOUBLE PRECISION NOT NULL,
     "y" DOUBLE PRECISION NOT NULL,
     "width" DOUBLE PRECISION NOT NULL,
@@ -192,7 +192,6 @@ CREATE TABLE "Shape" (
     "seed" INTEGER NOT NULL,
     "version" INTEGER NOT NULL DEFAULT 1,
     "versionNonce" INTEGER NOT NULL,
-    "updated" BIGINT NOT NULL,
     "isDeleted" BOOLEAN NOT NULL DEFAULT false,
     "locked" BOOLEAN NOT NULL DEFAULT false,
     "link" TEXT,
@@ -206,7 +205,6 @@ CREATE TABLE "Shape" (
 -- CreateTable
 CREATE TABLE "User" (
     "id" TEXT NOT NULL,
-    "username" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "passwordHash" TEXT NOT NULL,
     "name" TEXT,
@@ -222,7 +220,7 @@ CREATE TABLE "User" (
 -- CreateTable
 CREATE TABLE "BoardVersion" (
     "id" TEXT NOT NULL,
-    "roomId" TEXT NOT NULL,
+    "boardId" TEXT NOT NULL,
     "createdById" TEXT NOT NULL,
     "message" TEXT,
     "snapshot" JSONB NOT NULL,
@@ -232,7 +230,7 @@ CREATE TABLE "BoardVersion" (
 );
 
 -- CreateIndex
-CREATE INDEX "ActivityLog_roomId_createdAt_idx" ON "ActivityLog"("roomId", "createdAt");
+CREATE INDEX "ActivityLog_boardId_createdAt_idx" ON "ActivityLog"("boardId", "createdAt");
 
 -- CreateIndex
 CREATE INDEX "ActivityLog_pageId_createdAt_idx" ON "ActivityLog"("pageId", "createdAt");
@@ -241,7 +239,22 @@ CREATE INDEX "ActivityLog_pageId_createdAt_idx" ON "ActivityLog"("pageId", "crea
 CREATE INDEX "ActivityLog_userId_createdAt_idx" ON "ActivityLog"("userId", "createdAt");
 
 -- CreateIndex
-CREATE INDEX "Call_roomId_startedAt_idx" ON "Call"("roomId", "startedAt");
+CREATE INDEX "Board_ownerId_idx" ON "Board"("ownerId");
+
+-- CreateIndex
+CREATE INDEX "Board_favorite_idx" ON "Board"("favorite");
+
+-- CreateIndex
+CREATE INDEX "Board_isPublic_updatedAt_idx" ON "Board"("isPublic", "updatedAt");
+
+-- CreateIndex
+CREATE INDEX "BoardMember_userId_idx" ON "BoardMember"("userId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "BoardMember_boardId_userId_key" ON "BoardMember"("boardId", "userId");
+
+-- CreateIndex
+CREATE INDEX "Call_boardId_startedAt_idx" ON "Call"("boardId", "startedAt");
 
 -- CreateIndex
 CREATE INDEX "Call_startedById_idx" ON "Call"("startedById");
@@ -253,7 +266,7 @@ CREATE INDEX "CallParticipant_callId_joinedAt_idx" ON "CallParticipant"("callId"
 CREATE INDEX "CallParticipant_userId_idx" ON "CallParticipant"("userId");
 
 -- CreateIndex
-CREATE INDEX "ChatMessage_roomId_createdAt_idx" ON "ChatMessage"("roomId", "createdAt");
+CREATE INDEX "ChatMessage_boardId_createdAt_idx" ON "ChatMessage"("boardId", "createdAt");
 
 -- CreateIndex
 CREATE INDEX "ChatMessage_senderId_idx" ON "ChatMessage"("senderId");
@@ -277,7 +290,7 @@ CREATE INDEX "CommentReply_commentId_createdAt_idx" ON "CommentReply"("commentId
 CREATE INDEX "CommentReply_userId_idx" ON "CommentReply"("userId");
 
 -- CreateIndex
-CREATE INDEX "ImageAsset_roomId_createdAt_idx" ON "ImageAsset"("roomId", "createdAt");
+CREATE INDEX "ImageAsset_pageId_createdAt_idx" ON "ImageAsset"("pageId", "createdAt");
 
 -- CreateIndex
 CREATE INDEX "ImageAsset_uploadedById_idx" ON "ImageAsset"("uploadedById");
@@ -286,7 +299,7 @@ CREATE INDEX "ImageAsset_uploadedById_idx" ON "ImageAsset"("uploadedById");
 CREATE UNIQUE INDEX "Invite_token_key" ON "Invite"("token");
 
 -- CreateIndex
-CREATE INDEX "Invite_roomId_email_idx" ON "Invite"("roomId", "email");
+CREATE INDEX "Invite_boardId_email_idx" ON "Invite"("boardId", "email");
 
 -- CreateIndex
 CREATE INDEX "Invite_expiresAt_idx" ON "Invite"("expiresAt");
@@ -296,24 +309,6 @@ CREATE INDEX "Notification_userId_isRead_createdAt_idx" ON "Notification"("userI
 
 -- CreateIndex
 CREATE INDEX "Page_createdById_idx" ON "Page"("createdById");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Page_roomId_index_key" ON "Page"("roomId", "index");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Room_slug_key" ON "Room"("slug");
-
--- CreateIndex
-CREATE INDEX "Room_ownerId_idx" ON "Room"("ownerId");
-
--- CreateIndex
-CREATE INDEX "Room_isPublic_updatedAt_idx" ON "Room"("isPublic", "updatedAt");
-
--- CreateIndex
-CREATE INDEX "RoomMember_userId_idx" ON "RoomMember"("userId");
-
--- CreateIndex
-CREATE UNIQUE INDEX "RoomMember_roomId_userId_key" ON "RoomMember"("roomId", "userId");
 
 -- CreateIndex
 CREATE INDEX "Shape_pageId_idx" ON "Shape"("pageId");
@@ -328,22 +323,19 @@ CREATE INDEX "Shape_pageId_groupId_idx" ON "Shape"("pageId", "groupId");
 CREATE INDEX "Shape_pageId_frameId_idx" ON "Shape"("pageId", "frameId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
-
--- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
 CREATE INDEX "User_lastSeen_idx" ON "User"("lastSeen");
 
 -- CreateIndex
-CREATE INDEX "BoardVersion_roomId_createdAt_idx" ON "BoardVersion"("roomId", "createdAt");
+CREATE INDEX "BoardVersion_boardId_createdAt_idx" ON "BoardVersion"("boardId", "createdAt");
 
 -- CreateIndex
 CREATE INDEX "BoardVersion_createdById_idx" ON "BoardVersion"("createdById");
 
 -- AddForeignKey
-ALTER TABLE "ActivityLog" ADD CONSTRAINT "ActivityLog_roomId_fkey" FOREIGN KEY ("roomId") REFERENCES "Room"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "ActivityLog" ADD CONSTRAINT "ActivityLog_boardId_fkey" FOREIGN KEY ("boardId") REFERENCES "Board"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "ActivityLog" ADD CONSTRAINT "ActivityLog_pageId_fkey" FOREIGN KEY ("pageId") REFERENCES "Page"("id") ON DELETE SET NULL ON UPDATE CASCADE;
@@ -352,7 +344,16 @@ ALTER TABLE "ActivityLog" ADD CONSTRAINT "ActivityLog_pageId_fkey" FOREIGN KEY (
 ALTER TABLE "ActivityLog" ADD CONSTRAINT "ActivityLog_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Call" ADD CONSTRAINT "Call_roomId_fkey" FOREIGN KEY ("roomId") REFERENCES "Room"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Board" ADD CONSTRAINT "Board_ownerId_fkey" FOREIGN KEY ("ownerId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "BoardMember" ADD CONSTRAINT "BoardMember_boardId_fkey" FOREIGN KEY ("boardId") REFERENCES "Board"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "BoardMember" ADD CONSTRAINT "BoardMember_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Call" ADD CONSTRAINT "Call_boardId_fkey" FOREIGN KEY ("boardId") REFERENCES "Board"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Call" ADD CONSTRAINT "Call_startedById_fkey" FOREIGN KEY ("startedById") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -364,7 +365,7 @@ ALTER TABLE "CallParticipant" ADD CONSTRAINT "CallParticipant_callId_fkey" FOREI
 ALTER TABLE "CallParticipant" ADD CONSTRAINT "CallParticipant_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "ChatMessage" ADD CONSTRAINT "ChatMessage_roomId_fkey" FOREIGN KEY ("roomId") REFERENCES "Room"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "ChatMessage" ADD CONSTRAINT "ChatMessage_boardId_fkey" FOREIGN KEY ("boardId") REFERENCES "Board"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "ChatMessage" ADD CONSTRAINT "ChatMessage_senderId_fkey" FOREIGN KEY ("senderId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -388,31 +389,22 @@ ALTER TABLE "CommentReply" ADD CONSTRAINT "CommentReply_commentId_fkey" FOREIGN 
 ALTER TABLE "CommentReply" ADD CONSTRAINT "CommentReply_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "ImageAsset" ADD CONSTRAINT "ImageAsset_roomId_fkey" FOREIGN KEY ("roomId") REFERENCES "Room"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "ImageAsset" ADD CONSTRAINT "ImageAsset_pageId_fkey" FOREIGN KEY ("pageId") REFERENCES "Page"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "ImageAsset" ADD CONSTRAINT "ImageAsset_uploadedById_fkey" FOREIGN KEY ("uploadedById") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Invite" ADD CONSTRAINT "Invite_roomId_fkey" FOREIGN KEY ("roomId") REFERENCES "Room"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Invite" ADD CONSTRAINT "Invite_boardId_fkey" FOREIGN KEY ("boardId") REFERENCES "Board"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Notification" ADD CONSTRAINT "Notification_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Page" ADD CONSTRAINT "Page_roomId_fkey" FOREIGN KEY ("roomId") REFERENCES "Room"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Page" ADD CONSTRAINT "Page_boardId_fkey" FOREIGN KEY ("boardId") REFERENCES "Board"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Page" ADD CONSTRAINT "Page_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Room" ADD CONSTRAINT "Room_ownerId_fkey" FOREIGN KEY ("ownerId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "RoomMember" ADD CONSTRAINT "RoomMember_roomId_fkey" FOREIGN KEY ("roomId") REFERENCES "Room"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "RoomMember" ADD CONSTRAINT "RoomMember_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Shape" ADD CONSTRAINT "Shape_pageId_fkey" FOREIGN KEY ("pageId") REFERENCES "Page"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -421,7 +413,7 @@ ALTER TABLE "Shape" ADD CONSTRAINT "Shape_pageId_fkey" FOREIGN KEY ("pageId") RE
 ALTER TABLE "Shape" ADD CONSTRAINT "Shape_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "BoardVersion" ADD CONSTRAINT "BoardVersion_roomId_fkey" FOREIGN KEY ("roomId") REFERENCES "Room"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "BoardVersion" ADD CONSTRAINT "BoardVersion_boardId_fkey" FOREIGN KEY ("boardId") REFERENCES "Board"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "BoardVersion" ADD CONSTRAINT "BoardVersion_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

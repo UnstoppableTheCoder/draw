@@ -1,3 +1,7 @@
+# Fix ordering with respect to the frame
+
+# Fix the bug of pasting the images in new page
+
 # Don't return all the shapes - return them by the page
 
 # Fix the bug of rendering images
